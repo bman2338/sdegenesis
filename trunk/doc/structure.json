@@ -1,0 +1,143 @@
+{
+ projectName: "nomeProgetto", //eg. "ArgoUML"
+ //packages is an array of objects containing packages
+ packages: [
+  {
+   packageName: "com.usi.sdeTest", 
+   classes: [ //classes is an array containing objects that represent a class
+    {
+     className: "MyClass",
+     type: "class", //could be also interface or abstract class
+     attributes: "public",
+     extends: { //empty if no inheritance (or default Object inheritance), otherwise name of the class from which inherits and package
+      name: "SuperMyClass",
+      package: "com.usi.sdeTest"
+     }, 
+     implements: { //empty if no implementation of interfaces, otherwise name of the implemented interface and package, just like superclasses
+     
+     },
+     globalVariables: [
+      {
+       name: "index",
+       type: "int",
+       attributes: "private static",
+       init: "", //empty if not initialized, otherwise the value for initialization
+      }
+     ],
+     
+     methods: [
+      {
+       name: "main",
+       attributes: "public static",
+       parameters: [
+        {
+         name: "args",
+         type: "String[]",
+         attributes: "", //may be final for example
+        }
+       ],
+       localVariables: [
+        {
+         name: "aVariable",
+         type: "int",
+         attributes: "", //may be final aswell
+         init: "100", //if not initialized leave black
+        }
+       ],
+       returnType: "void",
+       content : "int aVariable = 100; index = 0; AnotherClass ac = new AnotherClass(index);", //maybe we can drop the content of the methods
+       
+       methodRelations: [ //methods called in this method
+        {
+         methodName: "AnotherClass(int index)",
+         inClass: "AnotherClass",
+         inPackage: "com.usi.sdeTest",
+        },
+       ],
+       
+       
+      }
+     ],
+     metrics: [ 
+        { metricName: "Afferent Coupling", value: 10 }, 
+        { metricName: "Efferent Coupling", value: 3 },
+        { metricName: "Lines of Code", value: 15 },
+     ],
+     
+     classRelations: [
+      { className: "AnotherClass"  } //eventually here we can put also the type of relations they have
+     ],
+    },
+    {
+     className: "AnotherClass",
+     type: "class", //could be also interface or abstract class
+     attributes: "public",
+     extends: { //empty if no inheritance (or default Object inheritance), otherwise name of the class from which inherits and package
+     }, 
+     implements: { //empty if no implementation of interfaces, otherwise name of the implemented interface and package, just like superclasses
+     
+     }, 
+     globalVariables: [],
+     methods: [
+      {
+       name: "AnotherClass", //same name = constructor
+       attributes: "public",
+       parameters: [
+        {
+         name: "index",
+         type: "int",
+         attributes: "final",
+        }
+       ],
+       localVariables: [],
+       returnType: "", //it's a constructor, no return type
+       content: "System.out.println(index);", //again, maybe we can drop this
+       
+       methodRelations: [
+        "System.out.println(Object)", //should we track also system calls?
+       ],
+      }
+     ],
+     
+     linesOfCode: 9,
+     classRelations: [], //no class called / used in this class
+    },
+   ],
+  },
+ ],
+ 
+ packagesRelations: {
+  "com.usi.sdeTest": ["anotherPackage", "anotherPackageAsWell"],
+  "anotherPackage" : ["com.usi.sdeTest", "anotherPackageAsWell"],
+  "anotherPackageAsWell" : ["com.usi.sdeTest", "anotherPackage"], //scelta discutibile
+ },
+ 
+ pointers: [
+  {
+   package: "com.usi.sdeTest",
+   file: "MyClass",
+   line: 10
+  },
+  {
+   package: "com.usi.sdeTest",
+   file: "AnotherClass",
+   line: 4
+  }
+ ],
+ 
+ tags: [ //tags of the project? of classes? of packages? does one single array will suffice?
+  "test", "prova", "sde", "JSON",
+ ],
+ 
+ buckTrackerInfo: [ //info about bugtracker, what's important to know? for now the more the better, list of bugs which may be asked by the information processer.
+  {
+   bugName: "Problema Col Print",
+   issueNumber: 1337,
+   description: "In AnotherClass non printa l'index.",
+   opener: "Patrick Zulian",
+   assignedTo: "", //empty = not assigned, otherwise fullname/ID of the guy which is assigned
+   dateOfOpening: "11.12.2011",
+   status: "new",
+  },
+ ],
+}
