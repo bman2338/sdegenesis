@@ -1,0 +1,4 @@
+package ch.usi.inf.genesis.model.core.famix
+
+class Property(val qualifier: Qualifier) {
+}
