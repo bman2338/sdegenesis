@@ -33,14 +33,21 @@ class IntReference(val id:Int) extends Reference {
 }
 
 class Node extends Entity {
+    def unapply(e:Entity) : Option[Node] = Some(this)
     val children:ListBuffer[Entity] = new ListBuffer[Entity]
     def addChild (entity:Entity) = children += entity 	
+    def resolve (pool : ListBuffer[Entity]) = {
+        val node = this
+		children.foreach((child) => child match {
+		  case node(el) => println("Node")
+		}
+    )}
 }
 
 class Attribute(val name:String) extends Node {
   override def toString = name
 }
 
-case class Element(innerName:String, val id:Option[Int]) extends Attribute(innerName) {
+case class Element(elementName:String, val modelName:String, val id:Option[Int]) extends Attribute(elementName) {
   
 }

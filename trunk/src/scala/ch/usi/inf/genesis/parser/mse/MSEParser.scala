@@ -1,6 +1,7 @@
 package ch.usi.inf.genesis.parser.mse
 
 import scala.util.parsing.combinator.RegexParsers
+import scala.collection.mutable.ListBuffer
 
 import ch.usi.inf.genesis.model._
 
@@ -10,7 +11,7 @@ import ch.usi.inf.genesis.model._
  */
 object MSEParser extends RegexParsers {
 	override def skipWhitespace = false
-
+	val pool = new ListBuffer[Entity];
 			def root : Parser[Option[Node]] = (document?)
 			def document = open ~> (elementNode*) <~ close ^^ { 
 				case nodes =>
@@ -20,8 +21,12 @@ object MSEParser extends RegexParsers {
 			}
 			def elementNode : Parser[Entity] = open ~> elementName ~ (serial?) ~ (attributeNode*) <~ close ^^ { 
 				case (model,name) ~ id ~ nodes => {
-					val element = new Element(name,id)
+					val element = new Element(name,model,id)
 					nodes.foreach((node) => element.addChild(node))
+					id match {
+					  case Some(integerId:Int) => pool.insert(integerId,element)
+					  case _ =>
+					}
 					element
 				}
 			}
@@ -97,6 +102,10 @@ object MSEParser extends RegexParsers {
 
 			def parse(a: String) : Option[Node] = {
 				val r = parseAll(root,a)
-				r.get
+				r.get match {
+				  case Some(model) => model.resolve(pool)
+				  case _ => None
+				}
+				None
 			}
 }
