@@ -2,9 +2,16 @@ package ch.usi.inf.genesis.model
 
 import scala.collection.mutable.ListBuffer
 
-abstract class Entity;
+import ch.usi.inf.genesis.model.core.ModelObject
 
-abstract class Value extends Entity;
+abstract class Entity {
+	var modelObject : ModelObject = null
+    def resolve (pool: ListBuffer[Entity]);
+}
+
+abstract class Value extends Entity {
+    def resolve (pool: ListBuffer[Entity]) = this
+}
 
 class BooleanValue(val boolean:Boolean) extends Value {
   override def toString = boolean.toString
@@ -36,12 +43,15 @@ class Node extends Entity {
     def unapply(e:Entity) : Option[Node] = Some(this)
     val children:ListBuffer[Entity] = new ListBuffer[Entity]
     def addChild (entity:Entity) = children += entity 	
-    def resolve (pool : ListBuffer[Entity]) = {
+    def resolve (pool : ListBuffer[Entity]) : ListBuffer[ModelObject] = {
         val node = this
+        val objects = new ListBuffer[ModelObject]
 		children.foreach((child) => child match {
 		  case node(el) => println("Node")
 		}
-    )}
+    )
+    objects
+    }
 }
 
 class Attribute(val name:String) extends Node {
