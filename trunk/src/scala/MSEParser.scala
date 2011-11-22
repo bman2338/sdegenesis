@@ -84,7 +84,10 @@ object MSEParser {
 		}
 	}
 
-
+	/**
+	 * Singleton object that is used to parse MSE files
+	 * @author Remo Lemma & Patrick Zulian
+	 */
 	object Parser extends RegexParsers {
 	  override def skipWhitespace = false
 	  
@@ -96,7 +99,7 @@ object MSEParser {
 	    	node
 	  }
 	  def elementNode : Parser[Entity] = open ~> elementName ~ (serial?) ~ (attributeNode*) <~ close ^^ { 
-	    case name ~ id ~ nodes => {
+	    case (model,name) ~ id ~ nodes => {
 	      val element = new Element(name,id)
 	      nodes.foreach((node) => element.addChild(node))
 	      element
@@ -115,7 +118,7 @@ object MSEParser {
 	  def boolean = (booleanTrue | booleanFalse) ^^ { case booleanValue => new BooleanValue(booleanValue.toBoolean) }
 	  def reference = integerReference | nameReference
 	  def integerReference = open ~> ref ~> natural <~ close ^^ { case integerNumber => new IntReference(integerNumber.toInt) }
-	  def nameReference = open ~> ref ~> elementName <~ close ^^ { case nameStr => new StringReference(nameStr) }
+	  def nameReference = open ~> ref ~> elementName <~ close ^^ { case (model,name) => new StringReference(model + "." + name) }
 	  
 	   def digit = "[0-9]".r
 	   def letter = "[a-zA-Z_]".r
@@ -131,11 +134,11 @@ object MSEParser {
 	     
 	   def nameIdentifier = ((letter|digit)*) ^^ { case xs => xs.foldLeft("")((element,rest) => element+rest) }
 	   def elementName = letter ~ nameIdentifier ~ ("." ~ letter ~ nameIdentifier) <~ (space*) ^^ {
-	     case l ~ nid ~ ("." ~ l1 ~ nid1) => l + nid + "." + l1 + nid1
+	     case l ~ nid ~ ("." ~ l1 ~ nid1) => (l + nid,l1 + nid1)
 	   }
 	   def simpleName = letter ~ nameIdentifier <~ (space*) ^^ { case l ~ nid => l + nid }
 	   def natural = (digit+) ^^ { case xs => xs.foldLeft("")((v,rest) => v+rest) }
-	   def suffix = "." ~ natural ^^ { case dot ~ naturalNumber => dot + naturalNumber }
+	   def suffix = "." ~> natural ^^ { case naturalNumber => "." + naturalNumber }
 	   def exponent = ("e"|"E") ~ (("-"|"+")?) ~ natural ^^ {
 	     case exp ~ sign ~ exponentNumber =>
 	       var retNumber = exponentNumber
