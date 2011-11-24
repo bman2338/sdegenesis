@@ -19,7 +19,9 @@ object MSEParser extends RegexParsers {
 	}
 	
 	class Value(obj:ModelObject) extends Entity {
-	   def apply (obj:ModelObject) = this.modelObject = obj;
+	   def apply (obj:ModelObject) = {
+		   this.modelObject = obj;
+	   }
 	   def resolve (pool: Map[Int,Entity]) = List(modelObject)
 	}
 
@@ -27,7 +29,9 @@ object MSEParser extends RegexParsers {
 
 	class StringReference(val id:String) extends Reference {
 		override def toString = id
- 	    def resolve (pool: Map[Int,Entity]) = List() // We do not handle this right now
+ 	    def resolve (pool: Map[Int,Entity]) = {
+		  List() // We do not handle this right now
+		}
 	}
 
 	class IntReference(val id:Int) extends Reference {
@@ -39,6 +43,7 @@ object MSEParser extends RegexParsers {
 		    	if (obj.modelObject == null) {
 		    	  obj.resolve(pool)
 		    	}
+		    	this.modelObject = obj.modelObject
 		    	List(obj.modelObject)
 		    }
 		    case _ => List()
@@ -49,13 +54,14 @@ object MSEParser extends RegexParsers {
 	class Node extends Entity {
 		val children:ListBuffer[Entity] = new ListBuffer[Entity]
 
-		def unapply(e:Entity) : Option[Node] = Some(this)
-		def addChild (entity:Entity) = children += entity 	
-		def resolve (pool : Map[Int,Entity]) : Seq[ModelObject] = {
-			val node = this
+		def unapply(e:Entity) : Boolean = this == e
+		def addChild (entity:Entity) = children += entity
+		def resolve (pool : Map[Int,Entity]) = {
 			val objects = new ListBuffer[ModelObject]
-			children.foreach((child) => child match {
-				case node(el) => println("Node")
+			children.foreach((child) => { 
+			  if (child.modelObject == null)
+				  child.resolve(pool)
+			  objects += child.modelObject
 			})
 			objects
 		}
@@ -63,10 +69,25 @@ object MSEParser extends RegexParsers {
 
 	class Attribute(val name:String) extends Node {
 		override def toString = name
+		override def resolve (pool:Map[Int,Entity]) = {
+		  super.resolve(pool)
+		}
 	}
 
-	case class Element(elementName:String, val modelName:String, val id:Option[Int]) extends Attribute(elementName) {
-
+	class Element(private val elementName:String, val modelName:String, val id:Option[Int]) extends Attribute(elementName) {
+		override def resolve (pool:Map[Int,Entity]) = {
+			val objects = new ListBuffer[ModelObject]
+			children.foreach((child) => {
+				if (child.modelObject == null)
+					child.resolve(pool)
+				//objects += child.modelObject
+			})
+//			objects
+			name match {
+			  case "Class" => 
+			}
+			null
+		}
 	}
   
 	override def skipWhitespace = false
