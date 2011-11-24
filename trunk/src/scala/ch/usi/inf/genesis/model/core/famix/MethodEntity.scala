@@ -2,11 +2,9 @@ package ch.usi.inf.genesis.model.core.famix
 
 import scala.collection.mutable.HashMap
 
-class MethodEntity(sourceAnchor: Qualifier, 
-				   name: String, 
-				   uniqueName: String,
+class MethodEntity(name: String, 
 				   //
-				   val belongsToClass: ClassEntity, 
-				   val invocations: HashMap[String, InvocationRelation] = new HashMap()) extends Entity(sourceAnchor, name, uniqueName)  {
+				   val belongsToClass: ClassEntity) extends Entity(name)  {
+  val invocations: HashMap[String, InvocationRelation] = new HashMap()
 
 }

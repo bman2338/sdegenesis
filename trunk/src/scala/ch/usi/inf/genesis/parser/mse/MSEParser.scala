@@ -1,4 +1,4 @@
-package ch.usi.inf.genesis.parser.mse
+	package ch.usi.inf.genesis.parser.mse
 
 import scala.util.parsing.combinator.RegexParsers
 import scala.collection.mutable.ListBuffer
@@ -15,14 +15,15 @@ object MSEParser extends RegexParsers {
 
 	abstract class Entity {
 		var modelObject : ModelObject = null
-		def resolve (pool: Map[Int,Entity]) : Seq[ModelObject];
+		def resolve (pool: Map[Int,Entity]) : Option[ModelObject];
 	}
 	
-	class Value(obj:ModelObject) extends Entity {
-	   def apply (obj:ModelObject) = {
+	case class Value private () extends Entity {
+	   def this (obj:ModelObject) = {
+		   this()
 		   this.modelObject = obj;
 	   }
-	   def resolve (pool: Map[Int,Entity]) = List(modelObject)
+	   def resolve (pool: Map[Int,Entity]) = Some(modelObject)
 	}
 
 	abstract class Reference extends Entity;
@@ -30,61 +31,69 @@ object MSEParser extends RegexParsers {
 	class StringReference(val id:String) extends Reference {
 		override def toString = id
  	    def resolve (pool: Map[Int,Entity]) = {
-		  List() // We do not handle this right now
+		    println("String Reference not handled")
+			None // We do not handle this right now
 		}
 	}
 
 	class IntReference(val id:Int) extends Reference {
 		override def toString = id.toString
-		def resolve (pool: Map[Int,Entity]) = {
+		def resolve (pool: Map[Int,Entity]) : Option[ModelObject] = {
+		  if (this.modelObject != null)
+		    return Some(this.modelObject)
 		  val poolItem = pool.get(id)
 		  poolItem match {
 		    case Some(obj:Entity) => {
-		    	if (obj.modelObject == null) {
-		    	  obj.resolve(pool)
-		    	}
+		    	if (obj.modelObject == null)
+		    		obj.resolve(pool)
 		    	this.modelObject = obj.modelObject
-		    	List(obj.modelObject)
+		    	Some(obj.modelObject)
 		    }
-		    case _ => List()
+		    case _ => None
 		  }
 		}
 	}
 
 	class Node extends Entity {
-		val children:ListBuffer[Entity] = new ListBuffer[Entity]
+		val children = new HashMap[String,Entity]
 
 		def unapply(e:Entity) : Boolean = this == e
-		def addChild (entity:Entity) = children += entity
 		def resolve (pool : Map[Int,Entity]) = {
-			val objects = new ListBuffer[ModelObject]
-			children.foreach((child) => { 
-			  if (child.modelObject == null)
-				  child.resolve(pool)
-			  objects += child.modelObject
-			})
-			objects
+		  	if (this.modelObject == null) {
+		  		children.foreach((pair) => { 
+				 	pair._2.resolve(pool)
+				})
+		  	}
+		  	Some(this.modelObject)
 		}
 	}
 
-	class Attribute(val name:String) extends Node {
+	class Attribute(val name:String) extends Entity {
 		override def toString = name
+		val children = new ListBuffer[Entity]
 		override def resolve (pool:Map[Int,Entity]) = {
-		  super.resolve(pool)
+			if (this.modelObject == null) {
+		  		children.foreach((value) => { 
+				 	value.resolve(pool)
+				})
+		  	}
+		  	Some(this.modelObject)  
 		}
 	}
 
-	class Element(private val elementName:String, val modelName:String, val id:Option[Int]) extends Attribute(elementName) {
+	class Element(val name:String, val modelName:String, val id:Option[Int]) extends Entity {
+  		val children = new HashMap[String,Entity]
 		override def resolve (pool:Map[Int,Entity]) = {
-			val objects = new ListBuffer[ModelObject]
-			children.foreach((child) => {
-				if (child.modelObject == null)
-					child.resolve(pool)
-				//objects += child.modelObject
-			})
-//			objects
+			children.foreach((pair) => { pair._2.resolve(pool) })
 			name match {
-			  case "Class" => 
+			  case FAMIX.CLASS => {
+			    //new ClassEntity()
+			      null
+			  }
+			  case FAMIX.INVOCATION => {
+			    // val invocation = new Invocation()
+			    // val source = children.get(source); source match { case Some(x) => invocation.setSender(..) || source.addInvocation(invocation) }
+			  }
 			}
 			null
 		}
@@ -97,13 +106,14 @@ object MSEParser extends RegexParsers {
 	def document = open ~> (elementNode*) <~ close ^^ { 
 		case nodes =>
 		val node = new Node
-		nodes.foreach((innerNode) => node.addChild(innerNode))
+		nodes.foreach((innerNode) => node.children += innerNode.name -> innerNode) 
+		  //node.addChild(innerNode))
 		node
 	}
-	def elementNode : Parser[Entity] = open ~> elementName ~ (serial?) ~ (attributeNode*) <~ close ^^ { 
+	def elementNode : Parser[Element] = open ~> elementName ~ (serial?) ~ (attributeNode*) <~ close ^^ { 
 		case (model,name) ~ id ~ nodes => {
-			val element = new Element(name,model,id)
-			nodes.foreach((node) => element.addChild(node))
+			val element = new Element(name,model,id)			
+			nodes.foreach((node) => element.children += node.name -> node)
 			id match {
 		  		case Some(integerId:Int) =>
 		  		  pool += integerId -> element
@@ -116,7 +126,7 @@ object MSEParser extends RegexParsers {
 	def attributeNode = open ~> simpleName ~ (valueNode*) <~ close ^^ {
 		case name ~ valueNodes => {
 			val attribute = new Attribute(name)
-			valueNodes.foreach ((valueNode) => attribute.addChild(valueNode))
+			valueNodes.foreach ((valueNode) => attribute.children += valueNode)
 			attribute
 		} 
 	}

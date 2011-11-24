@@ -9,14 +9,13 @@ import scala.collection.mutable.HashMap
 
 
 
-class ClassEntity(sourceAnchor: Qualifier, 
-				  name: String, 
-				  uniqueName: String,
+class ClassEntity(name: String, 
 				 //Class Entity specific fields
-				  var inheritance: InheritanceDefinitionRelation = null,
-	 			  var attributes: Map[String, AttributeEntity] = new HashMap(),
-	 			  var methods: Map[String, MethodEntity] = new HashMap() ) 
-	 			  extends Entity(sourceAnchor, name, uniqueName) 
+				  var inheritance: InheritanceDefinitionRelation = null) 
+	 			  extends Entity(name) {
+  val attributes: Map[String, AttributeEntity] = new HashMap()
+  val methods: Map[String, MethodEntity] = new HashMap()
+}
 	 			  
 	 			  
 	 			  
