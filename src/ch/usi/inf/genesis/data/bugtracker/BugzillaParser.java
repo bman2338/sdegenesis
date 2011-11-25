@@ -1,6 +1,9 @@
 package ch.usi.inf.genesis.data.bugtracker;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,9 +21,72 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-//import com.bea.xml.stream.events.StartElementEvent;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.MasonTagTypes;
+import net.htmlparser.jericho.MicrosoftConditionalCommentTagTypes;
+import net.htmlparser.jericho.PHPTagTypes;
+import net.htmlparser.jericho.Source;
 
-public class BugzillaXMLParser {
+
+public class BugzillaParser {
+
+	public static List<BugHistoryEntry> parseHistory(final URL historyUrl){
+		final List<BugHistoryEntry> history = new ArrayList<BugHistoryEntry>();
+		try {
+			final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			MicrosoftConditionalCommentTagTypes.register();
+			PHPTagTypes.register();
+			PHPTagTypes.PHP_SHORT.deregister();
+			MasonTagTypes.register();
+			final Source source = new Source(historyUrl);
+
+			int rowSpanValue = 0;
+			final Element bugzilla_body = source.getElementById("bugzilla-body");
+			for(final Element e : bugzilla_body.getAllElements()){
+
+				if(e.getName().equals("tr")){
+					final List<Element> childs = e.getChildElements();
+					if(childs.get(0).getName().equals("th"))//TABLE's HEADERS
+						continue;
+					if(childs.get(0).getName().equals("td")){
+						final String rowSpan = childs.get(0).getAttributeValue("rowspan");
+						final int localRowSpanValue = rowSpan == null? 0 : Integer.parseInt(rowSpan);
+
+						final BugHistoryEntry entry = new BugHistoryEntry();
+						if(rowSpanValue <= 0){
+							entry.setWho(childs.get(0).getContent().toString().replaceAll("[\\s]*",""));
+							try{
+								entry.setWhen(formatter.parse(childs.get(1).getContent().toString()));
+							}catch (final ParseException pex) {
+								entry.setWhen(null);
+							}
+							entry.setWhat(childs.get(2).getContent().toString().replaceAll("[\\s]*",""));
+							entry.setAdded(childs.get(3).getContent().toString().replaceAll("[\\s]*",""));
+							entry.setRemoved(childs.get(4).getContent().toString());
+
+							if(localRowSpanValue != 0)
+								rowSpanValue = localRowSpanValue-1;
+						}
+						else{
+							entry.setWho(history.get(history.size()-1).getWho());
+							entry.setWhen(history.get(history.size()-1).getWhen());
+							entry.setWhat(childs.get(0).getContent().toString().replaceAll("[\\s]*",""));
+							entry.setAdded(childs.get(1).getContent().toString().replaceAll("[\\s]*",""));
+							entry.setRemoved(childs.get(2).getContent().toString());
+							--rowSpanValue;
+						}
+						history.add(entry);
+					}
+				}
+			}
+		} catch (final MalformedURLException e1) {
+			e1.printStackTrace();
+		} catch (final IOException e1) {
+			e1.printStackTrace();
+		} 
+
+		return history;
+	}
 
 	public static List<BugInfo> parse(final InputStreamReader xmlStream){
 		final List<BugInfo> bugList = new ArrayList<BugInfo>();
@@ -33,11 +99,11 @@ public class BugzillaXMLParser {
 					"javax.xml.stream.XMLInputFactory",
 					"com.bea.xml.stream.MXParserFactory");
 
-			XMLInputFactory factory = XMLInputFactory.newInstance();
-			XMLEventReader eventReader = factory.createXMLEventReader(xmlStream);
-			XMLEventReader filteredEventReader =
+			final XMLInputFactory factory = XMLInputFactory.newInstance();
+			final XMLEventReader eventReader = factory.createXMLEventReader(xmlStream);
+			final XMLEventReader filteredEventReader =
 					factory.createFilteredReader(eventReader, new EventFilter() {
-						public boolean accept(XMLEvent event) {
+						public boolean accept(final XMLEvent event) {
 							// Exclude PIs, StartDocument and EndDocument
 							return (!event.isProcessingInstruction() && 
 									!event.isStartDocument() && 
@@ -50,7 +116,7 @@ public class BugzillaXMLParser {
 				final XMLEvent e = (XMLEvent) filteredEventReader.next();
 				if(e.isStartElement()){
 
-					StartElement element= e.asStartElement();
+					final StartElement element= e.asStartElement();
 
 					if(element.getName().equals(new QName("bug"))){
 						final Attribute error = element.getAttributeByName(new QName("error"));
@@ -64,7 +130,7 @@ public class BugzillaXMLParser {
 					}
 					else if(element.getName().equals(new QName("bug_id")) && bugFound){
 						final XMLEvent el = (XMLEvent) filteredEventReader.next();
-						Characters content = el.asCharacters();
+						final Characters content = el.asCharacters();
 						bug.setId(content == null? "" : content.getData());
 					}
 					else if(element.getName().equals(new QName("creation_ts"))){						
@@ -72,7 +138,7 @@ public class BugzillaXMLParser {
 							final XMLEvent el = (XMLEvent) filteredEventReader.next();
 							final Date date = formatter.parse(el.asCharacters().getData());
 							bug.setCreationDate(date);
-						} catch (ParseException e1) {
+						} catch (final ParseException e1) {
 							e1.printStackTrace();
 						}
 					}
@@ -81,7 +147,7 @@ public class BugzillaXMLParser {
 							final XMLEvent el = (XMLEvent) filteredEventReader.next();
 							final Date date = formatter.parse(el.asCharacters().getData());
 							bug.setUpdateDate(date);
-						} catch (ParseException e1) {
+						} catch (final ParseException e1) {
 							e1.printStackTrace();
 						}
 					}
@@ -130,11 +196,31 @@ public class BugzillaXMLParser {
 						assignee.setName(el.asCharacters().getData());
 						bug.addCcUser(assignee);
 					}
-					
+					else if(element.getName().equals(new QName("product"))){
+						final XMLEvent el = (XMLEvent) filteredEventReader.next();
+						bug.setProduct(el.asCharacters().getData());
+					}
+					else if(element.getName().equals(new QName("component"))){
+						final XMLEvent el = (XMLEvent) filteredEventReader.next();
+						bug.setComponent(el.asCharacters().getData());
+					}
+					else if(element.getName().equals(new QName("version"))){
+						final XMLEvent el = (XMLEvent) filteredEventReader.next();
+						bug.setVersion(el.asCharacters().getData());
+					}
+					else if(element.getName().equals(new QName("rep_platform"))){
+						final XMLEvent el = (XMLEvent) filteredEventReader.next();
+						bug.setPlatform(el.asCharacters().getData());
+					}
+					else if(element.getName().equals(new QName("op_sys"))){
+						final XMLEvent el = (XMLEvent) filteredEventReader.next();
+						bug.setOperatingSys(el.asCharacters().getData());
+					}
+
 				}
 
 				if(e.isEndElement()){
-					EndElement element = e.asEndElement();
+					final EndElement element = e.asEndElement();
 					if(element.getName().equals(new QName("bug"))){
 						if(bug != null){
 							bugList.add(bug);
@@ -147,7 +233,7 @@ public class BugzillaXMLParser {
 				}
 			}
 
-		}catch (XMLStreamException e) {
+		}catch (final XMLStreamException e) {
 			e.printStackTrace();
 		}
 		return bugList;

@@ -19,15 +19,15 @@ import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactor
 
 
 public class JiraCrawler implements BugTrackerCrawler{
-	private JerseyJiraRestClientFactory factory;
-	private URI jiraServerUri;
-	private JiraRestClient restClient;
+	private final JerseyJiraRestClientFactory factory;
+	private final URI jiraServerUri;
+	private final JiraRestClient restClient;
 
 	/**
 	 * @author Luca Ponzanelli
 	 * @param uri The uri to jira bug tracker
 	 * 
-	 * It initialize an anonymous Jira Crawler. Due to the anonymous access not all information can be retrieved.
+	 * It initializes an anonymous Jira Crawler. Due to the anonymous access not all information can be retrieved.
 	 * It can miss some bugs and/or detailed user information.
 	 */
 	public JiraCrawler(final String uri) throws URISyntaxException{
@@ -42,7 +42,7 @@ public class JiraCrawler implements BugTrackerCrawler{
 	 * @param username The user id to log in
 	 * @param password The user's password to log in
 	 * 
-	 * It initialize an anonymous Jira Crawler. 
+	 * It initializes an anonymous Jira Crawler. 
 	 * The amount of information accessible is related to the permissions granted to the user.
 	 */
 	public JiraCrawler(final String uri, final String username, final String password) throws URISyntaxException{
@@ -55,7 +55,7 @@ public class JiraCrawler implements BugTrackerCrawler{
 	public List<BugInfo> getBugList(){	
 		final NullProgressMonitor pm = new NullProgressMonitor();
 		int windowEnd = 1000;
-		int step = 1000;
+		final int step = 1000;
 		int windowStart = 0;
 		SearchResult result = null;
 		final List<BugInfo> bugList = new ArrayList<BugInfo>();
@@ -78,7 +78,7 @@ public class JiraCrawler implements BugTrackerCrawler{
 								assignee  = new BugTrackerUser(jiraAssignee.getName(), 
 										jiraAssignee.getDisplayName(), jiraAssignee.getEmailAddress());
 							}
-							catch(RestClientException ex){
+							catch(final RestClientException ex){
 								assignee  = new BugTrackerUser(basicAssignee.getName(), 
 										basicAssignee.getDisplayName(), "");
 							}
@@ -92,7 +92,7 @@ public class JiraCrawler implements BugTrackerCrawler{
 								jiraReporter = restClient.getUserClient().getUser(basicReporter.getName(), pm);
 								reporter  = new BugTrackerUser(jiraReporter.getName(), 
 										jiraReporter.getDisplayName(), jiraReporter.getEmailAddress());
-							}catch(RestClientException ex){
+							}catch(final RestClientException ex){
 								reporter  = new BugTrackerUser(basicReporter.getName(),basicReporter.getDisplayName(),"");
 							}
 						}
@@ -106,6 +106,11 @@ public class JiraCrawler implements BugTrackerCrawler{
 								status,
 								issue.getResolution() == null? "" : issue.getResolution().getName(),
 								issue.getSummary(),
+								issue.getProject().toString(),
+								"", //TODO FIX COMPONENTS BETWEEN BUGZILLA AND JIRA
+								"",
+								"",
+								"",
 								basicAssignee == null? new BugTrackerUser() : assignee,
 								issue.getWatchers().getNumWatchers(),
 								reporter == null? new BugTrackerUser(): reporter,
@@ -118,15 +123,14 @@ public class JiraCrawler implements BugTrackerCrawler{
 								issue.getVotes().getVotes()
 								));
 					}
-					catch (RestClientException rex){
+					catch (final RestClientException rex){
 						System.out.println(i.getKey()+":  " + rex.getErrorMessages());
-						//System.out.println(rex.getErrorMessages());
 					}
-					catch(MalformedURLException e){}
+					catch(final MalformedURLException e){}
 				}
 				windowStart = windowEnd+1;
 				windowEnd += step;
-			}catch (RestClientException rex){
+			}catch (final RestClientException rex){
 				System.out.println(rex.getErrorMessages());
 			}
 		}

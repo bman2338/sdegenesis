@@ -18,9 +18,16 @@ public class BugzillaCrawler implements BugTrackerCrawler{
 		bugzillaURL = new URL(url);
 	}
 
+	/**
+	 * 
+	 * @param bugParams
+	 * @return The id of the first bug in the retrieved CSV list.
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 */
 	private int retrieveBugId(final String bugParams) throws MalformedURLException, IOException{
 		//retrieve BugList in CSV.
-		String url = bugzillaURL.toString();
+		final String url = bugzillaURL.toString();
 		//Retrieve bug id
 		final URLConnection con = new URL(concatenateURLs(url, bugParams)).openConnection();
 		final BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -67,15 +74,22 @@ public class BugzillaCrawler implements BugTrackerCrawler{
 					xmlParams += param;
 					++current;
 				}while(((xmlParams + param).length() <= uriLength) && (current <= lastID));
-				
+
 				final URLConnection con = new URL(concatenateURLs(bugzillaURL.toString(), xmlParams)).openConnection();
-				final List<BugInfo> bugs = BugzillaXMLParser.parse(new InputStreamReader(con.getInputStream()));
+				final List<BugInfo> bugs = BugzillaParser.parse(new InputStreamReader(con.getInputStream()));
+
+				//Retrieve Bugs' History
+				for(final BugInfo bug : bugs){
+					bug.setHistory(BugzillaParser.parseHistory(new URL(bugzillaURL.toString()+"show_activity.cgi?id="+bug.getId())));
+				}
 				bugList.addAll(bugs);
+
+				System.out.println(bugs);
 				System.out.println("Downloaded: " + (current-firstID));
 			}
 			while(current <= lastID);
 		}
-		catch(IOException e) {
+		catch(final IOException e) {
 			System.out.println(e.getMessage());
 		}
 
