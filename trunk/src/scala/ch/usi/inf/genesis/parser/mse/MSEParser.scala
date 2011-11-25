@@ -41,7 +41,6 @@ object MSEParser extends RegexParsers {
 		def resolve (pool: Map[Int,MSEEntity]) : Option[ModelObject] = {
 			if (this.modelObject != null)
 				return Some(this.modelObject)
-			//this.modelObject = new FamixObject();
 			val poolItem = pool.get(id)
 			poolItem match {
 				case Some(obj:MSEEntity) => {
@@ -50,7 +49,8 @@ object MSEParser extends RegexParsers {
 					this.modelObject = obj.modelObject
 					Some(obj.modelObject)
 				}
-				case _ => None
+				case _ => 
+				  None
 			}
 		}
 	}
@@ -88,7 +88,7 @@ object MSEParser extends RegexParsers {
 				children.foreach((value) => {
 					value.resolve(pool) match {
 					  case Some(prop) => this.modelObject.addProperty(FAMIX.VALUE_PROP,prop)
-					  case None => println(name + " " + value)
+					  case None =>
 					}
 				})
 			}
@@ -165,8 +165,8 @@ object MSEParser extends RegexParsers {
 			nodes.foreach((node) => element.children += node.name -> node)
 			id match {
 				case Some(integerId:Int) =>
-				pool += integerId -> element
-				case _ =>
+					pool += integerId -> element
+				case _ => 
 			}
 			element
 		}
@@ -185,10 +185,7 @@ object MSEParser extends RegexParsers {
 	def boolean = (booleanTrue | booleanFalse) ^^ { case booleanValue => new Value(new BooleanValue(booleanValue.toBoolean)) }
 	def reference = integerReference | nameReference
 	def integerReference = open ~> ref ~> natural <~ close ^^ { 
-	  case integerNumber =>
-	   	//if (integerNumber.toInt == 16720)
-	   	//	println("HATE")
-	    new IntReference(integerNumber.toInt)
+	  case integerNumber => new IntReference(integerNumber.toInt)
 	}
 	def nameReference = open ~> ref ~> elementName <~ close ^^ { case (model,name) => new StringReference(model + "." + name) }
 
