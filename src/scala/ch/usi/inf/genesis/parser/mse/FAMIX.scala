@@ -10,11 +10,23 @@ object FAMIX extends Enumeration {
 	val INVOCATION = "Invocation";
 	val ACCESS = "Access";
 	
-	val BELONGSTOCLASS = "belongsToClass";
-	val INVOKEDBY = "invokedBy";
+
+	val PARENTTYPE = "parentType";
+	
+	val SENDER = "sender";
+	val RECEIVER = "receiver";
+	val PREVIOUS = "previous";
 	val CANDIDATES = "candidates";
+	val PARENTBEHAVIORALENTITY = "parentBehaviouralEntity";
+	
 	val ACCESSES = "accesses";
 	val ACCESSEDIN = "accessedIn";
+	
 	val SUBCLASS = "subclass";
 	val SUPERCLASS = "superclass";
+	
+	
+	//FAMIX 2.0 to FAMIX 3.0
+//	val BELONGSTOCLASS = "belongsToClass";
+//	val INVOKEDBY = "invokedBy";
 }
