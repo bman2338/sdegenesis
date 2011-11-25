@@ -1,3 +1,5 @@
 package ch.usi.inf.genesis.model.core.famix
 
-class Property 
+case class Property (private val propertyName:String) extends Entity(propertyName) {
+  
+}
