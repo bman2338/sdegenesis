@@ -11,6 +11,11 @@ public class BugInfo {
 	private String status;
 	private String resolution;
 	private String summary;
+	private String project;
+	private String component; //TODO Change it as List to make it compatible with Jira.
+	private String operatingSys;
+	private String platform;
+	private String version;
 	private BugTrackerUser assignee;
 	private List<BugTrackerUser> ccUsers;
 	private long watches;
@@ -21,12 +26,16 @@ public class BugInfo {
 	private String priority;
 	private String severity;
 	private long votes;
+	private List<BugHistoryEntry> history;
+
 
 	public BugInfo(){
 		this.ccUsers = new ArrayList<BugTrackerUser>();
+		this.history = new ArrayList<BugHistoryEntry>();
 	}
 
-	public BugInfo(final String id,final String status,final String resolution, final String summary,final BugTrackerUser assignee,
+	public BugInfo(final String id,final String status,final String resolution, final String summary, final String product, 
+			final String component, final String opertatingSys, final String platform, final String version, final BugTrackerUser assignee,
 			final long watches, final BugTrackerUser reporter, final List<BugTrackerUser> ccUsers, final String uri,
 			final Date creationDate, final Date updateDate, final String priority, final String severity,
 			final long votes) {
@@ -44,6 +53,12 @@ public class BugInfo {
 		this.severity = severity;
 		this.priority = priority;
 		this.ccUsers = ccUsers;
+		this.history = new ArrayList<BugHistoryEntry>();
+		this.project = product;
+		this.component = component;
+		this.version = version;
+		this.operatingSys = opertatingSys;
+		this.platform = platform;
 	}
 
 
@@ -86,7 +101,7 @@ public class BugInfo {
 	public String getUri() {
 		return uri;
 	}
-	public void setUrl(String uri) {
+	public void setUrl(final String uri) {
 		this.uri = uri;
 	}
 	public Date getCreationDate() {
@@ -133,14 +148,79 @@ public class BugInfo {
 	public void setCcUsers(final List<BugTrackerUser> ccUsers) {
 		this.ccUsers = ccUsers;
 	}
-	
+
 	public void addCcUser(final BugTrackerUser ccUser){
 		this.ccUsers.add(ccUser);
 	}
-	
+
 	public String toString(){ //COMPLETE TO STRING FOR DEBUG
 		return String.format("ID: %s\nSUMMARY: %s\nSTATUS: %s\nRESOLUTON: %s", id, summary, status, resolution) + 
 				String.format("PRIORITY: %s\nSEVERITY: %s\n CREATION_DATE:%s\nUPDATE_DATE:%s\n", priority,severity,creationDate, updateDate)+
-				String.format("REPORTER: %s\nASSIGNEE: %s\nCC: %s\nWATCHES: %s\nVOTES: %s",reporter, assignee, ccUsers, watches, votes);
+				String.format("REPORTER: %s\nASSIGNEE: %s\nCC: %s\nWATCHES: %s\nVOTES: %s",reporter, assignee, ccUsers, watches, votes)+
+				String.format("HISTORY: %s\n", history);
+	}
+
+	public List<BugHistoryEntry> getHistory() {
+		return history;
+	}
+
+	public void setHistory(final List<BugHistoryEntry> history) {
+		this.history = history;
+	}
+
+	public void addHistory(final BugHistoryEntry entry){
+		this.history.add(entry);
+	}
+
+	public String getProduct() {
+		return project;
+	}
+
+	public void setProduct(final String product) {
+		this.project = product;
+	}
+
+	public String getComponent() {
+		return component;
+	}
+
+	public void setComponent(final String component) {
+		this.component = component;
+	}
+
+	public String getOperatingSys() {
+		return operatingSys;
+	}
+
+	public void setOperatingSys(final String operatingSys) {
+		this.operatingSys = operatingSys;
+	}
+
+	public String getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(final String platform) {
+		this.platform = platform;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(final String version) {
+		this.version = version;
+	}
+
+	public long getWatches() {
+		return watches;
+	}
+
+	public void setWatches(final long watches) {
+		this.watches = watches;
+	}
+
+	public void setUri(final String uri) {
+		this.uri = uri;
 	}
 }
