@@ -29,8 +29,6 @@ abstract class ModelObject {
     	  	pair._2.foreach((element) =>
     	  	  if (element != null)
     	  		  internalAddProperty(propertyName,element)
-    	  	  else
-    	  	      println(propertyName)
     	  ))
     	  false
       }
