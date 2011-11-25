@@ -1,12 +1,13 @@
-package ch.usi.inf.genesis.parser.mse
+package ch.usi.inf.genesis.model.core
 
 object FAMIX extends Enumeration {
 	type FAMIX = String;
 	val NAMESPACE = "Namespace";
 	val CLASS = "Class";
+	val PARAMETRIZABLECLASS = "ParameterizableClass";
 	val METHOD = "Method";
 	val ATTRIBUTE = "Attribute";
-	val INHERITANCEDEFINITION = "InheritanceDefinition";
+	val INHERITANCEDEFINITION = "Inheritance";
 	val INVOCATION = "Invocation";
 	val ACCESS = "Access";
 	
@@ -25,8 +26,19 @@ object FAMIX extends Enumeration {
 	val SUBCLASS = "subclass";
 	val SUPERCLASS = "superclass";
 	
+	//val CONTAINER = "container";
+	val CONTAINER = "parentPackage";
 	
-	//FAMIX 2.0 to FAMIX 3.0
-//	val BELONGSTOCLASS = "belongsToClass";
-//	val INVOKEDBY = "invokedBy";
+	val RECV_INVOCATIONS_PROP = "invokedBy";
+	val SEND_INVOCATIONS_PROP = "invoking";
+	val VALUE_PROP = "value";
+	
+	val SUBCLASS_PROP = "subclassOf";
+	val SUPERCLASS_PROP = "superclassOf";
+	
+	val METHODS_PROP = "methods";
+	val ATTRIBUTES_PROP = "attributes";
+	val CLASSES_PROP = "classes";
+	val NAMESPACES_PROP = "namespaces"
+	
 }
