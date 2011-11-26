@@ -84,7 +84,7 @@ object MSEParser extends RegexParsers {
 		val children = new ListBuffer[MSEEntity]
 		override def resolve (pool:Map[Int,MSEEntity]) = {
 			if (this.modelObject == null) {
-	  			this.modelObject = new Property(name)
+	  			this.modelObject = new Property
 				children.foreach((value) => {
 					value.resolve(pool) match {
 					  case Some(prop) => this.modelObject.addProperty(FAMIX.VALUE_PROP,prop)
@@ -104,30 +104,20 @@ object MSEParser extends RegexParsers {
 			var obj : Option[FamixObject] = None
 			
 			name match {
-  			    case FAMIX.NAMESPACE => obj = Some(new NamespaceEntity(name))
-  			    case FAMIX.PARAMETRIZABLECLASS => Some(new ClassEntity(name))
-				case FAMIX.CLASS => {
-				  obj = Some(new ClassEntity(name))	
-				}
+  			    case FAMIX.NAMESPACE => obj = Some(new NamespaceEntity)
+  			    case FAMIX.PARAMETRIZABLECLASS => obj = Some(new ClassEntity)
+				case FAMIX.CLASS => obj = Some(new ClassEntity)	
 				case FAMIX.INHERITANCEDEFINITION => obj = Some(new InheritanceDefinitionRelation)
-				case FAMIX.METHOD => obj = Some(new MethodEntity(name))
+				case FAMIX.METHOD => obj = Some(new MethodEntity)
 
-				case FAMIX.INVOCATION => {
-					obj = Some(new InvocationRelation)
-				}
+				case FAMIX.INVOCATION => obj = Some(new InvocationRelation)
 
-				case FAMIX.ATTRIBUTE => {
-					obj = Some(new AttributeEntity(name))
-				}
+				case FAMIX.ATTRIBUTE => obj = Some(new AttributeEntity)
 
-				case FAMIX.ACCESS => {
-					obj = Some(new AccessRelation)
-				}
+				case FAMIX.ACCESS => obj = Some(new AccessRelation)
 
-				case _ => {
-					obj = Some(new FamixObject())
+				case _ => obj = Some(new FamixObject())
 					//println("Element " + name + " No Concreate instance")
-				}
 			}
 
 			obj match {

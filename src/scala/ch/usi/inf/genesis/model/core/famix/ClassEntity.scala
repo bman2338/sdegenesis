@@ -6,7 +6,7 @@ import ch.usi.inf.genesis.model.core.ModelObject
 import ch.usi.inf.genesis.model.core.FAMIX
 
 
-class ClassEntity(name: String) extends Entity(name) {
+class ClassEntity extends Entity {
 	override def internalAddProperty(propertyName:String,propertyValue:ModelObject) = {
 	  propertyName match {
 	    case FAMIX.CONTAINER =>

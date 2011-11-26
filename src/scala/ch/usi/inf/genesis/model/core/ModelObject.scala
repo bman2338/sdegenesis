@@ -24,7 +24,7 @@ abstract class ModelObject {
  
    def checkProperty (propertyName: String, propertyValue: ModelObject) : Boolean = {
     propertyValue match {
-      case Property(n) => {
+      case Property() => {
     	  propertyValue.properties.foreach((pair) =>
     	  	pair._2.foreach((element) =>
     	  	  if (element != null)
