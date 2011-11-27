@@ -1,9 +1,9 @@
 package ch.usi.inf.genesis.model.core
 import scala.collection.mutable.HashMap
-
 import scala.collection.mutable.ListBuffer
-
 import ch.usi.inf.genesis.model.core.famix.Property
+import ch.usi.inf.genesis.model.navigation.NavigatorOption._
+import ch.usi.inf.genesis.model.navigation.ModelVisitor
 
 abstract class ModelObject {
  val properties: HashMap[String,  ListBuffer[ModelObject]] = new HashMap()
@@ -44,4 +44,8 @@ abstract class ModelObject {
 	})*/
    	super.toString()
   }
+ def accept(visitor: ModelVisitor) : NavigatorOption = {
+   return visitor.visit(this);
+ }
+ 
 }
