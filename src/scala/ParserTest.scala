@@ -1,4 +1,6 @@
 import ch.usi.inf.genesis.parser.mse.MSEParser
+import ch.usi.inf.genesis.model.navigation.DepthFirstNavigator
+import ch.usi.inf.genesis.model.navigation.ModelPrinter
 
 object ParserTest {
 
@@ -21,8 +23,12 @@ object ParserTest {
 				try {
 					val in = source()
 					val a = try in.mkString finally in.close
-					val res = MSEParser.parse(a)
-					println(res.toString)
+					val res = MSEParser.parse(a) match {
+					  //Trying navigator with visitor interface
+					  case Some(res) => new DepthFirstNavigator().walkModel(res, new ModelPrinter())
+					  case None =>
+					}
+					//println(res.toString)
 				}
 				catch {
 					case ex: IOException => 
