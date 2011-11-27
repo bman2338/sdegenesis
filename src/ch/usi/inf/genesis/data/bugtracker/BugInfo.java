@@ -12,7 +12,7 @@ public class BugInfo {
 	private String resolution;
 	private String summary;
 	private String project;
-	private String component; //TODO Change it as List to make it compatible with Jira.
+	private List<String> components;
 	private String operatingSys;
 	private String platform;
 	private String version;
@@ -32,10 +32,11 @@ public class BugInfo {
 	public BugInfo(){
 		this.ccUsers = new ArrayList<BugTrackerUser>();
 		this.history = new ArrayList<BugHistoryEntry>();
+		this.components = new ArrayList<String>();
 	}
 
 	public BugInfo(final String id,final String status,final String resolution, final String summary, final String product, 
-			final String component, final String opertatingSys, final String platform, final String version, final BugTrackerUser assignee,
+			final List<String> component, final String opertatingSys, final String platform, final String version, final BugTrackerUser assignee,
 			final long watches, final BugTrackerUser reporter, final List<BugTrackerUser> ccUsers, final String uri,
 			final Date creationDate, final Date updateDate, final String priority, final String severity,
 			final long votes) {
@@ -55,7 +56,7 @@ public class BugInfo {
 		this.ccUsers = ccUsers;
 		this.history = new ArrayList<BugHistoryEntry>();
 		this.project = product;
-		this.component = component;
+		this.components = component;
 		this.version = version;
 		this.operatingSys = opertatingSys;
 		this.platform = platform;
@@ -153,10 +154,11 @@ public class BugInfo {
 		this.ccUsers.add(ccUser);
 	}
 
-	public String toString(){ //COMPLETE TO STRING FOR DEBUG
-		return String.format("ID: %s\nSUMMARY: %s\nSTATUS: %s\nRESOLUTON: %s", id, summary, status, resolution) + 
-				String.format("PRIORITY: %s\nSEVERITY: %s\n CREATION_DATE:%s\nUPDATE_DATE:%s\n", priority,severity,creationDate, updateDate)+
-				String.format("REPORTER: %s\nASSIGNEE: %s\nCC: %s\nWATCHES: %s\nVOTES: %s",reporter, assignee, ccUsers, watches, votes)+
+	public String toString(){
+		return String.format("ID: %s\nSUMMARY: %s\nSTATUS: %s\nRESOLUTON: %s\n", id, summary, status, resolution) + 
+				String.format("PROJECT: %s\nCOMPONENTS: %s\n", project, components) + 
+				String.format("PRIORITY: %s\nSEVERITY: %s\nCREATION_DATE:%s\nUPDATE_DATE:%s\n", priority,severity,creationDate, updateDate)+
+				String.format("REPORTER: %s\nASSIGNEE: %s\nCC: %s\nWATCHES: %s\nVOTES: %s\n",reporter, assignee, ccUsers, watches, votes)+
 				String.format("HISTORY: %s\n", history);
 	}
 
@@ -180,12 +182,12 @@ public class BugInfo {
 		this.project = product;
 	}
 
-	public String getComponent() {
-		return component;
+	public List<String> getComponent() {
+		return components;
 	}
 
-	public void setComponent(final String component) {
-		this.component = component;
+	public void setComponent(final List<String> component) {
+		this.components = component;
 	}
 
 	public String getOperatingSys() {
@@ -222,5 +224,9 @@ public class BugInfo {
 
 	public void setUri(final String uri) {
 		this.uri = uri;
+	}
+
+	public void addComponent(String componentName) {
+		this.components.add(componentName);
 	}
 }

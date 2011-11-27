@@ -3,6 +3,7 @@ package ch.usi.inf.genesis.data.bugtracker;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.NullProgressMonitor;
 import com.atlassian.jira.rest.client.RestClientException;
 import com.atlassian.jira.rest.client.auth.AnonymousAuthenticationHandler;
+import com.atlassian.jira.rest.client.domain.BasicComponent;
 import com.atlassian.jira.rest.client.domain.BasicIssue;
 import com.atlassian.jira.rest.client.domain.BasicUser;
 import com.atlassian.jira.rest.client.domain.Issue;
@@ -18,7 +20,7 @@ import com.atlassian.jira.rest.client.domain.User;
 import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory;
 
 
-public class JiraCrawler implements BugTrackerCrawler{
+public class JiraCrawler implements IBugTrackerCrawler{
 	private final JerseyJiraRestClientFactory factory;
 	private final URI jiraServerUri;
 	private final JiraRestClient restClient;
@@ -39,7 +41,7 @@ public class JiraCrawler implements BugTrackerCrawler{
 	/**
 	 * @author Luca Ponzanelli
 	 * @param uri The uri to jira bug tracker
-	 * @param username The user id to log in
+	 * @param username The user's id to log in
 	 * @param password The user's password to log in
 	 * 
 	 * It initializes an anonymous Jira Crawler. 
@@ -50,24 +52,49 @@ public class JiraCrawler implements BugTrackerCrawler{
 		this.jiraServerUri = new URI(uri);
 		this.restClient = factory.createWithBasicHttpAuthentication(jiraServerUri, username, password);
 	}
+	
 
+	/**
+	 * @author Luca Ponzanelli
+	 * @param project The project's id in jira
+	 * @param component The component's id in jira
+	 * @return A JQL compliant query to filter out bug entries on project id and component id
+	 */
+	private String buildQueryString(final String project, final String component){
+		final String projectPar = project == null || project.length() == 0? null : String.format("project = \"%s\"", project);
+		final String componentPar = component == null || component.length() == 0? null : String.format("component = \"%s\"", component);
+		
+		if(projectPar != null && componentPar != null)
+			return projectPar + "AND " + componentPar;
+		
+		if(componentPar != null)
+			return componentPar;
+		
+		if(projectPar != null)
+			return projectPar;
+		
+		return ""; //No Parameters in query
+	}
+	
 	@Override
-	public List<BugInfo> getBugList(){	
+	public List<BugInfo> getBugList(final String project, final String component){	
 		final NullProgressMonitor pm = new NullProgressMonitor();
 		int windowEnd = 1000;
 		final int step = 1000;
 		int windowStart = 0;
 		SearchResult result = null;
 		final List<BugInfo> bugList = new ArrayList<BugInfo>();
+		
+		final String query = buildQueryString(project, component);
 
 		do{
 			try{
-				result = restClient.getSearchClient().searchJql("",windowEnd,windowStart,pm);
+				result = restClient.getSearchClient().searchJql(query,windowEnd,windowStart,pm);
 				for(final BasicIssue i : result.getIssues()){
 					try{
 						final Issue issue = restClient.getIssueClient().getIssue(i.getKey(), pm);
-						if(!issue.getIssueType().getName().toLowerCase().equals("bug")) //only bugs? enhancement?
-							continue;
+						//if(!issue.getIssueType().getName().toLowerCase().equals("bug")) //only bugs? enhancement?
+						//	continue;
 
 						User jiraAssignee = null;
 						BugTrackerUser assignee = null;
@@ -99,15 +126,19 @@ public class JiraCrawler implements BugTrackerCrawler{
 
 
 						final String status = issue.getStatus().getName();
+						//extract all components
+						final List<String> components = new ArrayList<String>();
+						for(final BasicComponent c : issue.getComponents())
+							components.add(c.getName());
 						
-						System.out.println("Reporter Name: " + reporter.getDisplayName());
+						
 						bugList.add(new BugInfo(
 								issue.getKey(),
 								status,
 								issue.getResolution() == null? "" : issue.getResolution().getName(),
 								issue.getSummary(),
-								issue.getProject().toString(),
-								"", //TODO FIX COMPONENTS BETWEEN BUGZILLA AND JIRA
+								issue.getProject().getKey(),
+								components,
 								"",
 								"",
 								"",
@@ -138,5 +169,22 @@ public class JiraCrawler implements BugTrackerCrawler{
 
 		return bugList;
 	}
+
+	@Override
+	public List<BugInfo> getBugList() {
+		return getBugList("","");
+	}
+	
+	@Override
+	public URL getURL(){
+		try {
+			return this.jiraServerUri.toURL();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 
 }
