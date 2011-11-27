@@ -48,6 +48,6 @@ class BugTrackerUser{
 	
 	@Override
 	public String toString(){
-		return String.format("NAME: %s/nDISPLAY_NAME: %s/nE-MAIL: %s/n", name,displayName,email);
+		return String.format("NAME: %s\nDISPLAY_NAME: %s\nE-MAIL: %s\n", name,displayName,email);
 	}
 }

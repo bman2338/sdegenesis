@@ -9,39 +9,52 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BugzillaCrawler implements BugTrackerCrawler{
+public class BugzillaCrawler implements IBugTrackerCrawler{
 
 	private final URL bugzillaURL;
-	private final String firstBug = "buglist.cgi?ctype=csv&query_format=advanced&order=bug_id&limit=1";
-	private final String lastBug = "buglist.cgi?ctype=csv&query_format=advanced&order=bug_id%20DESC&limit=1";
+	
+	/**
+	 * @author Luca Ponzanelli
+	 * @param url the url to bugzilla bugtracker
+	 * @throws MalformedURLException
+	 * 
+	 * Example of url: https://issues.apache.org/bugzilla/
+	 */
 	public BugzillaCrawler(final String url) throws MalformedURLException{
 		bugzillaURL = new URL(url);
 	}
 
+	
+
 	/**
-	 * 
-	 * @param bugParams
-	 * @return The id of the first bug in the retrieved CSV list.
+	 * @author Luca Ponzanelli
+	 * @param product The id of the project's bugs to crawl
+	 * @param component The id of the component's bugs to crawl
+	 * @return The list of the bugs to be retrieved
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	private int retrieveBugId(final String bugParams) throws MalformedURLException, IOException{
-		//retrieve BugList in CSV.
+	private List<Integer> retrieveBugList(final String product, final String component) throws MalformedURLException, IOException{
+		//Format Parameters String
+		final String formattedProduct = product.replaceAll(" ", "%20");
+		final String formattedComponent = component.replaceAll(" ", "%20");
+		final String csvBugListParams = String.format("buglist.cgi?ctype=csv&query_format=advanced&order=bug_id&product=%s&component=%s", formattedProduct,formattedComponent);
 		final String url = bugzillaURL.toString();
-		//Retrieve bug id
-		final URLConnection con = new URL(concatenateURLs(url, bugParams)).openConnection();
+		final List<Integer> bugIdList = new ArrayList<Integer>();
+
+		//Retrieve bug list in CSV
+		final URLConnection con = new URL(concatenateURLs(url,csvBugListParams)).openConnection();
 		final BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		String bugEntry;
-		int firstID=-1;
 		while ((bugEntry = in.readLine()) != null){ 
 			final int index = bugEntry.indexOf(",");
 			final String str = bugEntry.substring(0, index);
 			if(!str.matches("[\\d]*"))
 				continue;
-			firstID = Integer.parseInt(str);
+			bugIdList.add(Integer.parseInt(str));
 		}
 		in.close();
-		return firstID;
+		return bugIdList;
 	}
 
 
@@ -55,39 +68,33 @@ public class BugzillaCrawler implements BugTrackerCrawler{
 
 	@Override
 	public List<BugInfo> getBugList() {
+		return getBugList("","");
+	}
+
+	@Override
+	public List<BugInfo> getBugList(final String project, final String component) {
 		final List<BugInfo> bugList = new ArrayList<BugInfo>();
 		final int uriLength = 7168;
-		int current = 0;
 		String param;
 		try{
-			final int firstID = retrieveBugId(firstBug);
-			final int lastID = retrieveBugId(lastBug);
-
-			System.out.println("First: " + firstID);
-			System.out.println("Last: " + lastID);
-
-			current = firstID;
-			do{
+			final List<Integer> bugIdList = retrieveBugList(project, component);
+			for(int current = 0; current < bugIdList.size(); ++current){
 				String xmlParams = "show_bug.cgi?ctype=xml";
 				do{
-					param = "&id="+current;
+					param = "&id="+bugIdList.get(current);
 					xmlParams += param;
 					++current;
-				}while(((xmlParams + param).length() <= uriLength) && (current <= lastID));
+				}while(((xmlParams + param).length() <= uriLength) && (current < bugIdList.size()));
 
 				final URLConnection con = new URL(concatenateURLs(bugzillaURL.toString(), xmlParams)).openConnection();
 				final List<BugInfo> bugs = BugzillaParser.parse(new InputStreamReader(con.getInputStream()));
 
 				//Retrieve Bugs' History
-				for(final BugInfo bug : bugs){
+				for(final BugInfo bug : bugs)
 					bug.setHistory(BugzillaParser.parseHistory(new URL(bugzillaURL.toString()+"show_activity.cgi?id="+bug.getId())));
-				}
-				bugList.addAll(bugs);
 
-				System.out.println(bugs);
-				System.out.println("Downloaded: " + (current-firstID));
+				bugList.addAll(bugs);
 			}
-			while(current <= lastID);
 		}
 		catch(final IOException e) {
 			System.out.println(e.getMessage());
@@ -96,4 +103,8 @@ public class BugzillaCrawler implements BugTrackerCrawler{
 		return bugList;
 	}
 
+	@Override
+	public URL getURL(){
+		return this.bugzillaURL;
+	}
 }
