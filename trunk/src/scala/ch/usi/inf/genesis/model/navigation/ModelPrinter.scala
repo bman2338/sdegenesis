@@ -7,14 +7,14 @@ import ch.usi.inf.genesis.model.core.FAMIX
 
 class ModelPrinter extends ModelVisitor {
 	
-  def visit(obj: ModelObject): NavigatorOption = { 
-    val list = obj.properties.get(FAMIX.NAME_PROP) match {
+  def visit(obj: ModelObject): NavigatorOption = {
+
+    obj.getName() match {
       case None => { 
-        println("No Name Prop. Skipping subtree")
-        return SKIP_SUBTREE 
+        return CONTINUE
         }
-      case Some(list) => {
-    	println(list.first)
+      case Some(name) => {
+    	//println(name)
       return CONTINUE
     }
     }

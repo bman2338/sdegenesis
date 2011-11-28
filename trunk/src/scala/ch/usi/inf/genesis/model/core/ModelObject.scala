@@ -48,4 +48,22 @@ abstract class ModelObject {
    return visitor.visit(this);
  }
  
+ 
+ def getName() = {
+   val name = properties.get(FAMIX.NAME_PROP)
+    name match {
+     case Some(xs) if (xs.length > 0) => Some(xs.first); 
+     case _ => None
+   }
+ }
+ 
+ def getUniqueIdentifier (parentIdentifier : String) = {
+   val name = properties.get(FAMIX.NAME_PROP)
+   
+   name match {
+     case Some(xs) if (xs.length > 0) => Some(parentIdentifier + "." + xs.first); 
+     case _ => None
+   }
+ }
+ 
 }

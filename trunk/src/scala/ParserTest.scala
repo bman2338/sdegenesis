@@ -1,6 +1,8 @@
 import ch.usi.inf.genesis.parser.mse.MSEParser
-import ch.usi.inf.genesis.model.navigation.DepthFirstNavigator
+import ch.usi.inf.genesis.model.navigation.BreadthFirstNavigator
 import ch.usi.inf.genesis.model.navigation.ModelPrinter
+import ch.usi.inf.genesis.model.core.FAMIX._
+import scala.collection.mutable.HashSet
 
 object ParserTest {
 
@@ -25,7 +27,12 @@ object ParserTest {
 					val a = try in.mkString finally in.close
 					val res = MSEParser.parse(a) match {
 					  //Trying navigator with visitor interface
-					  case Some(res) => new DepthFirstNavigator().walkModel(res, new ModelPrinter())
+					  
+					  case Some(res) =>  {
+					  val selection = new HashSet[String]();
+					  selection.add(CLASSES_PROP); //visit only class properties
+					    new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), None)
+					}
 					  case None =>
 					}
 					//println(res.toString)
