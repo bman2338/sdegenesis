@@ -1,3 +1,5 @@
+package ch.usi.inf.genesis.databaseInterface;
+
 import java.sql.*;
 import javax.sql.*;
 
