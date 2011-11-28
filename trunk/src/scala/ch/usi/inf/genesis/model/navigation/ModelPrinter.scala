@@ -9,11 +9,12 @@ class ModelPrinter extends ModelVisitor {
 	
   def visit(obj: ModelObject): NavigatorOption = {
 
-    obj.getName() match {
-      case None => { 
+    val name = obj.getName();
+    name match {
+      case "" => { 
         return CONTINUE
         }
-      case Some(name) => {
+      case _ => {
     	println(name)
       return CONTINUE
     }

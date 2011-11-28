@@ -1,5 +1,6 @@
 package ch.usi.inf.genesis.model.navigation
 
+import ch.usi.inf.genesis.model.core.FAMIX._
 import ch.usi.inf.genesis.model.core.ModelObject
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
 import scala.collection.mutable.Queue
@@ -8,26 +9,33 @@ import ch.usi.inf.genesis.model.core.IdFactory
 
 class BreadthFirstNavigator extends Navigator {
 
-	protected def walk(modelObject: ModelObject, visitor: ModelVisitor, selection: Option[HashSet[String]]): NavigatorOption = {
-		val visited: HashSet[Int] = new HashSet();
-		selection match {
-			case Some(selection) => walkAux(modelObject, visitor, visited, selection)
-			case None => walkAux(modelObject, visitor, visited)
-		}
+	protected override def walk(modelObject: ModelObject, visitor: ModelVisitor, selection: Option[HashSet[String]]): NavigatorOption = {
+			val visited: HashSet[Int] = new HashSet();
+	selection match {
+	case Some(selection) => walkAux(modelObject, visitor, visited, selection)
+	case None => walkAux(modelObject, visitor, visited)
+	}
 	}
 
 	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int], selection: HashSet[String]) : NavigatorOption = 
-		{
+	{
 
 			visited.add(modelObject.getId());
-			modelObject.accept(visitor) match {
-			case STOP => return STOP
-			case SKIP_SUBTREE => return STOP
+
+
+			var opt = CONTINUE;
+			if(!IGNORE_TYPE.equals(modelObject.getName())) {
+				opt = modelObject.accept(visitor);
+			}
+
+			opt match {
+			case STOP => return STOP;
+			case SKIP_SUBTREE => return STOP;
 			case CONTINUE =>
 			}
 
-			val queue = new Queue[ModelObject]()
-					queue.enqueue(modelObject);
+			val queue = new Queue[ModelObject]();
+			queue.enqueue(modelObject);
 
 			while (!queue.isEmpty) {
 				val current = queue.dequeue();
@@ -42,12 +50,17 @@ class BreadthFirstNavigator extends Navigator {
 					list.foreach(child => {
 						if(!visited.contains(child.getId())) {
 							if(skip) {
-								queue.enqueue(child)
-							} else 
-								child.accept(visitor) match {
+								queue.enqueue(child);
+							} else {
+								opt = CONTINUE;
+								if(!IGNORE_TYPE.equals(child.getName())) {
+									opt = child.accept(visitor);
+								}			
+								opt match {
 								case CONTINUE => queue.enqueue(child);
 								case STOP => return STOP;
 								case SKIP_SUBTREE =>
+								}
 							} 
 						}
 					})
@@ -59,7 +72,13 @@ class BreadthFirstNavigator extends Navigator {
 	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int]) : NavigatorOption = {
 
 			visited.add(modelObject.getId());
-			modelObject.accept(visitor) match {
+
+			var opt = CONTINUE;
+			if(!IGNORE_TYPE.equals(modelObject.getName())) {
+				opt = modelObject.accept(visitor);
+			}
+
+			opt match {
 			case STOP => return STOP
 			case SKIP_SUBTREE => return STOP
 			case CONTINUE =>
@@ -75,7 +94,11 @@ class BreadthFirstNavigator extends Navigator {
 					val list = pair._2;
 					list.foreach(child => {
 						if(!visited.contains(child.getId())) {
-							child.accept(visitor) match {
+							opt = CONTINUE;
+							if(!IGNORE_TYPE.equals(child.getName())) {
+								opt = child.accept(visitor);
+							}			
+							opt  match {
 							case CONTINUE => queue.enqueue(child);
 							case STOP => return STOP;
 							case SKIP_SUBTREE =>
