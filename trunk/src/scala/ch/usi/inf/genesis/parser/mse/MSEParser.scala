@@ -240,6 +240,7 @@ object MSEParser extends RegexParsers {
 	def string = "'[^']*'".r ^^ { str => new Value(new StringValue(str)) }
 
 	def parse(a: String) : Option[ModelObject] = {
+	  IdFactory.reset()
 		val r = parseAll(root,a)
 		r.get match {
 			case Some(model) => model.resolve(pool)

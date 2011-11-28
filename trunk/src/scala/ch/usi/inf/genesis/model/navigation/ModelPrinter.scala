@@ -14,7 +14,7 @@ class ModelPrinter extends ModelVisitor {
         return CONTINUE
         }
       case Some(name) => {
-    	//println(name)
+    	println(name)
       return CONTINUE
     }
     }

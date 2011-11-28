@@ -7,6 +7,8 @@ import ch.usi.inf.genesis.model.navigation.ModelVisitor
 
 abstract class ModelObject {
  val properties: HashMap[String,  ListBuffer[ModelObject]] = new HashMap()
+ val id = IdFactory.nextId()
+ 	
  
    final def addProperty (propertyName: String, propertyValue: ModelObject) : Unit = {
 	if (!checkProperty(propertyName,propertyValue))
@@ -48,6 +50,7 @@ abstract class ModelObject {
    return visitor.visit(this);
  }
  
+ def getId() : Int = id
  
  def getName() = {
    val name = properties.get(FAMIX.NAME_PROP)

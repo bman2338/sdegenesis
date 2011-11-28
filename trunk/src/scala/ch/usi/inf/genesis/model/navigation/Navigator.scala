@@ -9,6 +9,10 @@ import scala.collection.mutable.HashSet
 
 
 abstract class Navigator {
+  /** 
+   * @param modelObject the root of the navigation (it is always visited)
+   * 
+   */
   def walkModel(modelObject: ModelObject, visitor: ModelVisitor, selection: Option[HashSet[String]] = None) : Unit = {
     walk(modelObject, visitor, selection);
   }
