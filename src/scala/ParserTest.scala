@@ -3,6 +3,7 @@ import ch.usi.inf.genesis.model.navigation.BreadthFirstNavigator
 import ch.usi.inf.genesis.model.navigation.ModelPrinter
 import ch.usi.inf.genesis.model.core.FAMIX._
 import scala.collection.mutable.HashSet
+import ch.usi.inf.genesis.model.navigation.DepthFirstNavigator
 
 object ParserTest {
 
@@ -31,7 +32,8 @@ object ParserTest {
 					  case Some(res) =>  {
 					  val selection = new HashSet[String]();
 					  selection.add(CLASSES_PROP); //visit only class properties
-					    new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), None)
+					  //new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
+					    new DepthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
 					}
 					  case None =>
 					}

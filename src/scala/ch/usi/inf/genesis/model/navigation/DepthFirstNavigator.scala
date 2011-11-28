@@ -7,33 +7,74 @@ import scala.collection.mutable.HashSet
 
 class DepthFirstNavigator extends Navigator {
 	override def walk(modelObject: ModelObject, visitor: ModelVisitor, selection: Option[HashSet[String]]) : NavigatorOption = {
-	  selection match { 
-	            case Some(set) => println("Not Implemented")
-	            case None =>
-	         }
-	  
-	  //the model Object will call visit on the visitor 
-	  modelObject.accept(visitor) match {
-	     case CONTINUE =>  {
-	       modelObject.properties.foreach((pair) => {
-	         val list = pair._2
-	        // println(pair._1)
-	         list.foreach(value => {
-	           walk(value, visitor, selection) match {
-	             case CONTINUE =>
-	             case STOP => return STOP
-	           }
-	         }) 
-	       })
-	       return CONTINUE   
-	   }
-	     case SKIP_SUBTREE => return CONTINUE
-	     case STOP => return STOP
-	     
-	   }
+			val visited: HashSet[Int] = new HashSet();
+	selection match {
+	case Some(selection) => walkAux(modelObject, visitor, visited, true, selection)
+	case None => walkAux(modelObject, visitor, visited)
 	}
-	
-	
+	}
 
-	
+	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int], visit: Boolean, selection: HashSet[String]) : NavigatorOption = 
+		{
+			visited.add(modelObject.getId());  
+			//the model Object will call visit on the visitor 
+			
+			var opt = CONTINUE
+			if(visit) {
+			  opt = modelObject.accept(visitor);
+			}
+			
+			opt match {
+			case CONTINUE =>  {
+				modelObject.properties.foreach((pair) => {
+					val list = pair._2;
+					val visitChild = selection.contains(pair._1);
+					
+					list.foreach(child => {
+						if(!visited.contains(child.getId())) {
+							walkAux(child, visitor, visited, visitChild, selection) match {
+							case CONTINUE =>
+							case STOP => return STOP
+							}
+						}
+					}) 
+				})
+				return CONTINUE   
+			}
+			case SKIP_SUBTREE => return CONTINUE
+			case STOP => return STOP
+
+			}
+
+			CONTINUE
+		}
+
+	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int]) : NavigatorOption = {
+			visited.add(modelObject.getId());  
+
+			//the model Object will call visit on the visitor 
+			modelObject.accept(visitor) match {
+			case CONTINUE =>  {
+				modelObject.properties.foreach((pair) => {
+					val list = pair._2;
+					list.foreach(child => {
+						if(!visited.contains(child.getId())) {
+							walkAux(child, visitor, visited) match {
+							case CONTINUE =>
+							case STOP => return STOP
+							}
+						}
+					}) 
+				})
+				return CONTINUE   
+			}
+			case SKIP_SUBTREE => return CONTINUE
+			case STOP => return STOP
+
+			}
+
+			CONTINUE
+	}
+
+
 }
