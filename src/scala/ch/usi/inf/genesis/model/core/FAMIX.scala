@@ -3,6 +3,7 @@ package ch.usi.inf.genesis.model.core
 object FAMIX extends Enumeration {
 	type FAMIX = String;
 	val NAMESPACE = "Namespace";
+	val PACKAGE = "Package";
 	val CLASS = "Class";
 	val PARAMETRIZABLECLASS = "ParameterizableClass";
 	val METHOD = "Method";

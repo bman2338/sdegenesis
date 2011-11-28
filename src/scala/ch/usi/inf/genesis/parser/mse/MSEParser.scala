@@ -69,6 +69,8 @@ object MSEParser extends RegexParsers {
 					    name match {
 					       case FAMIX.NAMESPACE => 
 					         this.modelObject.addProperty(FAMIX.NAMESPACES_PROP,obj.modelObject)
+					       case FAMIX.PACKAGE =>
+					         this.modelObject.addProperty(FAMIX.NAMESPACES_PROP,obj.modelObject)
 					       case _ =>
 					    }
 					  case _ =>
@@ -105,6 +107,7 @@ object MSEParser extends RegexParsers {
 			
 			name match {
   			    case FAMIX.NAMESPACE => obj = Some(new NamespaceEntity)
+  			    case FAMIX.PACKAGE => obj = Some(new NamespaceEntity)
   			    case FAMIX.PARAMETRIZABLECLASS => obj = Some(new ClassEntity)
 				case FAMIX.CLASS => obj = Some(new ClassEntity)	
 				case FAMIX.INHERITANCEDEFINITION => obj = Some(new InheritanceDefinitionRelation)

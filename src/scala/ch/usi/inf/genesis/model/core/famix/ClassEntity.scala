@@ -10,9 +10,8 @@ class ClassEntity extends Entity {
 	override def internalAddProperty(propertyName:String,propertyValue:ModelObject) = {
 	  propertyName match {
 	    case FAMIX.CONTAINER =>
-	      println(propertyValue)
 	      propertyValue.addProperty(FAMIX.CLASSES_PROP,this)
-	    case _ => super.internalAddProperty(propertyName,propertyValue)
+	    case _ => super.internalAddProperty(propertyName, propertyValue)
 	  }
 	}
 }
