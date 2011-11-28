@@ -1,4 +1,4 @@
-function data() {
+/*function data() {
     
         var json=   {
             "name": "Object",
@@ -24,7 +24,7 @@ function data() {
         return json;
         
 }
-
+*/
 
 
 function tree() {
@@ -63,7 +63,7 @@ function tree() {
         // .attr("transform", function(d) { return "scale(" + 1 + ")translate(" + 1 + ")" });
         
         node.append("svg:circle")
-        .attr("r", 10);
+        .attr("r", 2.3);
     
     
     node.append("svg:text")
@@ -141,4 +141,10 @@ d3.select("#chart").html("");
 
 function stacked() {
 //TODO http://mbostock.github.com/d3/ex/stack.html
+}
+
+function revisions() {
+//TODO http://mbostock.github.com/d3/ex/calendar.html
+//activities LOC, developer actives
+//
 }

@@ -4,6 +4,7 @@ import ch.usi.inf.genesis.model.navigation.ModelPrinter
 import ch.usi.inf.genesis.model.core.FAMIX._
 import scala.collection.mutable.HashSet
 import ch.usi.inf.genesis.model.navigation.DepthFirstNavigator
+import ch.usi.inf.genesis.model.extractors._
 
 object ParserTest {
 
@@ -33,10 +34,11 @@ object ParserTest {
 					  val selection = new HashSet[String]();
 					  //visit only certain properties
 					  //selection.add(METHODS_PROP); 
-					 // selection.add(CLASSES_PROP); 
-					  selection.add(ATTRIBUTES_PROP);
-					  new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
-					  //  new DepthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
+					  selection.add(CLASSES_PROP); 
+					  //selection.add(ATTRIBUTES_PROP);
+					//new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
+					 //   new DepthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
+					   println(new ClassMethodsExtractor().extract(res))
 					}
 					  case None =>
 					}

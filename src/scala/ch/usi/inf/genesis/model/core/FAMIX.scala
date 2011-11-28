@@ -14,6 +14,7 @@ object FAMIX extends Enumeration {
 	
 
 	val PARENTTYPE = "parentType";
+	val IGNORE_TYPE = "'_unknown_type'";
 	
 	val SENDER = "sender";
 	val RECEIVER = "receiver";
@@ -43,5 +44,6 @@ object FAMIX extends Enumeration {
 	val NAMESPACES_PROP = "namespaces"
 	  
 	val NAME_PROP = "name"
+	
 	
 }

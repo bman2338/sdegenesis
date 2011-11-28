@@ -52,11 +52,13 @@ abstract class ModelObject {
  
  def getId() : Int = id
  
- def getName() = {
+ def getName() : String = {
    val name = properties.get(FAMIX.NAME_PROP)
     name match {
-     case Some(xs) if (xs.length > 0) => Some(xs.first); 
-     case _ => None
+     case Some(xs) if (xs.length > 0) => {
+    	 xs.first.toString()
+     }
+     case _ => ""
    }
  }
  
