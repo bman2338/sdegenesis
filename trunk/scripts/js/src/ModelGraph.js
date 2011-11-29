@@ -141,8 +141,18 @@ function sunburst () {
 		}*/
 		if (d.children)
 			return color((d.children ? d : d.parent).name);
-		return d.colour || "#fff";
+		var col = color(d.parent.name);
+		var rand = Math.random()+0.1;
+		var r = hexToR(col);
+		var g = hexToG(col);
+		var b = hexToB(col);
+		return d3.rgb(r*rand,g*rand,b*rand);
 	}
+
+	function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
+	function hexToG(h) {return parseInt((cutHex(h)).substring(2,4),16)}
+	function hexToB(h) {return parseInt((cutHex(h)).substring(4,6),16)}
+	function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
 
 	// Interpolate the scales!
 	function arcTween(d) {
