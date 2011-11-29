@@ -6,21 +6,22 @@ import ch.usi.inf.genesis.model.core.Project
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
 import scala.collection.mutable.HashSet
 
+
+//Do no use it (strange bug), does not visit all entitites
 class DepthFirstNavigator extends Navigator {
 	protected override def walk(modelObject: ModelObject, visitor: ModelVisitor, selection: Option[HashSet[String]]) : NavigatorOption = {
 			val visited: HashSet[Int] = new HashSet();
-	selection match {
-	case Some(selection) => walkAux(modelObject, visitor, visited, false, selection);
-	case None => walkAux(modelObject, visitor, visited);
-	}
+			selection match {
+				case Some(selection) => walkAux(modelObject, visitor, visited, true, selection);
+				case None => walkAux(modelObject, visitor, visited);
+			}
 	}
 
-	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int], visit: Boolean, selection: HashSet[String]) : NavigatorOption = {
-			
+	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int], visit: Boolean, selection: HashSet[String]) : NavigatorOption = {  
 			visited.add(modelObject.getId());  
 
 			var opt = CONTINUE;
-			if(visit && !IGNORE_TYPE.equals(modelObject.getName())) {
+			if(visit && !hasToIgnore(modelObject)) {
 				opt = modelObject.accept(visitor);
 			}
 
@@ -28,10 +29,15 @@ class DepthFirstNavigator extends Navigator {
 			case CONTINUE =>  {
 				modelObject.properties.foreach((pair) => {
 					val list = pair._2;
-					val visitChild = selection.contains(pair._1);
+					val visitChild : Boolean = selection.contains(pair._1);
+					
+					
+					
 					list.foreach(child => {
-						if(!visited.contains(child.getId())) {
-							walkAux(child, visitor, visited, visitChild, selection) match {
+					 val skip = visited.contains(child.getId());
+					 if(!skip) {
+						val opt = walkAux(child, visitor, visited, visitChild, selection);
+						opt match {
 							case CONTINUE => CONTINUE
 							case STOP => return STOP
 							case _ => CONTINUE
@@ -43,7 +49,7 @@ class DepthFirstNavigator extends Navigator {
 			}
 			case SKIP_SUBTREE => return CONTINUE
 			case STOP => return STOP
-
+			
 			}
 
 			return CONTINUE
@@ -56,7 +62,7 @@ class DepthFirstNavigator extends Navigator {
 			visited.add(modelObject.getId());  
 
 			var opt = CONTINUE;
-			if(!IGNORE_TYPE.equals(modelObject.getName())) {
+			if(!hasToIgnore(modelObject)) {
 				opt = modelObject.accept(visitor);
 			}
 

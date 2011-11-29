@@ -11,10 +11,10 @@ class BreadthFirstNavigator extends Navigator {
 
 	protected override def walk(modelObject: ModelObject, visitor: ModelVisitor, selection: Option[HashSet[String]]): NavigatorOption = {
 			val visited: HashSet[Int] = new HashSet();
-	selection match {
-	case Some(selection) => walkAux(modelObject, visitor, visited, selection)
-	case None => walkAux(modelObject, visitor, visited)
-	}
+			selection match {
+				case Some(selection) => walkAux(modelObject, visitor, visited, selection)
+				case None => walkAux(modelObject, visitor, visited)
+			}
 	}
 
 	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int], selection: HashSet[String]) : NavigatorOption = 
@@ -22,9 +22,8 @@ class BreadthFirstNavigator extends Navigator {
 
 			visited.add(modelObject.getId());
 
-
 			var opt = CONTINUE;
-			if(!IGNORE_TYPE.equals(modelObject.getName())) {
+			if(!hasToIgnore(modelObject)) {
 				opt = modelObject.accept(visitor);
 			}
 
@@ -39,23 +38,24 @@ class BreadthFirstNavigator extends Navigator {
 
 			while (!queue.isEmpty) {
 				val current = queue.dequeue();
-				visited.add(current.getId());
-
 				current.properties.foreach(pair => {
 					var skip = false;
-					if(!selection.contains(pair._1)) skip = true;
-
+					if(!selection.contains(pair._1)) 
+					  skip = true;
 
 					val list = pair._2;
 					list.foreach(child => {
 						if(!visited.contains(child.getId())) {
-							if(skip) {
+						  visited.add(child.getId());
+							
+						  if(skip) {
 								queue.enqueue(child);
 							} else {
 								opt = CONTINUE;
-								if(!IGNORE_TYPE.equals(child.getName())) {
+								if(!hasToIgnore(child)) {
 									opt = child.accept(visitor);
-								}			
+								}	
+								
 								opt match {
 								case CONTINUE => queue.enqueue(child);
 								case STOP => return STOP;
@@ -74,7 +74,7 @@ class BreadthFirstNavigator extends Navigator {
 			visited.add(modelObject.getId());
 
 			var opt = CONTINUE;
-			if(!IGNORE_TYPE.equals(modelObject.getName())) {
+			if(!hasToIgnore(modelObject)) {
 				opt = modelObject.accept(visitor);
 			}
 
@@ -89,13 +89,14 @@ class BreadthFirstNavigator extends Navigator {
 
 			while (!queue.isEmpty) {
 				val current = queue.dequeue();
-				visited.add(current.getId());
+				
 				current.properties.foreach(pair => {
 					val list = pair._2;
 					list.foreach(child => {
 						if(!visited.contains(child.getId())) {
+							visited.add(current.getId());
 							opt = CONTINUE;
-							if(!IGNORE_TYPE.equals(child.getName())) {
+							if(!hasToIgnore(child)) {
 								opt = child.accept(visitor);
 							}			
 							opt  match {

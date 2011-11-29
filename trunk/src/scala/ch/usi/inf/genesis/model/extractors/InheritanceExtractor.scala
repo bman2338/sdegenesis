@@ -8,7 +8,7 @@ import ch.usi.inf.genesis.model.core.famix.ClassEntity
 import ch.usi.inf.genesis.model.navigation.BreadthFirstNavigator
 import scala.collection.mutable.HashMap
 
-class InheritanceExtractor extends Extractor {
+class InheritanceExtractor(val classes: HashSet[String]) extends Extractor {
 	var selection: HashSet[String] = null;
 	var str : String = "";
 	var analysis: InheritanceAnalysis = null;
@@ -30,11 +30,12 @@ def extract(model: ModelObject): Analysis = {
 }
 
 def visit(obj: ModelObject): NavigatorOption = { 
-		obj.getName() match {
-		case "" =>
-		case "'EventListener'" => analysis.addClass(obj); 
-		case _ =>
+		val name = obj.getName();
+		name match {
+			case "" =>
+			case _ if(classes.contains(name))=> analysis.addClass(obj); 
 		}		
+
 		return analysis.opt();
 }
 
@@ -52,9 +53,7 @@ val childrenCloseStr = "]},\n";
 override def toString() = { toJSON() }
 
 def opt() : NavigatorOption = {
-  if(classes.size > 10)
-    return STOP
-    return CONTINUE
+		return CONTINUE;
 }
 
 def toJSON() : String = {
@@ -69,11 +68,11 @@ def toJSON() : String = {
 		})
 
 		if (classes.size == 1) {
-		  str = str.substring(0,str.length()-2)
-		  str += "; return json; }";
+			str = str.substring(0,str.length()-2)
+					str += "; return json; }";
 		}
 		else
-		  str += "]}; return json; }";
+			str += "]}; return json; }";
 		str = str.replace("'", "");
 		return str;
 }
@@ -91,11 +90,11 @@ private def toJSON(modelObject: ModelObject) : String = {
 			case None => str += nameCloseStr;
 			case Some(subclasses) => {
 				str +=   "\"," + childrenOpenStr;
-				
+
 				subclasses.foreach(subclass => {
 					str += toJSON(subclass);
 				});
-				
+
 				str += childrenCloseStr;
 			}
 			}

@@ -122,9 +122,10 @@ object MSEParser extends RegexParsers {
 				case _ => obj = Some(new FamixObject())
 					//println("Element " + name + " No Concreate instance")
 			}
-
+			
 			obj match {
 				case Some(obj) => 
+				obj.typeId = name;
 				this.modelObject = obj
 				children.foreach((pair) => { 
 					val child: Option[ModelObject] = pair._2.resolve(pool) 
