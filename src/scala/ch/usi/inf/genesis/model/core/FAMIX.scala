@@ -61,7 +61,8 @@ object FAMIX extends Enumeration {
 	val REVISION_COMMENT_PROP = "TODO" //TODO
 	val REVISION_DEVELOPER_PROP = "TODO" //TODO
 	val REVISION_DATE_PROP = "TODO" //TODO
-	val 
+	val REVISION_PROP = "TODO" //TODO
+	val OWNER_PROP = "TODO" //TODO
 	
 	
 	
