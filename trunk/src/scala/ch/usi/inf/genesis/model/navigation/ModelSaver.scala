@@ -54,6 +54,14 @@ class ModelSaver extends ModelVisitor {
 			    //TODO rev
 				
 				DatabaseInterface.addClass(projectName, belongsToPackage, ce.getName(), owner, revisionNumber)
+			
+				//now save the inheritance
+				ce.properties.get() match {
+					case None => 
+					case Some(list) => 
+						
+						DatabaseInterface.addInheritance(projectName, ce.getName(), String subclass, versionNumber)
+				}
 			}
 			
 			//save methods
