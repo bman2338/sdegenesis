@@ -46,7 +46,7 @@ object FAMIX extends Enumeration {
 	val NAMESPACES_PROP = "namespaces"
 	  
 	val NAME_PROP = "name"
-	 val PARENT_PACKAGE = "TODO" //TODO
+	val PARENT_PACKAGE = "TODO" //TODO
 	
 	
 }
