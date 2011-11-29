@@ -206,7 +206,7 @@ public class BugzillaParser {
 					}
 					else if(element.getName().equals(new QName("version"))){
 						final XMLEvent el = (XMLEvent) filteredEventReader.next();
-						bug.setVersion(el.asCharacters().getData());
+						bug.addVersion(el.asCharacters().getData());
 					}
 					else if(element.getName().equals(new QName("rep_platform"))){
 						final XMLEvent el = (XMLEvent) filteredEventReader.next();
