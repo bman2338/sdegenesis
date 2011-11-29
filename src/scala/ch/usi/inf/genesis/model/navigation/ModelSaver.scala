@@ -22,20 +22,25 @@ class ModelSaver extends ModelVisitor {
   }
   
   def visit(obj: ModelObject): NavigatorOption = {
+		  //project is already added to the database...
+		  
 		  obj match  {
+		    
 			//save packages
 		    case NamespaceEntity() => {
 		      var parentPackage = "";
 		      var owner = "";
 		      var rev = 0;
-		      /*ns.properties.get(PARENT_PACKAGE) match {
+		      
+		      //package containing this package
+		      obj.properties.get(PARENT_PACKAGE) match {
 		        case None =>
 		        case Some(list) if(list.length > 0) => parentPackage = list.first.getName() 
-		      }*/
+		      }
 		      //TODO owner
 		      //TODO rev
 		      
-		      //DatabaseInterface.addPackage(projectName, ns.getName(), owner, rev, parentPackage );
+		      //DatabaseInterface.addPackage(projectName, obj.getName(), owner, rev, parentPackage );
 		    }
 		
 			//save classes
@@ -45,23 +50,23 @@ class ModelSaver extends ModelVisitor {
 			    var rev = 0;
 				
 				//package containing this class
-				/*ce.properties.get(CONTAINER) match {
+				obj.properties.get(CONTAINER) match {
 			        case None =>
 			        case Some(list) if(list.length > 0) => belongsToPackage = list.first.getName() 
-			    }*/
+			    }
 			
 				//TODO owner
 			    //TODO rev
 				
-				//DatabaseInterface.addClass(projectName, belongsToPackage, ce.getName(), owner, revisionNumber)
+				//DatabaseInterface.addClass(projectName, belongsToPackage, obj.getName(), owner, revisionNumber)
 			
 				//now save the inheritance
-				/*ce.properties.get() match {
+				obj.properties.get() match {
 					case None => 
 					case Some(list) => 
 						
-						//DatabaseInterface.addInheritance(projectName, ce.getName(), String subclass, versionNumber)
-				}*/
+						//DatabaseInterface.addInheritance(projectName, obj.getName(), String subclass, versionNumber)
+				}
 			}
 			
 			//save methods
@@ -74,9 +79,37 @@ class ModelSaver extends ModelVisitor {
 				var returnType = "";
 				var className = "";
 				
+				//TODO owner
+			    //TODO rev
 				
+				//get the signature
+				obj.properties.get(SIGNATURE_PROP) match {
+			        case None =>
+			        case Some(list) if(list.length > 0) => signature = list.first.getName() 
+			    }
 				
-				//DatabaseInterface.addMethod(projectName, className, me.getName(), signature, modifiers, returnType, owner, revisionNumber)
+				//get the modifiers
+				obj.properties.get(MODIFIERS_PROP) match {
+			        case None =>
+			        case Some(list) if(list.length > 0) => modifiers = list.first.getName() 
+			    }
+				
+				//get the return type
+				obj.properties.get(DECLARED_TYPE_PROP) match {
+			        case None =>
+			        case Some(list) if(list.length > 0) => returnType = list.first.getName() 
+			    }
+				
+				//get the class name containing this method
+				obj.properties.get(PARENT_TYPE_PROP) match {
+			        case None =>
+			        case Some(list) if(list.length > 0) => className = list.first.getName() 
+			    }
+				
+				//DatabaseInterface.addMethod(projectName, className, obj.getName(), signature, modifiers, returnType, owner, revisionNumber)
+			
+				//HOW TO ADD METHOD INVOKATIONS? WE ARE NOT SURE IF METHODS ARE ALREADY THERE
+				//IN THE DATABASE IN THE FIRST PLACE
 			}
 			
 			//save attributes
@@ -89,8 +122,143 @@ class ModelSaver extends ModelVisitor {
 				var declaredType = "";
 				var className = "";
 				
-				//DatabaseInterface.addAttribute(projectName, className, ae.getName(), signature, modifiers, declaredType, revisionNumber)
+				//TODO owner
+			    //TODO rev
+				
+				//get the signature
+				obj.properties.get(SIGNATURE_PROP) match {
+			        case None =>
+			        case Some(list) if(list.length > 0) => signature = list.first.getName() 
+			    }
+				
+				//get the modifiers
+				obj.properties.get(MODIFIERS_PROP) match {
+			        case None =>
+			        case Some(list) if(list.length > 0) => modifiers = list.first.getName() 
+			    }
+				
+				//get the return type
+				obj.properties.get(DECLARED_TYPE_PROP) match {
+			        case None =>
+			        case Some(list) if(list.length > 0) => declaredType = list.first.getName() 
+			    }
+				
+				//get the class name containing this method
+				obj.properties.get(PARENT_TYPE_PROP) match {
+			        case None =>
+			        case Some(list) if(list.length > 0) => className = list.first.getName() 
+			    }
+				
+				//DatabaseInterface.addAttribute(projectName, className, obj.getName(), signature, modifiers, declaredType, revisionNumber)
 			}
+			
+			//add a developer
+			case DeveloperEntity() => {
+			  //DatabaseInterface.addDeveloper(obj.getName());
+			}
+			
+			//add a bug tracker developer
+			case DeveloperEntity() => {
+			  var btdevEmail = "";
+			  
+			  //get the class name containing this method
+			  obj.properties.get(BTDEVELOPER_EMAIL_PROP) match {
+			      case None =>
+			      case Some(list) if(list.length > 0) => btdevEmail = list.first.getName() 
+			  }
+			  
+			  //DatabaseInterface.addDeveloper(obj.getName(), btdevEmail);
+			}
+			
+			//add a bug
+			case BugEntity() => {
+			  var desc = "";
+			  var status = "";
+			  var assignee = "";
+			  
+			  //get the description of the bug
+			  obj.properties.get(BUG_DESCRIPTION_PROP) match {
+			      case None =>
+			      case Some(list) if(list.length > 0) => desc = list.first.getName() 
+			  }
+			  
+			  //get the bug status
+			  obj.properties.get(BUG_STATUS_PROP) match {
+			      case None =>
+			      case Some(list) if(list.length > 0) => status = list.first.getName() 
+			  }
+			  
+			  //get the current assignee
+			  obj.properties.get(BUG_ASSIGNEE_PROP) match {
+			      case None =>
+			      case Some(list) if(list.length > 0) => assignee = list.first.getName() 
+			  }
+			  
+			  //DatabaseInterface.addBug(projectName, obj.getName(), desc, status, assignee)
+			  
+			  //add history for a bug
+			  var assignees = obj.properties.get(PREVIOUS_ASSIGNEES_PROP);
+			  
+			  for (i <- assignees){
+				  //DatabaseInterface.addBugTrackerHistory(projectName, obj.getName(), i.getName())
+			  }
+			   
+			}
+			
+			//add a revision
+			case RevisionEntity() => {
+			  var comment = "";
+			  var revisionNumber = 0;
+			  var dev = "";
+			  var date = "";
+			  
+			  //get the comment of the revision
+			  obj.properties.get(REVISION_COMMENT_PROP) match {
+			      case None =>
+			      case Some(list) if(list.length > 0) => comment = list.first.getName() 
+			  }
+			  
+			  //get the developer that committed the revision
+			  obj.properties.get(REVISION_DEVELOPER_PROP) match {
+			      case None =>
+			      case Some(list) if(list.length > 0) => dev = list.first.getName() 
+			  }
+			  
+			  //get the date of the commit
+			  obj.properties.get(REVISION_DATE_PROP) match {
+			      case None =>
+			      case Some(list) if(list.length > 0) => date = list.first.getName() 
+			  }
+			  
+			  //TODO rev
+			  
+			  //DatabaseInterface.addRevision(projectName, comment, revisionNumber, dev, date)
+			}
+			
+			//add a class metric
+			case ClassMetricEntity() => {
+			  var ClassName = "";
+			  var metricName = "";
+			  var value = 0;
+			  var revisionNumber = 0;
+			  
+			  //TODO rev
+			  
+			  //DatabaseInterface.addClassMetric(projectName, ClassName, metricName, value, revisionNumber)
+			}
+			
+			//add a class metric
+			case MethodMetricEntity() => {
+			  var methodName = "";
+			  var metricName = "";
+			  var value = 0;
+			  var revisionNumber = 0;
+			  
+			  //TODO rev
+			  
+			  //DatabaseInterface.addClassMetric(projectName, methodName, metricName, value, revisionNumber)
+			}
+			
 		    case _ => CONTINUE
 		  }
     return CONTINUE
