@@ -8,7 +8,7 @@ case class InheritanceDefinitionRelation extends FamixObject {
 	override def internalAddProperty(propertyName:String,propertyValue:ModelObject) = {
 	  propertyName match {
 	    case FAMIX.SUBCLASS => { 
-	      val superclass = properties.get(FAMIX.SUPERCLASS_PROP)
+	      val superclass = properties.get(FAMIX.SUPERCLASS)
 	      superclass match {
 	        case Some(cl) => 
 	        cl.foreach((superclass) => {
@@ -20,7 +20,7 @@ case class InheritanceDefinitionRelation extends FamixObject {
 	      }
 	    }
 	    case FAMIX.SUPERCLASS => {
-	      val subclass = properties.get(FAMIX.SUBCLASS_PROP)
+	      val subclass = properties.get(FAMIX.SUBCLASS)
 	      subclass match {
 	        case Some(cl) => cl.foreach((subclass) => {
 	          subclass.addProperty(FAMIX.SUPERCLASS_PROP,propertyValue)

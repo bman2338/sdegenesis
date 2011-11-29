@@ -11,8 +11,9 @@ case class ClassEntity extends Entity {
 	  propertyName match {
 	    case FAMIX.CONTAINER =>
 	      propertyValue.addProperty(FAMIX.CLASSES_PROP,this)
-	    case _ => super.internalAddProperty(propertyName, propertyValue)
+	    case _ =>
 	  }
+	  super.internalAddProperty(propertyName, propertyValue)
 	}
 }
 

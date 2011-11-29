@@ -40,9 +40,9 @@ object ParserTest {
 					//new BreadthFirstNavigator().walkModel(res, new ModelPrinter())//, Some(selection))
 					//   new DepthFirstNavigator().walkModel(res, new ModelPrinter())//, Some(selection))
 					   //println(new ClassMethodsExtractor().extract(res))
-					 // println(new InheritanceExtractor().extract(res));
-					 val saver = new  ModelSaver();
-					 new BreadthFirstNavigator().walkModel(res, saver, saver.getSelection());
+					  println(new InheritanceExtractor().extract(res));
+					 //val saver = new  ModelSaver();
+//					 new BreadthFirstNavigator().walkModel(res, saver, saver.getSelection());
 					  
 					}
 					  case None =>
