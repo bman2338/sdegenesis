@@ -23,7 +23,7 @@ class BreadthFirstNavigator extends Navigator {
 			visited.add(modelObject.getId());
 
 			var opt = CONTINUE;
-			if(!hasToIgnore(modelObject)) {
+			if(!hasToIgnore(modelObject) && selectionFunction(modelObject)) {
 				opt = modelObject.accept(visitor);
 			}
 
@@ -39,7 +39,7 @@ class BreadthFirstNavigator extends Navigator {
 			while (!queue.isEmpty) {
 				val current = queue.dequeue();
 				var skip = false;
-				if(!selectionFunction(current)) 
+
 					  skip = true;
 				current.properties.foreach(pair => {
 					val list = pair._2;
@@ -47,7 +47,7 @@ class BreadthFirstNavigator extends Navigator {
 						if(!visited.contains(child.getId())) {
 						  visited.add(child.getId());
 							
-						  if(skip) {
+						  if(!selectionFunction(child)) {
 								queue.enqueue(child);
 							} else {
 								opt = CONTINUE;
