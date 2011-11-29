@@ -7,8 +7,10 @@ import ch.usi.inf.genesis.model.core.FAMIX
 case class MethodEntity extends Entity {
 	override def internalAddProperty(propertyName:String,propertyValue:ModelObject) = {
 	  propertyName match {
-	    case FAMIX.PARENTTYPE => propertyValue.addProperty(FAMIX.METHODS_PROP,this)
-	    case _ => super.internalAddProperty(propertyName, propertyValue)
+	    case FAMIX.PARENTTYPE => 
+	      propertyValue.addProperty(FAMIX.METHODS_PROP,this)
+	    case _ =>
 	  }
+	  super.internalAddProperty(propertyName, propertyValue)
 	}
 }

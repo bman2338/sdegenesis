@@ -4,7 +4,7 @@ import ch.usi.inf.genesis.model.core.ModelObject
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
 import ch.usi.inf.genesis.model.core.FAMIX._
 import scala.collection.mutable.HashSet
-import ch.usi.inf.genesis.model.core.famix.NamespaceEntity
+import ch.usi.inf.genesis.model.core.famix._
 
 
 class ModelSaver extends ModelVisitor {
@@ -24,48 +24,48 @@ class ModelSaver extends ModelVisitor {
   def visit(obj: ModelObject): NavigatorOption = {
 		  obj match  {
 			//save packages
-		    case NamespaceEntity(ns) => {
+		    case NamespaceEntity() => {
 		      var parentPackage = "";
 		      var owner = "";
 		      var rev = 0;
-		      ns.properties.get(PARENT_PACKAGE) match {
+		      /*ns.properties.get(PARENT_PACKAGE) match {
 		        case None =>
 		        case Some(list) if(list.length > 0) => parentPackage = list.first.getName() 
-		      }
+		      }*/
 		      //TODO owner
 		      //TODO rev
 		      
-		      DatabaseInterface.addPackage(projectName, ns.getName(), owner, rev, parentPackage );
+		      //DatabaseInterface.addPackage(projectName, ns.getName(), owner, rev, parentPackage );
 		    }
 		
 			//save classes
-			case ClassEntity(ce) => {
+			case ClassEntity() => {
 				var belongsToPackage = "";
 			    var owner = "";
 			    var rev = 0;
 				
 				//package containing this class
-				ce.properties.get(CONTAINER) match {
+				/*ce.properties.get(CONTAINER) match {
 			        case None =>
 			        case Some(list) if(list.length > 0) => belongsToPackage = list.first.getName() 
-			    }
+			    }*/
 			
 				//TODO owner
 			    //TODO rev
 				
-				DatabaseInterface.addClass(projectName, belongsToPackage, ce.getName(), owner, revisionNumber)
+				//DatabaseInterface.addClass(projectName, belongsToPackage, ce.getName(), owner, revisionNumber)
 			
 				//now save the inheritance
-				ce.properties.get() match {
+				/*ce.properties.get() match {
 					case None => 
 					case Some(list) => 
 						
-						DatabaseInterface.addInheritance(projectName, ce.getName(), String subclass, versionNumber)
-				}
+						//DatabaseInterface.addInheritance(projectName, ce.getName(), String subclass, versionNumber)
+				}*/
 			}
 			
 			//save methods
-			case MethodEntity(me){
+			case MethodEntity() => {
 				var belongsToPackage = "";
 			    var owner = "";
 			    var rev = 0;
@@ -76,11 +76,11 @@ class ModelSaver extends ModelVisitor {
 				
 				
 				
-				DatabaseInterface.addMethod(projectName, className, me.getName(), signature, modifiers, returnType, owner, revisionNumber)
+				//DatabaseInterface.addMethod(projectName, className, me.getName(), signature, modifiers, returnType, owner, revisionNumber)
 			}
 			
 			//save attributes
-			case AttributeEntity(ae){
+			case AttributeEntity() => {
 				var belongsToPackage = "";
 			    var owner = "";
 			    var rev = 0;
@@ -89,7 +89,7 @@ class ModelSaver extends ModelVisitor {
 				var declaredType = "";
 				var className = "";
 				
-				DatabaseInterface.addAttribute(projectName, className, ae.getName(), signature, modifiers, declaredType, revisionNumber)
+				//DatabaseInterface.addAttribute(projectName, className, ae.getName(), signature, modifiers, declaredType, revisionNumber)
 			}
 		    case _ => CONTINUE
 		  }

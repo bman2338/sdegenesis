@@ -25,14 +25,15 @@ def getSelection() : HashSet[String] = {
 def extract(model: ModelObject): Analysis = { 
 		analysis = new InheritanceAnalysis();
 		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection()));
-		//analysis.clean();
+		analysis.clean();
 		return analysis;
 }
 
 def visit(obj: ModelObject): NavigatorOption = { 
 		obj.getName() match {
 		case "" =>
-		case _ => analysis.addClass(obj);
+		case "'EventListener'" => analysis.addClass(obj); 
+		case _ =>
 		}		
 		return analysis.opt();
 }
@@ -51,19 +52,28 @@ val childrenCloseStr = "]},\n";
 override def toString() = { toJSON() }
 
 def opt() : NavigatorOption = {
-  if(classes.size > 100)
+  if(classes.size > 10)
     return STOP
     return CONTINUE
 }
 
 def toJSON() : String = {
-		var str = "{ \"name\": \"" + "Object" + "\", \"children\": [\n";	
+		var str = "";
+		if (classes.size == 1)
+			str = "function data() { var json = ";			  
+		else 
+			str = "function data() { var json = { \"name\": \"" + "ROOT" + "\", \"children\": [\n";	
 		classes.foreach(pair => {
 			val clazz = pair._2;
 			str += toJSON(clazz);
 		})
 
-		str += "]}";
+		if (classes.size == 1) {
+		  str = str.substring(0,str.length()-2)
+		  str += "; return json; }";
+		}
+		else
+		  str += "]}; return json; }";
 		str = str.replace("'", "");
 		return str;
 }
@@ -80,7 +90,6 @@ private def toJSON(modelObject: ModelObject) : String = {
 			modelObject.properties.get(SUBCLASS_PROP) match {
 			case None => str += nameCloseStr;
 			case Some(subclasses) => {
-			  
 				str +=   "\"," + childrenOpenStr;
 				
 				subclasses.foreach(subclass => {
@@ -88,11 +97,8 @@ private def toJSON(modelObject: ModelObject) : String = {
 				});
 				
 				str += childrenCloseStr;
-				
 			}
 			}
-
-			
 		}
 		}
 		return str;
