@@ -6,6 +6,7 @@ import scala.collection.mutable.HashSet
 import ch.usi.inf.genesis.model.navigation.DepthFirstNavigator
 import ch.usi.inf.genesis.model.extractors._
 import ch.usi.inf.genesis.model.navigation.ModelSaver
+import ch.usi.inf.genesis.model.core.famix.ClassEntity
 
 object ParserTest {
 
@@ -38,7 +39,11 @@ object ParserTest {
 					 selection.add(CLASSES_PROP); 
 					  //selection.add(ATTRIBUTES_PROP);
 					 // new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
-					 new DepthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
+					 new DepthFirstNavigator().walkModel(res, new ModelPrinter(), Some((obj) => {
+					   obj match {
+					     case ClassEntity() => true
+					     case _ => false
+					   }}))
 					  // println(new ClassMethodsExtractor().extract(res))
 					  //println(new InheritanceExtractor().extract(res));
 					 //val saver = new  ModelSaver();
