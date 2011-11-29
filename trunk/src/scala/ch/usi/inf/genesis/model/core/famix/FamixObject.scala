@@ -5,6 +5,4 @@ import scala.collection.mutable.HashMap
 import ch.usi.inf.genesis.model.core.ModelObject
 import scala.collection.mutable.LinkedList
 
-class FamixObject extends ModelObject {
-  
-}
+class FamixObject extends ModelObject

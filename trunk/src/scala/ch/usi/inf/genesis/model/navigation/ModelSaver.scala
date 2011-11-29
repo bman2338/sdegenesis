@@ -23,7 +23,7 @@ class ModelSaver extends ModelVisitor {
   
   def visit(obj: ModelObject): NavigatorOption = {
 		  obj match  {
-		    case NamespaceEntity(ns) => {
+		    case NamespaceEntity() => {
 		      var parentPackage = "";
 		      var owner = "";
 		      var rev = 0;
