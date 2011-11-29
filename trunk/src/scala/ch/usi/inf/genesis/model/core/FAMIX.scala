@@ -31,6 +31,8 @@ object FAMIX extends Enumeration {
 	//val CONTAINER = "container";
 	val CONTAINER = "parentPackage";
 	
+	
+	//PROP are also selection parameters for Navigator
 	val RECV_INVOCATIONS_PROP = "invokedBy";
 	val SEND_INVOCATIONS_PROP = "invoking";
 	val VALUE_PROP = "value";
@@ -44,6 +46,7 @@ object FAMIX extends Enumeration {
 	val NAMESPACES_PROP = "namespaces"
 	  
 	val NAME_PROP = "name"
+	 val PARENT_PACKAGE = "TODO" //TODO
 	
 	
 }
