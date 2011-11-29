@@ -41,7 +41,7 @@ class ModelSaver extends ModelVisitor {
 		      //get the revision number
 		      obj.properties.get(REVISION_PROP) match {
 		        case None =>
-		        case Some(list) if(list.length > 0) => rev = list.first.getName() 
+		        case Some(list) if(list.length > 0) => rev = list.first.getName()
 		      }
 		      
 		      //get the owner
