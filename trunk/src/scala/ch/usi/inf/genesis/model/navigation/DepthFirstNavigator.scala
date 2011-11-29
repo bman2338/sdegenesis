@@ -12,16 +12,16 @@ class DepthFirstNavigator extends Navigator {
 	protected override def walk(modelObject: ModelObject, visitor: ModelVisitor, selectionFunction: Option[ModelObject => Boolean]) : NavigatorOption = {
 			val visited: HashSet[Int] = new HashSet();
 			selectionFunction match {
-				case Some(func) => walkAux(modelObject, visitor, visited, true, func);
-				case None => walkAux(modelObject, visitor, visited, true, ((obj) => true));
+				case Some(func) => walkAux(modelObject, visitor, visited, func);
+				case None => walkAux(modelObject, visitor, visited, ((obj) => true));
 			}
 	}
 
-	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int], visit: Boolean, selectionFunction: ModelObject => Boolean) : NavigatorOption = {  
+	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int], selectionFunction: ModelObject => Boolean) : NavigatorOption = {  
 			visited.add(modelObject.getId());  
 
 			var opt = CONTINUE;
-			if(visit && !hasToIgnore(modelObject)) {
+			if(!hasToIgnore(modelObject) && selectionFunction(modelObject)) {
 				opt = modelObject.accept(visitor);
 			}
 
@@ -34,7 +34,7 @@ class DepthFirstNavigator extends Navigator {
 					list.foreach(child => {
 					 val skip = visited.contains(child.getId());
 					 if(!skip) {
-						val opt = walkAux(child, visitor, visited, visitChild, selectionFunction);
+						val opt = walkAux(child, visitor, visited, selectionFunction);
 						opt match {
 							case CONTINUE => CONTINUE
 							case STOP => return STOP
