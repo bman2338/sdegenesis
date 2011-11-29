@@ -38,7 +38,8 @@ object ParserTest {
 					  //selection.add(ATTRIBUTES_PROP);
 					//new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
 					 //   new DepthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
-					   println(new ClassMethodsExtractor().extract(res))
+					   //println(new ClassMethodsExtractor().extract(res))
+					  println(new InheritanceExtractor().extract(res));
 					}
 					  case None =>
 					}
