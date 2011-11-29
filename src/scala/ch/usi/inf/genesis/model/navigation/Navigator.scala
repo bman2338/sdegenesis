@@ -13,10 +13,10 @@ abstract class Navigator {
    * @param modelObject the root of the navigation (it is always visited)
    * 
    */
-  def walkModel(modelObject: ModelObject, visitor: ModelVisitor, selection: Option[HashSet[String]] = None) : Unit = {
-    walk(modelObject, visitor, selection);
+  def walkModel(modelObject: ModelObject, visitor: ModelVisitor, selectionFunction: Option[ModelObject => Boolean] = None) : Unit = {
+    walk(modelObject, visitor, selectionFunction);
   }
-  protected def walk(modelObject: ModelObject, visitor: ModelVisitor, selection: Option[HashSet[String]]) : NavigatorOption;
+  protected def walk(modelObject: ModelObject, visitor: ModelVisitor, selectionFunction: Option[ModelObject => Boolean]) : NavigatorOption;
 	
   protected def hasToIgnore(obj: ModelObject) : Boolean = {
     return obj.getName().toString().startsWith(IGNORE_TYPE);

@@ -7,24 +7,24 @@ import ch.usi.inf.genesis.model.navigation.NavigatorOption._
 import ch.usi.inf.genesis.model.core.famix.ClassEntity
 import ch.usi.inf.genesis.model.navigation.BreadthFirstNavigator
 import scala.collection.mutable.HashMap
+import ch.usi.inf.genesis.model.core.famix.ClassEntity
 
 class InheritanceExtractor(val classes: HashSet[String]) extends Extractor {
-	var selection: HashSet[String] = null;
 	var str : String = "";
 	var analysis: InheritanceAnalysis = null;
 
 
-def getSelection() : HashSet[String] = {
-		if(selection == null) {
-			selection = new HashSet();
-			selection.add(CLASSES_PROP);
+def getSelection(obj:ModelObject) : Boolean = {
+  
+		obj match {
+		  case ClassEntity() => true
+		  case _ => false
 		}
-		return selection;
 }
 
 def extract(model: ModelObject): Analysis = { 
 		analysis = new InheritanceAnalysis();
-		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection()));
+		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection));
 		analysis.clean();
 		return analysis;
 }

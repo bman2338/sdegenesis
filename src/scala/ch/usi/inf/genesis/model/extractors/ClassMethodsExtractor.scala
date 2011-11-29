@@ -6,34 +6,37 @@ import ch.usi.inf.genesis.model.navigation.NavigatorOption._
 import ch.usi.inf.genesis.model.navigation._
 import scala.collection.mutable.HashSet
 import ch.usi.inf.genesis.model.core.FAMIX._
+import ch.usi.inf.genesis.model.core.famix.FamixObject
+import ch.usi.inf.genesis.model.core.famix.ClassEntity
 
 class ClassMethodsExtractor extends ModelVisitor {
-	var selection: HashSet[String] = null;
+	//var selection: HashSet[String] = null;
 	var classes: HashSet[String] = null;
 	var str : String = "";
 
+  	classes = new HashSet();
+	classes.add("'BugzillaXMLParser'");
+	classes.add("'BugTrackerCrawler'");
+	classes.add("'JiraCrawler'");
+	classes.add("'BugTrackerUser'");
+	classes.add("'LanguageFactory'");
+	classes.add("'Environment'");
+	classes.add("'BugzillaCrawler'");
+	
 def extract(model: ModelObject) : String = {
 		str = "{ \"name\": \"" + model.getName() + "\", \"children\": [";
-		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection()));
+		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection));
 		str += "]}";
 		str = str.replace("'", "");
 		str;
 }
 
-def getSelection() : HashSet[String] = {
-		if(selection == null) {
-			selection = new HashSet();
-			selection.add(CLASSES_PROP);
-			classes = new HashSet();
-			classes.add("'BugzillaXMLParser'");
-			classes.add("'BugTrackerCrawler'");
-			classes.add("'JiraCrawler'");
-			classes.add("'BugTrackerUser'");
-			classes.add("'LanguageFactory'");
-			classes.add("'Environment'");
-			classes.add("'BugzillaCrawler'");
-		}
-		return selection;
+def getSelection(obj:ModelObject) : Boolean = {
+  
+  obj match {
+    case ClassEntity() => true
+    case _ => false
+  }
 }
 
 def visit(obj: ModelObject): NavigatorOption = {

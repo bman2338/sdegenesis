@@ -9,15 +9,15 @@ import ch.usi.inf.genesis.model.core.IdFactory
 
 class BreadthFirstNavigator extends Navigator {
 
-	protected override def walk(modelObject: ModelObject, visitor: ModelVisitor, selection: Option[HashSet[String]]): NavigatorOption = {
+	protected override def walk(modelObject: ModelObject, visitor: ModelVisitor, selectionFunction: Option[ModelObject => Boolean]): NavigatorOption = {
 			val visited: HashSet[Int] = new HashSet();
-			selection match {
-				case Some(selection) => walkAux(modelObject, visitor, visited, selection)
-				case None => walkAux(modelObject, visitor, visited)
+			selectionFunction match {
+				case Some(func) => walkAux(modelObject, visitor, visited, func)
+				case None => walkAux(modelObject, visitor, visited, ((obj) => true))
 			}
 	}
 
-	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int], selection: HashSet[String]) : NavigatorOption = 
+	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int], selectionFunction: ModelObject => Boolean) : NavigatorOption = 
 	{
 
 			visited.add(modelObject.getId());
@@ -38,11 +38,10 @@ class BreadthFirstNavigator extends Navigator {
 
 			while (!queue.isEmpty) {
 				val current = queue.dequeue();
-				current.properties.foreach(pair => {
-					var skip = false;
-					if(!selection.contains(pair._1)) 
+				var skip = false;
+				if(!selectionFunction(current)) 
 					  skip = true;
-
+				current.properties.foreach(pair => {
 					val list = pair._2;
 					list.foreach(child => {
 						if(!visited.contains(child.getId())) {
@@ -68,47 +67,4 @@ class BreadthFirstNavigator extends Navigator {
 			}
 			STOP
 		}
-
-	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int]) : NavigatorOption = {
-
-			visited.add(modelObject.getId());
-
-			var opt = CONTINUE;
-			if(!hasToIgnore(modelObject)) {
-				opt = modelObject.accept(visitor);
-			}
-
-			opt match {
-			case STOP => return STOP
-			case SKIP_SUBTREE => return STOP
-			case CONTINUE =>
-			}
-
-			val queue = new Queue[ModelObject]()
-					queue.enqueue(modelObject);
-
-			while (!queue.isEmpty) {
-				val current = queue.dequeue();
-				
-				current.properties.foreach(pair => {
-					val list = pair._2;
-					list.foreach(child => {
-						if(!visited.contains(child.getId())) {
-							visited.add(current.getId());
-							opt = CONTINUE;
-							if(!hasToIgnore(child)) {
-								opt = child.accept(visitor);
-							}			
-							opt  match {
-							case CONTINUE => queue.enqueue(child);
-							case STOP => return STOP;
-							case SKIP_SUBTREE =>
-							} 
-						}
-					})
-				})
-			}
-			STOP
-	}
-
 }
