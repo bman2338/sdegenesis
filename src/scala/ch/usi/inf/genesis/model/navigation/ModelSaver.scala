@@ -23,7 +23,8 @@ class ModelSaver extends ModelVisitor {
   
   def visit(obj: ModelObject): NavigatorOption = {
 		  obj match  {
-		    case NamespaceEntity() => {
+			//save packages
+		    case NamespaceEntity(ns) => {
 		      var parentPackage = "";
 		      var owner = "";
 		      var rev = 0;
@@ -36,7 +37,53 @@ class ModelSaver extends ModelVisitor {
 		      
 		      DatabaseInterface.addPackage(projectName, ns.getName(), owner, rev, parentPackage );
 		    }
-		    case _ =>
+		
+			//save classes
+			case ClassEntity(ce) => {
+				var belongsToPackage = "";
+			    var owner = "";
+			    var rev = 0;
+				
+				//package containing this class
+				ce.properties.get(CONTAINER) match {
+			        case None =>
+			        case Some(list) if(list.length > 0) => belongsToPackage = list.first.getName() 
+			    }
+			
+				//TODO owner
+			    //TODO rev
+				
+				DatabaseInterface.addClass(projectName, belongsToPackage, ce.getName(), owner, revisionNumber)
+			}
+			
+			//save methods
+			case MethodEntity(me){
+				var belongsToPackage = "";
+			    var owner = "";
+			    var rev = 0;
+				var signature = "";
+				var modifiers = "";
+				var returnType = "";
+				var className = "";
+				
+				
+				
+				DatabaseInterface.addMethod(projectName, className, me.getName(), signature, modifiers, returnType, owner, revisionNumber)
+			}
+			
+			//save attributes
+			case AttributeEntity(ae){
+				var belongsToPackage = "";
+			    var owner = "";
+			    var rev = 0;
+				var signature = "";
+				var modifiers = "";
+				var declaredType = "";
+				var className = "";
+				
+				DatabaseInterface.addAttribute(projectName, className, ae.getName(), signature, modifiers, declaredType, revisionNumber)
+			}
+		    case _ => CONTINUE
 		  }
     return CONTINUE
   }
