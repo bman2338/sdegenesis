@@ -195,7 +195,7 @@ class ModelSaver extends ModelVisitor {
 			}
 			
 			//add a bug tracker developer
-			case DeveloperEntity() => {
+			case BTDeveloperEntity() => {
 			  var btdevEmail = "";
 			  
 			  //get the class name containing this method
