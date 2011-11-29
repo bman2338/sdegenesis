@@ -4,7 +4,7 @@ import ch.usi.inf.genesis.model.core.ModelObject
 import ch.usi.inf.genesis.model.core.Project
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
 import scala.collection.mutable.HashSet
-
+import ch.usi.inf.genesis.model.core.FAMIX._
 
 
 
@@ -18,4 +18,7 @@ abstract class Navigator {
   }
   protected def walk(modelObject: ModelObject, visitor: ModelVisitor, selection: Option[HashSet[String]]) : NavigatorOption;
 	
+  protected def hasToIgnore(obj: ModelObject) : Boolean = {
+    return obj.getName().toString().startsWith(IGNORE_TYPE);
+  }
 }

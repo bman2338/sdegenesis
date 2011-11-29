@@ -14,7 +14,7 @@ object FAMIX extends Enumeration {
 	
 
 	val PARENTTYPE = "parentType";
-	val IGNORE_TYPE = "'_unknown_type'";
+	val IGNORE_TYPE = "'_unknown_";
 	
 	val SENDER = "sender";
 	val RECEIVER = "receiver";
@@ -63,7 +63,6 @@ object FAMIX extends Enumeration {
 	val REVISION_DATE_PROP = "TODO" //TODO
 	val REVISION_PROP = "TODO" //TODO
 	val OWNER_PROP = "TODO" //TODO
-	
 	
 	
 }
