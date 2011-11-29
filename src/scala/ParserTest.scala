@@ -5,6 +5,7 @@ import ch.usi.inf.genesis.model.core.FAMIX._
 import scala.collection.mutable.HashSet
 import ch.usi.inf.genesis.model.navigation.DepthFirstNavigator
 import ch.usi.inf.genesis.model.extractors._
+import ch.usi.inf.genesis.model.navigation.ModelSaver
 
 object ParserTest {
 
@@ -36,10 +37,13 @@ object ParserTest {
 					  //selection.add(METHODS_PROP); 
 					  selection.add(CLASSES_PROP); 
 					  //selection.add(ATTRIBUTES_PROP);
-					//new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
-					 //   new DepthFirstNavigator().walkModel(res, new ModelPrinter(), Some(selection))
+					//new BreadthFirstNavigator().walkModel(res, new ModelPrinter())//, Some(selection))
+					//   new DepthFirstNavigator().walkModel(res, new ModelPrinter())//, Some(selection))
 					   //println(new ClassMethodsExtractor().extract(res))
-					  println(new InheritanceExtractor().extract(res));
+					 // println(new InheritanceExtractor().extract(res));
+					 val saver = new  ModelSaver();
+					 new BreadthFirstNavigator().walkModel(res, saver, saver.getSelection());
+					  
 					}
 					  case None =>
 					}

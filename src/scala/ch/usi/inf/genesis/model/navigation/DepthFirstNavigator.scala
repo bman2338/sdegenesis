@@ -16,8 +16,8 @@ class DepthFirstNavigator extends Navigator {
 	}
 
 	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int], visit: Boolean, selection: HashSet[String]) : NavigatorOption = {
+			
 			visited.add(modelObject.getId());  
-			//the model Object will call visit on the visitor 
 
 			var opt = CONTINUE;
 			if(visit && !IGNORE_TYPE.equals(modelObject.getName())) {
@@ -34,6 +34,7 @@ class DepthFirstNavigator extends Navigator {
 							walkAux(child, visitor, visited, visitChild, selection) match {
 							case CONTINUE => CONTINUE
 							case STOP => return STOP
+							case _ => CONTINUE
 							}
 						}
 					}) 
@@ -45,8 +46,11 @@ class DepthFirstNavigator extends Navigator {
 
 			}
 
-			CONTINUE
+			return CONTINUE
 	}
+	
+	
+	
 
 	private def walkAux(modelObject: ModelObject, visitor: ModelVisitor, visited: HashSet[Int]) : NavigatorOption = {
 			visited.add(modelObject.getId());  
@@ -65,7 +69,7 @@ class DepthFirstNavigator extends Navigator {
 						if(!visited.contains(child.getId())) {
 							walkAux(child, visitor, visited) match {
 							case CONTINUE =>
-							case STOP => return CONTINUE
+							case STOP => return STOP
 							}
 						}
 					}) 
@@ -77,7 +81,7 @@ class DepthFirstNavigator extends Navigator {
 
 			}
 
-			CONTINUE
+			return CONTINUE
 	}
 
 
