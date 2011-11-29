@@ -33,22 +33,13 @@ class ModelSaver extends ModelVisitor {
 		      var rev = 0;
 		      
 		      //package containing this package
-		      obj.properties.get(PARENT_PACKAGE) match {
-		        case None =>
-		        case Some(list) if(list.length > 0) => parentPackage = list.first.getName() 
-		      }
+		      parentPackage = obj.getProperty(PARENT_PACKAGE);
 		      
 		      //get the revision number
-		      obj.properties.get(REVISION_PROP) match {
-		        case None =>
-		        case Some(list) if(list.length > 0) => rev = list.first.getName()
-		      }
+		      rev = obj.getProperty(REVISION_PROP);
 		      
 		      //get the owner
-		      obj.properties.get(OWNER_PROP) match {
-		        case None =>
-		        case Some(list) if(list.length > 0) => owner = list.first.getName() 
-		      }
+		      owner = obj.getProperty(OWNER_PROP);
 		      
 		      //DatabaseInterface.addPackage(projectName, obj.getName(), owner, rev, parentPackage );
 		    }
@@ -60,31 +51,21 @@ class ModelSaver extends ModelVisitor {
 			    var rev = 0;
 				
 				//package containing this class
-				obj.properties.get(CONTAINER) match {
-			        case None =>
-			        case Some(list) if(list.length > 0) => belongsToPackage = list.first.getName() 
-			    }
+				belongsToPackage = obj.getProperty(CONTAINER);
 			
 				//get the revision number
-				obj.properties.get(REVISION_PROP) match {
-		        	case None =>
-		        	case Some(list) if(list.length > 0) => rev = list.first.getName() 
-				}
+				rev = obj.getProperty(REVISION_PROP);
 		      
-		      //get the owner
-		      obj.properties.get(OWNER_PROP) match {
-		        case None =>
-		        case Some(list) if(list.length > 0) => owner = list.first.getName() 
-		      }
+				//get the owner
+				owner = obj.getProperty(OWNER_PROP);
 				
 				//DatabaseInterface.addClass(projectName, belongsToPackage, obj.getName(), owner, revisionNumber)
 			
 				//now save the inheritance
-				obj.properties.get() match {
-					case None => 
-					case Some(list) => 
-						
-						//DatabaseInterface.addInheritance(projectName, obj.getName(), String subclass, versionNumber)
+				var superclasses = obj.getProperty(SUBCLASS_PROP); //on FAMIX.scala it's written "subclassOf"
+				
+				for(superclass <- superclasses){
+					//DatabaseInterface.addInheritance(projectName, superclass, obj.getName(), versionNumber)
 				}
 			}
 			
@@ -99,40 +80,22 @@ class ModelSaver extends ModelVisitor {
 				var className = "";
 				
 				//get the revision number
-				obj.properties.get(REVISION_PROP) match {
-		        	case None =>
-		        	case Some(list) if(list.length > 0) => rev = list.first.getName() 
-				}
+				rev = obj.getProperty(REVISION_PROP);
 		      
 				//get the owner
-				obj.properties.get(OWNER_PROP) match {
-		        	case None =>
-		        	case Some(list) if(list.length > 0) => owner = list.first.getName() 
-				}
+				owner = obj.getProperty(OWNER_PROP);
 				
 				//get the signature
-				obj.properties.get(SIGNATURE_PROP) match {
-			        case None =>
-			        case Some(list) if(list.length > 0) => signature = list.first.getName() 
-			    }
+				signature = obj.getProperty(SIGNATURE_PROP);
 				
 				//get the modifiers
-				obj.properties.get(MODIFIERS_PROP) match {
-			        case None =>
-			        case Some(list) if(list.length > 0) => modifiers = list.first.getName() 
-			    }
+				modifiers = obj.getProperty(MODIFIERS_PROP);
 				
 				//get the return type
-				obj.properties.get(DECLARED_TYPE_PROP) match {
-			        case None =>
-			        case Some(list) if(list.length > 0) => returnType = list.first.getName() 
-			    }
+				returnType = obj.getPropert(DECLARED_TYPE_PROP);
 				
 				//get the class name containing this method
-				obj.properties.get(PARENT_TYPE_PROP) match {
-			        case None =>
-			        case Some(list) if(list.length > 0) => className = list.first.getName() 
-			    }
+				className = obj.properties.get(PARENT_TYPE_PROP);
 				
 				//DatabaseInterface.addMethod(projectName, className, obj.getName(), signature, modifiers, returnType, owner, revisionNumber)
 			
@@ -151,40 +114,22 @@ class ModelSaver extends ModelVisitor {
 				var className = "";
 				
 				//get the revision number
-				obj.properties.get(REVISION_PROP) match {
-					case None =>
-					case Some(list) if(list.length > 0) => rev = list.first.getName() 
-				}
+				rev = obj.getProperty(REVISION_PROP);
 		      
 				//get the owner
-				obj.properties.get(OWNER_PROP) match {
-		        	case None =>
-		        	case Some(list) if(list.length > 0) => owner = list.first.getName() 
-				}
+				owner = obj.getProperty(OWNER_PROP);
 				
 				//get the signature
-				obj.properties.get(SIGNATURE_PROP) match {
-			        case None =>
-			        case Some(list) if(list.length > 0) => signature = list.first.getName() 
-			    }
+				signature = obj.getProperty(SIGNATURE_PROP);
 				
 				//get the modifiers
-				obj.properties.get(MODIFIERS_PROP) match {
-			        case None =>
-			        case Some(list) if(list.length > 0) => modifiers = list.first.getName() 
-			    }
+				modifiers = obj.getProperty(MODIFIERS_PROP);
 				
 				//get the return type
-				obj.properties.get(DECLARED_TYPE_PROP) match {
-			        case None =>
-			        case Some(list) if(list.length > 0) => declaredType = list.first.getName() 
-			    }
+				returnType = obj.getPropert(DECLARED_TYPE_PROP);
 				
 				//get the class name containing this method
-				obj.properties.get(PARENT_TYPE_PROP) match {
-			        case None =>
-			        case Some(list) if(list.length > 0) => className = list.first.getName() 
-			    }
+				className = obj.properties.get(PARENT_TYPE_PROP);
 				
 				//DatabaseInterface.addAttribute(projectName, className, obj.getName(), signature, modifiers, declaredType, revisionNumber)
 			}
@@ -199,10 +144,7 @@ class ModelSaver extends ModelVisitor {
 			  var btdevEmail = "";
 			  
 			  //get the class name containing this method
-			  obj.properties.get(BTDEVELOPER_EMAIL_PROP) match {
-			      case None =>
-			      case Some(list) if(list.length > 0) => btdevEmail = list.first.getName() 
-			  }
+			  btdevEmail = obj.properties.get(BTDEVELOPER_EMAIL_PROP);
 			  
 			  //DatabaseInterface.addDeveloper(obj.getName(), btdevEmail);
 			}
@@ -214,22 +156,13 @@ class ModelSaver extends ModelVisitor {
 			  var assignee = "";
 			  
 			  //get the description of the bug
-			  obj.properties.get(BUG_DESCRIPTION_PROP) match {
-			      case None =>
-			      case Some(list) if(list.length > 0) => desc = list.first.getName() 
-			  }
+			  desc = obj.properties.get(BUG_DESCRIPTION_PROP);
 			  
 			  //get the bug status
-			  obj.properties.get(BUG_STATUS_PROP) match {
-			      case None =>
-			      case Some(list) if(list.length > 0) => status = list.first.getName() 
-			  }
+			  status = obj.properties.get(BUG_STATUS_PROP);
 			  
 			  //get the current assignee
-			  obj.properties.get(BUG_ASSIGNEE_PROP) match {
-			      case None =>
-			      case Some(list) if(list.length > 0) => assignee = list.first.getName() 
-			  }
+			  assignee = obj.properties.get(BUG_ASSIGNEE_PROP);
 			  
 			  //DatabaseInterface.addBug(projectName, obj.getName(), desc, status, assignee)
 			  
@@ -250,28 +183,16 @@ class ModelSaver extends ModelVisitor {
 			  var date = "";
 			  
 			  //get the comment of the revision
-			  obj.properties.get(REVISION_COMMENT_PROP) match {
-			      case None =>
-			      case Some(list) if(list.length > 0) => comment = list.first.getName() 
-			  }
+			  comment = obj.properties.get(REVISION_COMMENT_PROP);
 			  
 			  //get the developer that committed the revision
-			  obj.properties.get(REVISION_DEVELOPER_PROP) match {
-			      case None =>
-			      case Some(list) if(list.length > 0) => dev = list.first.getName() 
-			  }
+			  dev = obj.properties.get(REVISION_DEVELOPER_PROP);
 			  
 			  //get the date of the commit
-			  obj.properties.get(REVISION_DATE_PROP) match {
-			      case None =>
-			      case Some(list) if(list.length > 0) => date = list.first.getName() 
-			  }
+			  date = obj.properties.get(REVISION_DATE_PROP);
 			  
 			  //get the revision number
-		      obj.properties.get(REVISION_PROP) match {
-		        case None =>
-		        case Some(list) if(list.length > 0) => rev = list.first.getName() 
-		      }
+		      rev = obj.properties.get(REVISION_PROP);
 			  
 			  //DatabaseInterface.addRevision(projectName, comment, rev, dev, date)
 			}
@@ -284,10 +205,7 @@ class ModelSaver extends ModelVisitor {
 			  var rev = 0;
 			  
 			  //get the revision number
-		      obj.properties.get(REVISION_PROP) match {
-		        case None =>
-		        case Some(list) if(list.length > 0) => rev = list.first.getName() 
-		      }
+		      rev = obj.properties.get(REVISION_PROP);
 			  
 			  //DatabaseInterface.addClassMetric(projectName, ClassName, metricName, value, rev)
 			}
@@ -300,10 +218,7 @@ class ModelSaver extends ModelVisitor {
 			  var rev = 0;
 			  
 			  //get the revision number
-		      obj.properties.get(REVISION_PROP) match {
-		        case None =>
-		        case Some(list) if(list.length > 0) => rev = list.first.getName() 
-		      }
+		      rev = obj.properties.get(REVISION_PROP);
 			  
 			  //DatabaseInterface.addClassMetric(projectName, methodName, metricName, value, rev)
 			}
