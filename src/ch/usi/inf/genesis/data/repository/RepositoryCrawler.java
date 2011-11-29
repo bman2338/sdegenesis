@@ -1,4 +1,4 @@
-package ch.usi.inf.genesis.repository;
+package ch.usi.inf.genesis.data.repository;
 
 /**
  * Parent class of all repository crawlers

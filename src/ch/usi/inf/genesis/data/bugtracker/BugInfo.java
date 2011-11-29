@@ -15,7 +15,7 @@ public class BugInfo {
 	private List<String> components;
 	private String operatingSys;
 	private String platform;
-	private String version;
+	private List<String> versions;
 	private BugTrackerUser assignee;
 	private List<BugTrackerUser> ccUsers;
 	private long watches;
@@ -33,10 +33,11 @@ public class BugInfo {
 		this.ccUsers = new ArrayList<BugTrackerUser>();
 		this.history = new ArrayList<BugHistoryEntry>();
 		this.components = new ArrayList<String>();
+		this.versions = new ArrayList<String>();
 	}
 
 	public BugInfo(final String id,final String status,final String resolution, final String summary, final String product, 
-			final List<String> component, final String opertatingSys, final String platform, final String version, final BugTrackerUser assignee,
+			final List<String> component, final String opertatingSys, final String platform, final List<String> versions, final BugTrackerUser assignee,
 			final long watches, final BugTrackerUser reporter, final List<BugTrackerUser> ccUsers, final String uri,
 			final Date creationDate, final Date updateDate, final String priority, final String severity,
 			final long votes) {
@@ -57,7 +58,7 @@ public class BugInfo {
 		this.history = new ArrayList<BugHistoryEntry>();
 		this.project = product;
 		this.components = component;
-		this.version = version;
+		this.versions = versions;
 		this.operatingSys = opertatingSys;
 		this.platform = platform;
 	}
@@ -206,12 +207,16 @@ public class BugInfo {
 		this.platform = platform;
 	}
 
-	public String getVersion() {
-		return version;
+	public List<String> getVersions() {
+		return versions;
 	}
 
-	public void setVersion(final String version) {
-		this.version = version;
+	public void setVersions(final List<String> versions) {
+		this.versions = versions;
+	}
+	
+	public void addVersion(final String version){
+		this.versions.add(version);
 	}
 
 	public long getWatches() {

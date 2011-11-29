@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +37,9 @@ public class BugzillaCrawler implements IBugTrackerCrawler{
 	 */
 	private List<Integer> retrieveBugList(final String product, final String component) throws MalformedURLException, IOException{
 		//Format Parameters String
-		final String formattedProduct = product.replaceAll(" ", "%20");
-		final String formattedComponent = component.replaceAll(" ", "%20");
+		final String formattedProduct = URLEncoder.encode(product, "UTF-8");//product.replaceAll(" ", "%20");
+		final String formattedComponent = URLEncoder.encode(component, "UTF-8");//component.replaceAll(" ", "%20");
+		
 		final String csvBugListParams = String.format("buglist.cgi?ctype=csv&query_format=advanced&order=bug_id&product=%s&component=%s", formattedProduct,formattedComponent);
 		final String url = bugzillaURL.toString();
 		final List<Integer> bugIdList = new ArrayList<Integer>();

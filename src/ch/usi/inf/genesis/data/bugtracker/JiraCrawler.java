@@ -17,6 +17,7 @@ import com.atlassian.jira.rest.client.domain.BasicUser;
 import com.atlassian.jira.rest.client.domain.Issue;
 import com.atlassian.jira.rest.client.domain.SearchResult;
 import com.atlassian.jira.rest.client.domain.User;
+import com.atlassian.jira.rest.client.domain.Version;
 import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory;
 
 
@@ -125,13 +126,18 @@ public class JiraCrawler implements IBugTrackerCrawler{
 						}
 
 
+						//extract all versions
+						final List<String> versions = new ArrayList<String>();
+						for(final Version v : issue.getAffectedVersions())
+							versions.add(v.getName());
+						
 						final String status = issue.getStatus().getName();
 						//extract all components
 						final List<String> components = new ArrayList<String>();
 						for(final BasicComponent c : issue.getComponents())
 							components.add(c.getName());
 						
-						
+
 						bugList.add(new BugInfo(
 								issue.getKey(),
 								status,
@@ -141,7 +147,7 @@ public class JiraCrawler implements IBugTrackerCrawler{
 								components,
 								"",
 								"",
-								"",
+								versions,
 								basicAssignee == null? new BugTrackerUser() : assignee,
 								issue.getWatchers().getNumWatchers(),
 								reporter == null? new BugTrackerUser(): reporter,
@@ -149,20 +155,22 @@ public class JiraCrawler implements IBugTrackerCrawler{
 								issue.getSelf().toURL().toString(),
 								issue.getCreationDate().toDate(),
 								issue.getUpdateDate().toDate(),
-								"",
+								issue.getPriority().getName(),
 								"",
 								issue.getVotes().getVotes()
 								));
 					}
 					catch (final RestClientException rex){
-						System.out.println(i.getKey()+":  " + rex.getErrorMessages());
+						System.out.println(i.getKey()+":  " + rex);
 					}
-					catch(final MalformedURLException e){}
+					catch(final MalformedURLException e){
+						System.out.println(e);
+					}
 				}
 				windowStart = windowEnd+1;
 				windowEnd += step;
 			}catch (final RestClientException rex){
-				System.out.println(rex.getErrorMessages());
+				System.out.println(rex);
 			}
 		}
 		while(result != null && result.getIssues().iterator().hasNext());
@@ -179,8 +187,7 @@ public class JiraCrawler implements IBugTrackerCrawler{
 	public URL getURL(){
 		try {
 			return this.jiraServerUri.toURL();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 		}
 		return null;
