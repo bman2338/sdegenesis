@@ -37,8 +37,18 @@ class ModelSaver extends ModelVisitor {
 		        case None =>
 		        case Some(list) if(list.length > 0) => parentPackage = list.first.getName() 
 		      }
-		      //TODO owner
-		      //TODO rev
+		      
+		      //get the revision number
+		      obj.properties.get(REVISION_PROP) match {
+		        case None =>
+		        case Some(list) if(list.length > 0) => rev = list.first.getName() 
+		      }
+		      
+		      //get the owner
+		      obj.properties.get(OWNER_PROP) match {
+		        case None =>
+		        case Some(list) if(list.length > 0) => owner = list.first.getName() 
+		      }
 		      
 		      //DatabaseInterface.addPackage(projectName, obj.getName(), owner, rev, parentPackage );
 		    }
@@ -55,8 +65,17 @@ class ModelSaver extends ModelVisitor {
 			        case Some(list) if(list.length > 0) => belongsToPackage = list.first.getName() 
 			    }
 			
-				//TODO owner
-			    //TODO rev
+				//get the revision number
+				obj.properties.get(REVISION_PROP) match {
+		        	case None =>
+		        	case Some(list) if(list.length > 0) => rev = list.first.getName() 
+				}
+		      
+		      //get the owner
+		      obj.properties.get(OWNER_PROP) match {
+		        case None =>
+		        case Some(list) if(list.length > 0) => owner = list.first.getName() 
+		      }
 				
 				//DatabaseInterface.addClass(projectName, belongsToPackage, obj.getName(), owner, revisionNumber)
 			
@@ -79,8 +98,17 @@ class ModelSaver extends ModelVisitor {
 				var returnType = "";
 				var className = "";
 				
-				//TODO owner
-			    //TODO rev
+				//get the revision number
+				obj.properties.get(REVISION_PROP) match {
+		        	case None =>
+		        	case Some(list) if(list.length > 0) => rev = list.first.getName() 
+				}
+		      
+				//get the owner
+				obj.properties.get(OWNER_PROP) match {
+		        	case None =>
+		        	case Some(list) if(list.length > 0) => owner = list.first.getName() 
+				}
 				
 				//get the signature
 				obj.properties.get(SIGNATURE_PROP) match {
@@ -122,8 +150,17 @@ class ModelSaver extends ModelVisitor {
 				var declaredType = "";
 				var className = "";
 				
-				//TODO owner
-			    //TODO rev
+				//get the revision number
+				obj.properties.get(REVISION_PROP) match {
+					case None =>
+					case Some(list) if(list.length > 0) => rev = list.first.getName() 
+				}
+		      
+				//get the owner
+				obj.properties.get(OWNER_PROP) match {
+		        	case None =>
+		        	case Some(list) if(list.length > 0) => owner = list.first.getName() 
+				}
 				
 				//get the signature
 				obj.properties.get(SIGNATURE_PROP) match {
@@ -208,7 +245,7 @@ class ModelSaver extends ModelVisitor {
 			//add a revision
 			case RevisionEntity() => {
 			  var comment = "";
-			  var revisionNumber = 0;
+			  var rev = 0;
 			  var dev = "";
 			  var date = "";
 			  
@@ -230,9 +267,13 @@ class ModelSaver extends ModelVisitor {
 			      case Some(list) if(list.length > 0) => date = list.first.getName() 
 			  }
 			  
-			  //TODO rev
+			  //get the revision number
+		      obj.properties.get(REVISION_PROP) match {
+		        case None =>
+		        case Some(list) if(list.length > 0) => rev = list.first.getName() 
+		      }
 			  
-			  //DatabaseInterface.addRevision(projectName, comment, revisionNumber, dev, date)
+			  //DatabaseInterface.addRevision(projectName, comment, rev, dev, date)
 			}
 			
 			//add a class metric
@@ -240,11 +281,15 @@ class ModelSaver extends ModelVisitor {
 			  var ClassName = "";
 			  var metricName = "";
 			  var value = 0;
-			  var revisionNumber = 0;
+			  var rev = 0;
 			  
-			  //TODO rev
+			  //get the revision number
+		      obj.properties.get(REVISION_PROP) match {
+		        case None =>
+		        case Some(list) if(list.length > 0) => rev = list.first.getName() 
+		      }
 			  
-			  //DatabaseInterface.addClassMetric(projectName, ClassName, metricName, value, revisionNumber)
+			  //DatabaseInterface.addClassMetric(projectName, ClassName, metricName, value, rev)
 			}
 			
 			//add a class metric
@@ -252,11 +297,15 @@ class ModelSaver extends ModelVisitor {
 			  var methodName = "";
 			  var metricName = "";
 			  var value = 0;
-			  var revisionNumber = 0;
+			  var rev = 0;
 			  
-			  //TODO rev
+			  //get the revision number
+		      obj.properties.get(REVISION_PROP) match {
+		        case None =>
+		        case Some(list) if(list.length > 0) => rev = list.first.getName() 
+		      }
 			  
-			  //DatabaseInterface.addClassMetric(projectName, methodName, metricName, value, revisionNumber)
+			  //DatabaseInterface.addClassMetric(projectName, methodName, metricName, value, rev)
 			}
 			
 		    case _ => CONTINUE
