@@ -39,13 +39,6 @@ abstract class ModelObject {
       }
     } 
   }
- override def toString = {
-	/*properties.foreach((pair) => { 
-	  print((pair._1.toString) + "") 
-	  pair._2.foreach ((el) => println(el))
-	})*/
-   	super.toString()
-  }
  def accept(visitor: ModelVisitor) : NavigatorOption = {
    return visitor.visit(this);
  }
@@ -60,6 +53,13 @@ abstract class ModelObject {
      }
      case _ => ""
    }
+ }
+ 
+ def getProperties (key :String) = properties.get(key);
+ 
+ def getProperty (key : String) = properties.get(key) match {
+   case Some(xs) if !xs.isEmpty => xs.first 
+   case None => None
  }
  
  def getUniqueIdentifier (parentIdentifier : String) = {
