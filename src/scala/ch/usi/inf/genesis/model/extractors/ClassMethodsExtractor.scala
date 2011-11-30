@@ -9,7 +9,7 @@ import ch.usi.inf.genesis.model.core.FAMIX._
 import ch.usi.inf.genesis.model.core.famix.FamixObject
 import ch.usi.inf.genesis.model.core.famix.ClassEntity
 
-class ClassMethodsExtractor extends ModelVisitor {
+class ClassMethodsExtractor extends Extractor {
 	//var selection: HashSet[String] = null;
 	var classes: HashSet[String] = null;
 	var str : String = "";
@@ -23,12 +23,12 @@ class ClassMethodsExtractor extends ModelVisitor {
 	classes.add("'Environment'");
 	classes.add("'BugzillaCrawler'");
 	
-def extract(model: ModelObject) : String = {
-		str = "{ \"name\": \"" + model.getName() + "\", \"children\": [";
+def extract(model: ModelObject) : Analysis = {
+		str = "function data() { var json = { \"name\": \"" + model.getName() + "\", \"children\": [";
 		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection));
-		str += "]}";
+		str += "]}; return json; }";
 		str = str.replace("'", "");
-		str;
+		new StringAnalysis(str);
 }
 
 def getSelection(obj:ModelObject) : Boolean = {
@@ -40,8 +40,8 @@ def getSelection(obj:ModelObject) : Boolean = {
 }
 
 def visit(obj: ModelObject): NavigatorOption = {
-		if(!classes.contains(obj.getName()))
-		  return CONTINUE;
+//		if(!classes.contains(obj.getName()))
+//		  return CONTINUE;
   
 		val name = obj.getName();
 		

@@ -176,6 +176,14 @@ function sunburst () {
 }
 
 
+function methods() {
+d3.select("#methods").html("");
+var json = data().children;
+
+
+
+}
+
 
 function tree() {
     d3.select("#chart").html("");
@@ -199,7 +207,7 @@ function tree() {
 		.attr("width", r*3)
 		.attr("height", r*3 - 150)
 		.append("svg:g")
-		.attr("transform", "translate(" + (r + 50)+ "," + (r + 50) + ")");
+		.attr("transform", "translate(" + (r )+ "," + (r ) + ")");
 
 		var nodes = tree.nodes(json);
 		var link = vis.selectAll("path.link")
