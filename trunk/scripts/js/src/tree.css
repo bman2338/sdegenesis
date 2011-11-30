@@ -7,6 +7,11 @@ body {
  font-family: Arial, Helvetica, sans-serif;
 }
 
+.Menu li {
+ display:inline;
+ margin: 20px;
+}
+
 .node circle {
   fill: #fff;
   stroke: steelblue;
@@ -17,7 +22,13 @@ body {
   font: 9px sans-serif;
 }
 
+::-webkit-scrollbar {
+    width: 13px;
+    height: 10px;
+}
+
 .node text {
+    font-size:20px;
     stroke: #999;
     stroke-width: 0.2px;
 }
@@ -34,6 +45,7 @@ body {
     stroke: steelblue;
      stroke-width: 2.5px;
      z-index:10;
+     cursor: pointer;
 }
 
 .Root {
@@ -41,16 +53,17 @@ body {
     stroke: steelblue;
      stroke-width: 2.5px;
      z-index:10;
+     cursor: pointer;
 
 }
 
 .Branch text, .Root text {
-    
+    font-size:28px;
     stroke-width: 1.5px;
 }
 
 .Root text {
-stroke: #6A85C2;
+    stroke: #6A85C2;
 }
 
 .link {
@@ -66,7 +79,7 @@ stroke: #6A85C2;
 }
 
 .Block {
-display:block
+    display:block
 
 }
 
@@ -75,11 +88,11 @@ display:block
 }
 
 .Right {
-float:right;
-clear:both;
-left: 280px;
-position: absolute;
-overflow:visible;
+    float:right;
+    clear:both;
+    left: 280px;
+    position: absolute;
+    overflow:visible;
 }
 
 .List {
@@ -98,7 +111,7 @@ overflow:visible;
 
 
 .List li:visited {
- color: #995;
+    color: #995;
 }
 
 .List li { 
