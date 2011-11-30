@@ -7,16 +7,31 @@ d3.select(rootsTarget).html("");
 var json = data4().children;
 var el = d3.select(rootsTarget);
 
+json = json.sort(function(a, b) {
+if(b.children) {
+    if(a.children) {
+        return b.children.length - a.children.length;
+        } else { return 1 };
+    }
+    else {
+        return -1;
+    }
+});
+
+el = el.append("list");
 jQuery.each(json, function() {
     var that = this;
-    //if(that.children.length > 0)
-    el.append("div").html(that.name).on("click", 
-    function(ev) { 
+    var callback = function(ev) { 
         tree(that, target) 
-        //alert(that.children);
-    });
+    };
+    
+    el.append("li").html("a").html(that.name).on("click", 
+    callback
+    );//.on("mouseover", callback);
 
 });
+tree(json[0], target);
+
 }
 
 function tree(root, target) {
@@ -26,7 +41,7 @@ function tree(root, target) {
 	
 //	function(json) {
     
-		var r = 960/2;
+		var r = 720/2;
 		var tree = d3.layout.tree()
 		.size([360, r - 120])
 		.separation(function(a,b) { return (a.parent == b.parent ? 1: 2)/a.depth });
