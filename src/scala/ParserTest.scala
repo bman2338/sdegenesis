@@ -35,17 +35,17 @@ object ParserTest {
 					  case Some(res) =>  {
 					    
 					    
-					  new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), 
-					 //new DepthFirstNavigator().walkModel(res, new ModelPrinter(), 
-					     Some((obj) => {
-					   obj match {
-					     case ClassEntity() => true
-					     case _ => false
-					   }}))
-					  // println(new ClassMethodsExtractor().extract(res))
+//					  new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), 
+//					 //new DepthFirstNavigator().walkModel(res, new ModelPrinter(), 
+//					     Some((obj) => {
+//					   obj match {
+//					     case ClassEntity() => true
+//					     case _ => false
+//					   }}))
+					   println(new ClassMethodsExtractor().extract(res))
 					  //println(new InheritanceExtractor().extract(res));
 					 //val saver = new  ModelSaver();
-//					 new BreadthFirstNavigator().walkModel(res, saver, saver.getSelection());
+					   //new BreadthFirstNavigator().walkModel(res, saver, saver.getSelection());
 					  
 					}
 					  case None =>

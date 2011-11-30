@@ -27,7 +27,6 @@ class DepthFirstNavigator extends Navigator {
 
 			opt match {
 			case CONTINUE =>  {
-			  	val visitChild : Boolean = selectionFunction(modelObject);
 				modelObject.properties.foreach((pair) => {
 					val list = pair._2;
 
