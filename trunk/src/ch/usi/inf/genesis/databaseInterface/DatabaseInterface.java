@@ -1,73 +1,72 @@
-package ch.usi.inf.genesis.databaseInterface;
-
 import java.sql.*;
 import javax.sql.*;
 
 public class DatabaseInterface{
-
+    
 	static String dbtime;
 	static String dbUrl = "jdbc:mysql://127.0.0.1/Genesis_db";
 	String dbClass = "com.mysql.jdbc.Driver";
+	final static String username = "root";
+	final static String pass = "";
 	static String query = "INSERT INTO Developers (name) VALUES ('Dev1');";
-
-
+    
+    
 	public static void main(String args[]){
 		try {
-			System.out.println(1 << 3);
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			//stmt.executeUpdate(query);
-
+            
 			/*while (rs.next()) {
-				dbtime = rs.getString(1);
-				System.out.println(dbtime);
-			} //end while */
-
+             dbtime = rs.getString(1);
+             System.out.println(dbtime);
+             } //end while */
+            
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
-
+        
 		/*addDeveloper("Dev1");
-		addProject("ArgoUML", "Java");
-		addPackage("ArgoUML", "ch", "Dev1", 1);
-		addPackage("ArgoUML", "ch", "Dev1", 3);
-		addPackage("ArgoUML", "inf", "Dev1", 2, "ch");
-		addClass("ArgoUML", "ch", "Main", "Dev1", 2);
-		addClass("ArgoUML", "ch", "Main", "Dev1", 6);
-		addMethod("ArgoUML", "Main", "main", "main(String[] args)", "public static", "void", "Dev1", 4);
-		addAttribute("ArgoUML", "Main", "index", "index = 0", "public static", "int", 3);
-		addDeveloper("Dev2");
-		addBugTrackerDeveloper("Dev11", "dev11@lol.com");
-		addBugTrackerDeveloper("Dev22", "dev22@lol.com");
-		addBug("ArgoUML", "a strange bug", "a bug happens when opening the program", "assigned", "Dev11");
-		addBugTrackerHistory("ArgoUML", "a strange bug", "Dev22");
-		
-		java.util.Date javaDate = new java.util.Date();
-		long javaTime = javaDate.getTime();
-		java.sql.Date sqlDate = new java.sql.Date(javaTime);
-	    addRevision("ArgoUML", "added the project", 1, "Dev1", sqlDate.toString()); 
-	    
-		addClass("ArgoUML", "inf", "SubMain", "Dev1", 5);
-		addInheritance("ArgoUML", "Main", "SubMain", 5); 
-		addMethodMetric("ArgoUML", "main", "loc", 30, 4);
-		addClassMetric("ArgoUML", "Main", "loc", 50, 6);
-		addMethod("ArgoUML", "Main", "secondMain", "main(String[] args)", "public static", "void", "Dev1", 4);
-		addMethod("ArgoUML", "Main", "thirdMain", "main(String[] args)", "public static", "void", "Dev1", 4);
-		String[] cand = new String[1];
-		cand[0] = "secondMain";
-		addInvocation("ArgoUML", "main", "thirdMain", cand, 4); */
-
+         addProject("ArgoUML", "Java");
+         addPackage("ArgoUML", "ch", "Dev1", 1);
+         addPackage("ArgoUML", "ch", "Dev1", 3);
+         addPackage("ArgoUML", "inf", "Dev1", 2, "ch");
+         addClass("ArgoUML", "ch", "Main", "Dev1", 2);
+         addClass("ArgoUML", "ch", "Main", "Dev1", 6);
+         addMethod("ArgoUML", "Main", "main", "main(String[] args)", "public static", "void", "Dev1", 4);
+         addAttribute("ArgoUML", "Main", "index", "index = 0", "public static", "int", 3);
+         addDeveloper("Dev2");
+         addBugTrackerDeveloper("Dev11", "dev11@lol.com");
+         addBugTrackerDeveloper("Dev22", "dev22@lol.com");
+         addBug("ArgoUML", "a strange bug", "a bug happens when opening the program", "assigned", "Dev11");
+         addBugTrackerHistory("ArgoUML", "a strange bug", "Dev22");
+         
+         java.util.Date javaDate = new java.util.Date();
+         long javaTime = javaDate.getTime();
+         java.sql.Date sqlDate = new java.sql.Date(javaTime);
+         addRevision("ArgoUML", "added the project", 1, "Dev1", sqlDate.toString()); 
+         
+         addClass("ArgoUML", "inf", "SubMain", "Dev1", 5);
+         addInheritance("ArgoUML", "Main", "SubMain", 5); 
+         addMethodMetric("ArgoUML", "main", "loc", 30, 4);
+         addClassMetric("ArgoUML", "Main", "loc", 50, 6);
+         addMethod("ArgoUML", "Main", "secondMain", "main(String[] args)", "public static", "void", "Dev1", 4);
+         addMethod("ArgoUML", "Main", "thirdMain", "main(String[] args)", "public static", "void", "Dev1", 4);
+         String[] cand = new String[1];
+         cand[0] = "secondMain";
+         addInvocation("ArgoUML", "main", "thirdMain", cand, 4);
+         addDeveloper("Dev3");*/
 		
 	}  //end main
-
+    
 	/**
 	 * Method to add a new project into the database
 	 * @param name	Name of the project
@@ -76,7 +75,7 @@ public class DatabaseInterface{
 	public static void addProject(String name, String sourceLanguage){
 		addProject(name, sourceLanguage, "");
 	}
-
+    
 	/**
 	 * Method to add a new project into the database
 	 * @param name	Name of the project
@@ -85,22 +84,22 @@ public class DatabaseInterface{
 	 */
 	public static void addProject(String name, String sourceLanguage, String sourceDialect){
 		try {
-
+            
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			String addProjectQuery = "INSERT INTO Projects (name, source_language, source_dialect) " +
-					"VALUES ('"+name+"', '"+sourceLanguage+"', '"+sourceDialect+"');";
+            "VALUES ('"+name+"', '"+sourceLanguage+"', '"+sourceDialect+"');";
 			stmt.executeUpdate(addProjectQuery);
-
+            
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -116,7 +115,7 @@ public class DatabaseInterface{
 	public static void addPackage(String projectName, String name, String owner, int revisionNumber){
 		addPackage(projectName, name, owner, revisionNumber, "");
 	}
-
+    
 	/**
 	 * Method to add a new package in the database
 	 * Be careful that the package this one belongs to (if any) should be already
@@ -129,11 +128,11 @@ public class DatabaseInterface{
 	 */
 	public static void addPackage(String projectName, String name, String owner, int revisionNumber, String belongsToPackage){
 		try {
-
+            
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			//First: get the id of the owner
 			String getOwnerQuery = "SELECT id FROM Developers WHERE name = '" + owner + "';";
 			ResultSet rs = stmt.executeQuery(getOwnerQuery);
@@ -155,13 +154,13 @@ public class DatabaseInterface{
 			//Belongs to no package, add it as it is.
 			if(belongsToPackage == ""){
 				String addPackageQuery = "INSERT INTO Packages (name, owner, revision_number, project_id) " +
-						"VALUES ('"+name+"', '"+devId+"', '"+revisionNumber+"', '"+projId+"');";
+                "VALUES ('"+name+"', '"+devId+"', '"+revisionNumber+"', '"+projId+"');";
 				stmt.executeUpdate(addPackageQuery);
 				
 				//we have just to find the id
 				//of the just inserted package
 				String getPackageJustInsertedQuery = "SELECT * FROM Packages WHERE name = '" + name + "' AND " +
-						"project_id = " + projId + " AND revision_number = " + revisionNumber;
+                "project_id = " + projId + " AND revision_number = " + revisionNumber;
 				
 				rs = stmt.executeQuery(getPackageJustInsertedQuery);
 				int justInsertedId = 0;
@@ -171,7 +170,7 @@ public class DatabaseInterface{
 				
 				//then add it to the ProjectToPackages table
 				String addToProjectToPackagesQuery = "INSERT INTO ProjectToPackages (project_id, package_id) " +
-						"VALUES ("+projId+", "+justInsertedId+");";
+                "VALUES ("+projId+", "+justInsertedId+");";
 				stmt.executeUpdate(addToProjectToPackagesQuery);
 			}
 			
@@ -179,9 +178,9 @@ public class DatabaseInterface{
 			else{
 				//get all the packages with that name
 				String getPackageIdQuery = "SELECT * FROM Packages WHERE project_id = " + projId + 
-											" AND name = '" + belongsToPackage + "';";
+                " AND name = '" + belongsToPackage + "';";
 				rs = stmt.executeQuery(getPackageIdQuery);
-
+                
 				//iterate through the results and find the appropriate one
 				//(the one with the same rev number or the closest smaller one)
 				int smallerClosest = 0;
@@ -202,14 +201,14 @@ public class DatabaseInterface{
 				
 				//Insert the current package
 				String addPackageQuery = "INSERT INTO Packages (name, owner, revision_number, project_id) " +
-						"VALUES ('"+name+"', "+devId+", "+revisionNumber+", "+projId+");";
+                "VALUES ('"+name+"', "+devId+", "+revisionNumber+", "+projId+");";
 				stmt.executeUpdate(addPackageQuery);
 				
 				//now we have to fill the table package to package
 				//we have the id of the parent package, we have just to
 				//find the id of the just inserted package
 				String getPackageJustInsertedQuery = "SELECT * FROM Packages WHERE name = '" + name + "' AND " +
-						"project_id = " + projId + " AND revision_number = " + revisionNumber;
+                "project_id = " + projId + " AND revision_number = " + revisionNumber;
 				rs = stmt.executeQuery(getPackageJustInsertedQuery);
 				
 				int justInsertedId = 0;
@@ -218,22 +217,22 @@ public class DatabaseInterface{
 				}
 				
 				String addToPackageToPackageTableQuery = "INSERT INTO PackageToPackages (parent_package, child_package) " +
-						"VALUES ("+packageBelongedId+", "+justInsertedId+");";
+                "VALUES ("+packageBelongedId+", "+justInsertedId+");";
 				stmt.executeUpdate(addToPackageToPackageTableQuery);
 			}
-
+            
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
 	}
-
+    
 	/**
 	 * Method to add classes to the database
 	 * @param projectName	The name of the project this class belongs to
@@ -250,14 +249,14 @@ public class DatabaseInterface{
 		int ownerId = getOwnerId(owner);
 		
 		try {
-
+            
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
 			
 			//first, add the class to the class table
 			String addClassQuery = "INSERT INTO Classes (name, revision_number, owner, project_id) " +
-					"VALUES ('"+name+"', '"+revisionNumber+"', '"+ownerId+"', + '"+projId+"');";
+            "VALUES ('"+name+"', '"+revisionNumber+"', '"+ownerId+"', + '"+projId+"');";
 			stmt.executeUpdate(addClassQuery);
 			
 			//if it's part of a package, add the connection to the package
@@ -266,23 +265,21 @@ public class DatabaseInterface{
 			int classId = getClassIdPreciseVersion(name, projId, revisionNumber);
 			
 			String addClassToPackageToClassesTableQuery = "INSERT INTO PackageToClasses (package_id, class_id) " +
-					"VALUES ("+packageId+", "+classId+");";
+            "VALUES ("+packageId+", "+classId+");";
 			stmt.executeUpdate(addClassToPackageToClassesTableQuery);
 			
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-
-
 	/**
 	 * Method to add methods to the database.
 	 * @param projectName	Name of the project that contains this method
@@ -298,14 +295,14 @@ public class DatabaseInterface{
 		int ownerId = getOwnerId(owner);
 		
 		try {
-
+            
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			//add method to the database
 			String addMethodQuery = "INSERT INTO Methods (name, signature, modifiers, return_type, owner, revision_number, project_id) " +
-					"VALUES ('"+name+"', '"+signature+"', '"+modifiers+"', '"+returnType+"', '"+ownerId+"', '"+revisionNumber+"', '"+projectId+"');";
+            "VALUES ('"+name+"', '"+signature+"', '"+modifiers+"', '"+returnType+"', '"+ownerId+"', '"+revisionNumber+"', '"+projectId+"');";
 			stmt.executeUpdate(addMethodQuery);
 			
 			//get the method id and the class that contains it
@@ -314,21 +311,21 @@ public class DatabaseInterface{
 			
 			//and put them into the ClassToMethods table
 			String addMethodToClassToMethodsTableQuery = "INSERT INTO ClassToMethods (class_id, method_id) " +
-					"VALUES ("+containingClassId+", "+methodId+");";
+            "VALUES ("+containingClassId+", "+methodId+");";
 			stmt.executeUpdate(addMethodToClassToMethodsTableQuery);
 			
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
 	}
-
+    
 	/**
 	 * Method to add attributes to the database.
 	 * @param projectName	The name of the project
@@ -343,14 +340,14 @@ public class DatabaseInterface{
 		int projectId = getProjectId(projectName);
 		
 		try {
-
+            
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			//add attribute to the database
 			String addAttributeQuery = "INSERT INTO Attributes (name, signature, modifiers, declared_type, revision_number, project_id) " +
-					"VALUES ('"+name+"', '"+signature+"', '"+modifiers+"', '"+declaredType+"', '"+revisionNumber+"', '"+projectId+"');";
+            "VALUES ('"+name+"', '"+signature+"', '"+modifiers+"', '"+declaredType+"', '"+revisionNumber+"', '"+projectId+"');";
 			stmt.executeUpdate(addAttributeQuery);
 			
 			//get the attribute id and the class that contains it
@@ -359,16 +356,16 @@ public class DatabaseInterface{
 			
 			//and put them into the ClassToMethods table
 			String addAttributeToClassToAttributesTableQuery = "INSERT INTO ClassToAttributes (class_id, attribute_id) " +
-					"VALUES ("+containingClassId+", "+attributeId+");";
+            "VALUES ("+containingClassId+", "+attributeId+");";
 			stmt.executeUpdate(addAttributeToClassToAttributesTableQuery);
 			
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -383,18 +380,18 @@ public class DatabaseInterface{
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			String addDeveloperQuery = "INSERT INTO Developers (name) " +
-					"VALUES ('"+name+"');";
+            "VALUES ('"+name+"');";
 			stmt.executeUpdate(addDeveloperQuery);
-
+            
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -410,18 +407,18 @@ public class DatabaseInterface{
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			String addBTDeveloperQuery = "INSERT INTO BugTrackerDevelopers (name, email) " +
-					"VALUES ('"+name+"', '"+email+"');";
+            "VALUES ('"+name+"', '"+email+"');";
 			stmt.executeUpdate(addBTDeveloperQuery);
-
+            
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -440,22 +437,22 @@ public class DatabaseInterface{
 		int assigneeId = getAssigneeId(assignee);
 		
 		try {
-
+            
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			String addBugQuery = "INSERT INTO BugTrackerInfo (name, description, belongs_to_project, status, assignee) " +
-					"VALUES ('"+name+"', '"+desc+"', '"+projectId+"', '"+status+"', '"+assigneeId+"');";
+            "VALUES ('"+name+"', '"+desc+"', '"+projectId+"', '"+status+"', '"+assigneeId+"');";
 			stmt.executeUpdate(addBugQuery);
-
+            
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -476,18 +473,18 @@ public class DatabaseInterface{
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			String addBugHistoryQuery = "INSERT INTO BugTrackerHistory (bug_id, previous_assignee) " +
-					"VALUES ('"+bugId+"', '"+previousAssigneeId+"');";
+            "VALUES ('"+bugId+"', '"+previousAssigneeId+"');";
 			stmt.executeUpdate(addBugHistoryQuery);
-
+            
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -506,22 +503,22 @@ public class DatabaseInterface{
 		int devId = getOwnerId(dev);
 		
 		try {
-
+            
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			String addBugQuery = "INSERT INTO Revisions (project_id, comment, revision_number, developer_id, revision_date) " +
-					"VALUES ('"+projId+"', '"+comment+"', '"+revision_number+"', '"+devId+"', '"+date+"');";
+            "VALUES ('"+projId+"', '"+comment+"', '"+revision_number+"', '"+devId+"', '"+date+"');";
 			stmt.executeUpdate(addBugQuery);
-
+            
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -540,22 +537,22 @@ public class DatabaseInterface{
 		int subclassId = getClassId(subclass, projId, versionNumber);
 		
 		try {
-
+            
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			String addInheritanceQuery = "INSERT INTO Inheritance (subclass, superclass, revision_number) " +
-					"VALUES ('"+subclassId+"', '"+superclassId+"', '"+versionNumber+"');";
+            "VALUES ('"+subclassId+"', '"+superclassId+"', '"+versionNumber+"');";
 			stmt.executeUpdate(addInheritanceQuery);
-
+            
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -574,22 +571,22 @@ public class DatabaseInterface{
 		int methodId = getMethodIdPreciseVersion(methodName, projId, revisionNumber);
 		
 		try {
-
+            
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			String addMethodMetricQuery = "INSERT INTO MethodMetrics (method_id, name, value, revision_number) " +
-					"VALUES ('"+methodId+"', '"+metricName+"', '"+value+"', '"+revisionNumber+"');";
+            "VALUES ('"+methodId+"', '"+metricName+"', '"+value+"', '"+revisionNumber+"');";
 			stmt.executeUpdate(addMethodMetricQuery);
-
+            
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -608,22 +605,22 @@ public class DatabaseInterface{
 		int classId = getClassIdPreciseVersion(ClassName, projId, revisionNumber);
 		
 		try {
-
+            
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
-
+            
 			String addClassMetricQuery = "INSERT INTO ClassMetrics (class_id, name, value, revision_number) " +
-					"VALUES ('"+classId+"', '"+metricName+"', '"+value+"', '"+revisionNumber+"');";
+            "VALUES ('"+classId+"', '"+metricName+"', '"+value+"', '"+revisionNumber+"');";
 			stmt.executeUpdate(addClassMetricQuery);
-
+            
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -648,7 +645,7 @@ public class DatabaseInterface{
 		}
 		
 		try {
-
+            
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection (dbUrl, "root", "");
 			Statement stmt = con.createStatement();
@@ -656,24 +653,24 @@ public class DatabaseInterface{
 			//put the invoked method in the table by adding the revision in which it has been invoked
 			//the method itself and the invoker (invoked_by)
 			String addInvocationQuery = "INSERT INTO Invocations (receiver, invoked_by, revision_number) " +
-					"VALUES ('"+receiverMethodId+"', '"+invokerId+"', '"+revisionNumber+"');";
+            "VALUES ('"+receiverMethodId+"', '"+invokerId+"', '"+revisionNumber+"');";
 			stmt.executeUpdate(addInvocationQuery);
 			
 			//now we should put the candidates invoked by the invokerId
 			String addCandidateQuery;
 			for(int i = 0; i < candidatesId.length; i++){
 				addCandidateQuery = "INSERT INTO Candidates (invoker_id, candidate, revision_number) " +
-						"VALUES ("+invokerId+", "+candidatesId[i]+", "+revisionNumber+")";
+                "VALUES ("+invokerId+", "+candidatesId[i]+", "+revisionNumber+")";
 				stmt.executeUpdate(addCandidateQuery);
 			}
 			
 			con.close();
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -701,11 +698,11 @@ public class DatabaseInterface{
 			}
 			
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -729,7 +726,7 @@ public class DatabaseInterface{
 			Statement stmt = con.createStatement();
 			
 			String getProjectIdQuery = "SELECT * FROM Packages WHERE name = '" + packageName + "' AND " +
-					"project_id = " + projectId;
+            "project_id = " + projectId;
 			ResultSet rs = stmt.executeQuery(getProjectIdQuery);
 			
 			//iterate through the results and find the appropriate one
@@ -753,11 +750,11 @@ public class DatabaseInterface{
 			packId = packageBelongedId;
 			
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -785,11 +782,11 @@ public class DatabaseInterface{
 			}
 			
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -813,7 +810,7 @@ public class DatabaseInterface{
 			Statement stmt = con.createStatement();
 			
 			String getClassIdQuery = "SELECT * FROM Classes WHERE name = '" + name + "' AND " +
-					"project_id = " + projId + " AND revision_number = " + revisionNumber;
+            "project_id = " + projId + " AND revision_number = " + revisionNumber;
 			ResultSet rs = stmt.executeQuery(getClassIdQuery);
 			
 			while (rs.next()) {
@@ -821,18 +818,18 @@ public class DatabaseInterface{
 			}
 			
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
 		
 		return classId;
 	}
-
+    
 	/**
 	 * Fetches last classId for the given revisionNumber.
 	 * Example: revision number 3, classes in the with this name: 1, 2, 5. This method returns 2.
@@ -849,7 +846,7 @@ public class DatabaseInterface{
 			Statement stmt = con.createStatement();
 			
 			String getClassesIdQuery = "SELECT * FROM Classes WHERE name = '" + name + "' AND " +
-					"project_id = " + projId;
+            "project_id = " + projId;
 			ResultSet rs = stmt.executeQuery(getClassesIdQuery);
 			
 			//iterate through the results and find the appropriate one
@@ -873,11 +870,11 @@ public class DatabaseInterface{
 			classId = classBelongedId;
 			
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -900,7 +897,7 @@ public class DatabaseInterface{
 			Statement stmt = con.createStatement();
 			
 			String getMethodIdQuery = "SELECT * FROM Methods WHERE name = '" + methodName + "' AND " +
-					"project_id = " + projId + " AND revision_number = " + revisionNumber;
+            "project_id = " + projId + " AND revision_number = " + revisionNumber;
 			ResultSet rs = stmt.executeQuery(getMethodIdQuery);
 			
 			while (rs.next()) {
@@ -908,11 +905,11 @@ public class DatabaseInterface{
 			}
 			
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -935,7 +932,7 @@ public class DatabaseInterface{
 			Statement stmt = con.createStatement();
 			
 			String getAttributeIdQuery = "SELECT * FROM Attributes WHERE name = '" + attributeName + "' AND " +
-					"project_id = " + projId + " AND revision_number = " + revisionNumber;
+            "project_id = " + projId + " AND revision_number = " + revisionNumber;
 			ResultSet rs = stmt.executeQuery(getAttributeIdQuery);
 			
 			while (rs.next()) {
@@ -943,18 +940,18 @@ public class DatabaseInterface{
 			}
 			
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
 		
 		return attributeId;
 	}
-
+    
 	/**
 	 * Returns the id of an assignee developer given its name
 	 * @param owner	The name of the assignee developer
@@ -975,11 +972,11 @@ public class DatabaseInterface{
 			}
 			
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -1001,7 +998,7 @@ public class DatabaseInterface{
 			Statement stmt = con.createStatement();
 			
 			String getBugIdQuery = "SELECT * FROM BugTrackerInfo WHERE name = '" + bugName + "' AND " +
-					"belongs_to_project = " + projId;
+            "belongs_to_project = " + projId;
 			ResultSet rs = stmt.executeQuery(getBugIdQuery);
 			
 			while (rs.next()) {
@@ -1009,11 +1006,11 @@ public class DatabaseInterface{
 			}
 			
 		} //end try
-
+        
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+        
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
