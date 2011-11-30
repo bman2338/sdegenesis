@@ -32,9 +32,9 @@ function sunburst (rawJson) {
 				}
 
 
-				var callback = function(ev) { 
+				var callback = function(ev) {
 					d3.select("#monitor").html(that.name) 
-					_sunburst(that.children, target.that.name) 
+					_sunburst(that.children, target,that.name) 
 				};
 
 				el.append("li").html("a").html(that.name).on("click", 
@@ -59,7 +59,7 @@ function sunburst (rawJson) {
 			duration = 1000;
 			var color = d3.scale.category20c();
 			var div = d3.select(target);
-
+			div.html("");
 			var vis = div.append("svg:svg")
 			.attr("width", w + p * 2)
 			.attr("height", h + p * 2)
@@ -82,6 +82,7 @@ function sunburst (rawJson) {
 			var nodes = partition.nodes({children: json});
 
 			nodes[0].name = name;
+			nodes[0].isRoot = true;
 
 			var path = vis.selectAll("path").data(nodes);
 			path.enter().append("svg:path")
@@ -120,7 +121,8 @@ function sunburst (rawJson) {
 			var text = vis.selectAll("text").data(nodes);
 			var textEnter = text.enter().append("svg:text")
 			.style("opacity", 1)
-			.attr("id", function(d, i) { return "text-" + i; })
+			.attr("id", function(d, i) {
+				 return "text-" + i; })
 			.style("fill", function(d) {
 				return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000";
 			})
@@ -129,16 +131,33 @@ function sunburst (rawJson) {
 			})
 			.attr("dy", ".2em")
 			.attr("transform", function(d) {
+				if (d.isRoot)
+				return "";
 				var multiline = (d.name || "").split(" ").length > 1,
 				angle = x(d.x + d.dx / 2) * 180 / Math.PI - 90,
 				rotate = angle + (multiline ? -.5 : 0);
 				return "rotate(" + rotate + ")translate(" + (y(d.y) + p) + ")rotate(" + (angle > 90 ? -180 : 0) + ")";
 			})
-			.on("click", click);
+			.on("click", click)
+			.on("mouseover", function(d, i) { 
+	                d3.select("#monitor").html(d.name) 
+	                var t = d3.select(d3.event.currentTarget);
+					var elements = t.selectAll("tspan");
+	                elements.attr("visibility", "visible");
+
+	            })
+	         .on("mouseout", function(d) {
+					var t = d3.select(d3.event.currentTarget);
+					var elements = t.selectAll("tspan")
+	                elements.attr("visibility", "hidden");
+	            });
 			textEnter.append("svg:tspan")
 			.attr("x", 0)
 			.attr("visibility","hidden")
-			.text(function(d) { return d.depth ? d.name.split(" ")[0] : ""; });
+			.text(function(d) { 
+				if (d.isRoot)
+					return d.name;
+				return d.depth ? d.name.split(" ")[0] : ""; });
 			textEnter.append("svg:tspan")
 			.attr("x", 0)
 			.attr("dy", "1em")
@@ -150,7 +169,6 @@ function sunburst (rawJson) {
 				.duration(duration)
 				.attrTween("d", arcTween(d));
 
-				// Somewhat of a hack as we rely on arcTween updating the scales.
 				text
 				.style("visibility", function(e) {
 					return isParentOf(d, e) ? null : d3.select(this).style("visibility");
@@ -162,6 +180,8 @@ function sunburst (rawJson) {
 					};
 				})
 				.attrTween("transform", function(d) {
+					if (d.isRoot)
+						return "";
 					var multiline = (d.name || "").split(" ").length > 1;
 					return function() {
 						var angle = x(d.x + d.dx / 2) * 180 / Math.PI - 90,
@@ -169,7 +189,7 @@ function sunburst (rawJson) {
 						return "rotate(" + rotate + ")translate(" + (y(d.y) + p) + ")rotate(" + (angle > 90 ? -180 : 0) + ")";
 					};
 				})
-				.style("opacity", function(e) { return isParentOf(d, e) ? 1 : 1e-6; })
+				//.style("opacity", function(e) { return isParentOf(d, e) ? 1 : 1e-6; })
 				.each("end", function(e) {
 					d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
 				});
