@@ -12,18 +12,8 @@ class HierarchyExtractor(val prop: FAMIX,
     					 var getSelection: (ModelObject => Boolean),
     					 var getAnalysis: Option[(()=> HierarchyAnalysis)] = None) extends Extractor {
 
-	var str : String = "";
 	var analysis: HierarchyAnalysis = null;
 	
-
-//def getSelection(obj:ModelObject) : Boolean = {
-//  
-//		obj match {
-//		  case MethodEntity() => true
-//		  case _ => false
-//		}
-//}
-
 def extract(model: ModelObject): Analysis = { 
 		getAnalysis match {
 		  case None => analysis = new HierarchyAnalysis(prop);
@@ -78,13 +68,6 @@ def toJSON() : String = {
 			str = "function data() { var json = ";			  
 		else 
 			str = "function data() { var json = { \"name\": \"" + "ROOT" + "\", \"children\": [\n";	
-		
-		
-//		nodes.foreach(pair => {
-//			val node = pair._2;
-//			visited.add(node.getId());
-//			
-//		})
 		
 		
 		nodes.foreach(pair => {

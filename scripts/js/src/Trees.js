@@ -1,11 +1,17 @@
 function sortNodes(a, b) {
     if(b.children) {
         if(a.children) {
-            return b.children.length - a.children.length;
+            var res = b.children.length - a.children.length;
+            if(res == 0) {
+                res = (a.name < b.name)? -1 : 1;
+            }
+            return res;
         } else  return 1;
     }
     else return -1;
 }
+
+
 
 
 function roots() {
@@ -24,12 +30,7 @@ function roots() {
     jQuery.each(json, function() {
         var that = this;
         if(that.children) {
-            that.children = that.children.sort(function(a, b) { 
-                var res = sortNodes(a,b); 
-                if(res == 0) {
-                    res = a.name > b.name;
-                }
-                return res; });
+            that.children = that.children.sort(sortNodes);
         }
         
         
@@ -94,14 +95,21 @@ function hTree(root, target) {
         
         
 		node.append("svg:circle")
-		.attr("r", function(d) 
-              {
+		.attr("r", function(d) {
             if(d.children)
                 return d.children.length/5 + 4; 
-            return  3; }).on("mouseover", function(d, i) { 
+            return  4; })
+        .on("mouseover", function(d, i) { 
                 d3.select("#monitor").html(d.name) 
+                var t = d3.select(d3.event.currentTarget.parentNode).selectAll("text");
+                t.attr("visibility", "visible");
                 
-            }).on("click", function(d, i) {
+            })
+         .on("mouseout", function(d) {
+          var t = d3.select(d3.event.currentTarget.parentNode).selectAll("text");
+                t.attr("visibility", "hidden")
+            })   
+         .on("click", function(d, i) {
                 if(isBranch(d)) {
                     if(d.hParent) {
                         hTree(d.hParent, target);
@@ -116,11 +124,11 @@ function hTree(root, target) {
     
     
     node.append("svg:text")
-		.attr("dx", function(d) { return d.x < 180 ? 10 : -10; })
+		.attr("dx", function(d) { return d.x < 180 ? 20 : -20; })
 		.attr("dy", ".31em")
 		.attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
 		.attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
-		.text(function(d) { return d.name; });
+		.text(function(d) { return d.name; }).attr("visibility", "hidden");
     
     
     //	});
