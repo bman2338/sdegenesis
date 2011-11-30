@@ -17,12 +17,32 @@ body {
   font: 10px sans-serif;
 }
 
+
+.Branch:hover {
+     fill: #f73;
+      stroke: steelblue;
+     stroke-width: 5.5px;
+}
+ 
+.Branch {
+     fill: #f60;
+      stroke: steelblue;
+     stroke-width: 3.5px;
+}
+
+
+
 .link {
   fill: none;
   stroke: #ccc;
   stroke-width: 1.5px;
 }
 
+
+#monitor {
+    text-align: center;
+    font-size: 20px;
+}
 
 .Block {
 display:block
@@ -35,8 +55,10 @@ display:block
 
 .Right {
 float:right;
-/*clear:both;*/
+clear:both;
 left: 280px;
+position: absolute;
+overflow:visible;
 }
 
 .List {
@@ -49,7 +71,8 @@ left: 280px;
 
 
 .List li:hover {
-    color: red;
+    color: #d44;
+    background-color: #eee;
 }
 
 
