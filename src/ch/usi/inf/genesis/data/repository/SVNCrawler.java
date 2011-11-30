@@ -37,10 +37,11 @@ public class SVNCrawler implements IRepositoryCrawler{
 	private final String projectName;
 	private final File localPath;
 	private final SVNRepository repository;
-	private final FamixLanguage projectLang;
 	private final List<IRepositoryCrawlerNotificationDelegate> delegates;
+	private final IExternalModelParserWrapper modelParser;
+	private final String mseOutputPath = "mse/";
 
-	public SVNCrawler(final String url, final String projectName, final FamixLanguage projectLang, final String... extensions) throws SVNException{
+	public SVNCrawler(final String url, final String projectName, final IExternalModelParserWrapper modelParser, final String... extensions) throws SVNException{
 		this.url = SVNURL.parseURIEncoded(url);
 		this.options = SVNWCUtil.createDefaultOptions(true);
 		this.authManager = SVNWCUtil.createDefaultAuthenticationManager( );
@@ -59,11 +60,11 @@ public class SVNCrawler implements IRepositoryCrawler{
 		this.allowedExtensions = new ArrayList<String>();
 		for(final String s : extensions)
 			this.allowedExtensions.add(s);
-		this.projectLang = projectLang;
 		this.delegates = new ArrayList<IRepositoryCrawlerNotificationDelegate>();
+		this.modelParser = modelParser;
 	}
 
-	public SVNCrawler(final String url, final String projectName, final FamixLanguage projectLang, final RepositoryUserAuth auth, final String... extensions) throws SVNException{
+	public SVNCrawler(final String url, final String projectName, final RepositoryUserAuth auth, final IExternalModelParserWrapper modelParser, final String... extensions) throws SVNException{
 		this.url = SVNURL.parseURIEncoded(url);
 		this.options = SVNWCUtil.createDefaultOptions(true);
 		this.authManager = SVNWCUtil.createDefaultAuthenticationManager(auth.getUsername(), auth.getPassword());
@@ -82,8 +83,8 @@ public class SVNCrawler implements IRepositoryCrawler{
 		this.allowedExtensions = new ArrayList<String>();
 		for(final String s : extensions)
 			this.allowedExtensions.add(s);
-		this.projectLang = projectLang;
 		this.delegates = new ArrayList<IRepositoryCrawlerNotificationDelegate>();
+		this.modelParser = modelParser;
 	}
 
 	@Override
@@ -98,10 +99,9 @@ public class SVNCrawler implements IRepositoryCrawler{
 
 	@Override
 	public void crawl(final long firstRev, final long lastRev) throws RepositoryCrawlFailedException {
-
-		final InFamixWrapper infamix = new InFamixWrapper("inFamix/MacOS/inFamix",projectLang);
 		try{
 			manager.getUpdateClient().doCheckout(url, localPath, SVNRevision.create(firstRev) , SVNRevision.create(firstRev), SVNDepth.INFINITY, false);
+			
 			for(long i = firstRev; i < lastRev; ++i){
 				final long rev = i;
 				final List<File> modifiedFiles = new ArrayList<File>();
@@ -134,7 +134,7 @@ public class SVNCrawler implements IRepositoryCrawler{
 							deletedFiles.add(diffFile); 
 					}
 				});
-				if(!modifiedFiles.isEmpty() || !addedFiles.isEmpty()){
+				if(!modifiedFiles.isEmpty() || !addedFiles.isEmpty() || !deletedFiles.isEmpty()){
 					//Put all files together to get change log. (no deleted files)
 					final List<File> allUpdatedFiles = new ArrayList<File>();
 					allUpdatedFiles.addAll(modifiedFiles);
@@ -151,7 +151,7 @@ public class SVNCrawler implements IRepositoryCrawler{
 								throws SVNException {
 							
 							try {
-								final File mseFile = infamix.execute(localPath.getAbsolutePath(), "mse/" + projectName + "_rev_" + (rev+1) +".mse", false);
+								final File mseFile = modelParser.execute(localPath.getAbsolutePath(), mseOutputPath + projectName + "_rev_" + (rev+1) +".mse", false);
 								notifyOnParsingComplete(new RevisionInformation(
 										logEntry.getAuthor(),logEntry.getDate(), logEntry.getMessage(), logEntry.getRevision(),
 										addedFiles, deletedFiles, modifiedFiles, mseFile));
@@ -163,7 +163,7 @@ public class SVNCrawler implements IRepositoryCrawler{
 					
 					
 				}
-				System.out.println("###########  REV " + (i+1) +"  ###########\n\n");
+				//System.out.println("###########  REV " + (i+1) +"  ###########\n\n");
 			}
 		}catch(final SVNException e){
 			throw new RepositoryCrawlFailedException(e.toString());
