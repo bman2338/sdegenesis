@@ -89,7 +89,7 @@ private def toJSON(modelObject: ModelObject) : String = {
 		case _  => { 
 			str += nameOpenStr + name;
 
-			modelObject.properties.get(SUBCLASS_PROP) match {
+			modelObject.getProperties(SUBCLASS_PROP) match {
 			case None => str += nameCloseStr;
 			case Some(subclasses) => {
 				str +=   "\"," + childrenOpenStr;
