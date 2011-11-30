@@ -47,17 +47,7 @@ object ParserTest {
 					  //println(new InheritanceExtractor().extract(res));
 					 //val saver = new  ModelSaver();
 					   //new BreadthFirstNavigator().walkModel(res, saver, saver.getSelection());
-					  println(new HierarchyExtractor(
-					  //INVOKINGMETHODS_PROP, 
-					  SUBCLASS_PROP,
-					  (obj) => {
-					    obj match {
-					      //case MethodEntity() => true 
-					      case ClassEntity() => true
-					      case _ => false
-					    }
-					  }
-					  ).extract(res));
+					 println(InvocationExtractorFactory.getSimpleInvocationExtractor().extract(res))
 					 
 					  
 					  

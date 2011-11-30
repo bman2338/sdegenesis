@@ -12,6 +12,14 @@ body {
  margin: 20px;
 }
 
+
+
+
+.Branch:hover, .Root:hover, .node circle:hover {
+     stroke: steelblue;
+     stroke-width: 6.5px;
+}
+
 .node circle {
   fill: #fff;
   stroke: steelblue;
@@ -35,10 +43,7 @@ body {
 
 
 
-.Branch:hover, .Root:hover {
-     stroke: steelblue;
-     stroke-width: 6.5px;
-}
+
  
 .Branch {
      fill: #f60;

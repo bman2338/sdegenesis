@@ -14,13 +14,13 @@ function sortNodes(a, b) {
 
 
 
-function roots() {
+function roots(data) {
     var target = "#chart";
     var rootsTarget = "#roots";
     
     d3.select(rootsTarget).html("");
     
-    var json = data4().children;
+    var json = data.children;
     var el = d3.select(rootsTarget);
     
     json = json.sort(sortNodes);
