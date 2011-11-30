@@ -1,3 +1,13 @@
+function sortNodes(a, b) {
+if(b.children) {
+    if(a.children) {
+        return b.children.length - a.children.length;
+        } else  return 1;
+    }
+    else return -1;
+}
+
+
 function roots() {
 var target = "#chart";
 var rootsTarget = "#roots";
@@ -7,20 +17,22 @@ d3.select(rootsTarget).html("");
 var json = data4().children;
 var el = d3.select(rootsTarget);
 
-json = json.sort(function(a, b) {
-if(b.children) {
-    if(a.children) {
-        return b.children.length - a.children.length;
-        } else { return 1 };
-    }
-    else {
-        return -1;
-    }
-});
+json = json.sort(sortNodes);
+
 
 el = el.append("list");
 jQuery.each(json, function() {
     var that = this;
+    if(that.children) {
+        that.children = that.children.sort(function(a, b) { 
+        var res = sortNodes(a,b); 
+        if(res == 0) {
+        res = a.name > b.name;
+        }
+        return res; });
+    }
+    
+    
     var callback = function(ev) { 
         d3.select("#monitor").html(that.name) 
         hTree(that, target) 
@@ -108,7 +120,7 @@ function hTree(root, target) {
 		.attr("dy", ".31em")
 		.attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
 		.attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
-		//.text(function(d) { return d.name; });
+		.text(function(d) { return d.name; });
         
 
 //	});
