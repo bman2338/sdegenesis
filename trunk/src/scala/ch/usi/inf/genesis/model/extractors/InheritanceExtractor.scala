@@ -9,7 +9,7 @@ import ch.usi.inf.genesis.model.navigation.BreadthFirstNavigator
 import scala.collection.mutable.HashMap
 import ch.usi.inf.genesis.model.core.famix.ClassEntity
 
-class InheritanceExtractor(val classes: HashSet[String]) extends Extractor {
+class InheritanceExtractor(val classes: Option[HashSet[String]] = None) extends Extractor {
 	var str : String = "";
 	var analysis: InheritanceAnalysis = null;
 
@@ -33,7 +33,10 @@ def visit(obj: ModelObject): NavigatorOption = {
 		val name = obj.getName();
 		name match {
 			case "" =>
-			case _ if(classes.contains(name))=> analysis.addClass(obj); 
+			case _  => classes match {
+			  case Some(classes) if(classes.contains(name))=> analysis.addClass(obj);
+			  case None => analysis.addClass(obj);
+			}  
 		}		
 
 		return analysis.opt();

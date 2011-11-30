@@ -1,3 +1,12 @@
+/* {
+    border: 1px solid red;
+} /**/
+
+body {
+ color: #555;
+ font-family: Arial, Helvetica, sans-serif;
+}
+
 .node circle {
   fill: #fff;
   stroke: steelblue;
@@ -13,3 +22,46 @@
   stroke: #ccc;
   stroke-width: 1.5px;
 }
+
+
+.Block {
+display:block
+
+}
+
+.Left {
+    float:left;
+}
+
+.Right {
+float:right;
+/*clear:both;*/
+left: 280px;
+}
+
+.List {
+    list-style-type:none;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 600px;
+    width: 250px;
+}
+
+
+.List li:hover {
+    color: red;
+}
+
+
+.List li:visited {
+ color: #995;
+}
+
+.List li { 
+    color: #636;
+    cursor: pointer;
+    font-size: 13px;
+    margin-bottom: 3px;
+    border: 1px solid #eee;
+}
+
