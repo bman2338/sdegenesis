@@ -35,6 +35,11 @@ object FAMIX extends Enumeration {
 	//PROP are NOT MORE USED  as selection parameters for Navigator
 	val RECV_INVOCATIONS_PROP = "invokedBy";
 	val SEND_INVOCATIONS_PROP = "invoking";
+	
+	//FOR direct access from methods
+	val INVOKEDBYMETHODS_PROP = "invokedByMethods";
+	val INVOKINGMETHODS_PROP = "invokingMethods";
+	
 	val VALUE_PROP = "value";
 	
 	val SUBCLASS_PROP = "subclassOf";

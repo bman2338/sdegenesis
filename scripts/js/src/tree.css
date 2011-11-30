@@ -24,8 +24,7 @@ body {
 
 
 
-.Branch:hover {
-     fill: #f73;
+.Branch:hover, .Root:hover {
      stroke: steelblue;
      stroke-width: 6.5px;
 }
@@ -37,11 +36,22 @@ body {
      z-index:10;
 }
 
-.Branch text {
+.Root {
+    fill: #d5d;
+    stroke: steelblue;
+     stroke-width: 2.5px;
+     z-index:10;
+
+}
+
+.Branch text, .Root text {
+    
     stroke-width: 1.5px;
 }
 
-
+.Root text {
+stroke: #6A85C2;
+}
 
 .link {
   fill: none;

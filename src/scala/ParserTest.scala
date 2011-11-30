@@ -7,6 +7,7 @@ import ch.usi.inf.genesis.model.navigation.DepthFirstNavigator
 import ch.usi.inf.genesis.model.extractors._
 import ch.usi.inf.genesis.model.navigation.ModelSaver
 import ch.usi.inf.genesis.model.core.famix.ClassEntity
+import ch.usi.inf.genesis.model.core.famix.MethodEntity
 
 object ParserTest {
 
@@ -43,9 +44,26 @@ object ParserTest {
 //					     case _ => false
 //					   }}))
 					  // println(new ClassMethodsExtractor().extract(res))
-					  println(new InheritanceExtractor().extract(res));
+					  //println(new InheritanceExtractor().extract(res));
 					 //val saver = new  ModelSaver();
 					   //new BreadthFirstNavigator().walkModel(res, saver, saver.getSelection());
+					  println(new HierarchyExtractor(
+					  //INVOKINGMETHODS_PROP, 
+					  SUBCLASS_PROP,
+					  (obj) => {
+					    obj match {
+					      //case MethodEntity() => true 
+					      case ClassEntity() => true
+					      case _ => false
+					    }
+					  }
+					  ).extract(res));
+					 
+					  
+					  
+					  
+					  
+					  
 					  
 					}
 					  case None =>
