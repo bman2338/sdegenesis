@@ -19,6 +19,9 @@ abstract class Navigator {
   protected def walk(modelObject: ModelObject, visitor: ModelVisitor, selectionFunction: Option[ModelObject => Boolean]) : NavigatorOption;
 	
   protected def hasToIgnore(obj: ModelObject) : Boolean = {
-    return obj.getName().toString().startsWith(IGNORE_TYPE);
+    var ignore =  obj.getName().toString().startsWith(IGNORE_TYPE);
+    var isStub = obj.getProperty(ISSTUB_PROP);
+    ignore |= isStub.toString().matches("true");
+    return ignore;
   }
 }
