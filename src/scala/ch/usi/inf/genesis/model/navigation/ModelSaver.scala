@@ -20,7 +20,7 @@ class ModelSaver extends ModelVisitor {
     
     return Some(selection);
   }
-  
+
   def visit(obj: ModelObject): NavigatorOption = {
 		  //project is already added to the database...
 		  

@@ -125,7 +125,6 @@ object MSEParser extends RegexParsers {
 			
 			obj match {
 				case Some(obj) => 
-				obj.typeId = name;
 				this.modelObject = obj
 				children.foreach((pair) => { 
 					val child: Option[ModelObject] = pair._2.resolve(pool) 

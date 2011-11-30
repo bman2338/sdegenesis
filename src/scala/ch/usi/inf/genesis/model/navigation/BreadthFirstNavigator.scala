@@ -38,9 +38,6 @@ class BreadthFirstNavigator extends Navigator {
 
 			while (!queue.isEmpty) {
 				val current = queue.dequeue();
-				var skip = false;
-
-					  skip = true;
 				current.properties.foreach(pair => {
 					val list = pair._2;
 					list.foreach(child => {
@@ -48,19 +45,19 @@ class BreadthFirstNavigator extends Navigator {
 						  visited.add(child.getId());
 							
 						  if(!selectionFunction(child)) {
-								queue.enqueue(child);
-							} else {
-								opt = CONTINUE;
-								if(!hasToIgnore(child)) {
-									opt = child.accept(visitor);
-								}	
-								
-								opt match {
-								case CONTINUE => queue.enqueue(child);
-								case STOP => return STOP;
-								case SKIP_SUBTREE =>
-								}
-							} 
+							  queue.enqueue(child);
+						  } else {
+							  opt = CONTINUE;
+							  if(!hasToIgnore(child)) {
+								  opt = child.accept(visitor);
+							  }	
+
+							  opt match {
+							  case CONTINUE => queue.enqueue(child);
+							  case STOP => return STOP;
+							  case SKIP_SUBTREE =>
+							  }
+						  } 
 						}
 					})
 				})
