@@ -10,6 +10,7 @@
 <script type="text/javascript" src="../lib/mbostock/lib/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="data3.js"></script>
 <script type="text/javascript" src="data4.js"></script>
+<script type="text/javascript" src="data5.js"></script>
 <script type="text/javascript" src="data3Array.js"></script>
 <script type="text/javascript" src="ModelGraph.js"></script>
 <script type="text/javascript" src="Trees.js"></script>
@@ -22,7 +23,14 @@
 <li><a href="javascript:graph()"> Graph </a> </li>
 <li><a href="javascript:hist()"> Histogram </a> </li>
 <li><a href="javascript:sunburst()"> Sunburst <a> </li>
-<li><a href="javascript:roots()"> Trees <a> </li>
+
+    <li class="SecondLevel">
+        <a href="javascript:roots(data4())"> Inheritance Tree</a> 
+    </li>
+    <li class="SecondLevel">
+        <a href="javascript:roots(data5())"> Invocations Tree</a> 
+    </li>
+ 
 </ul>
 <div id="monitor"></div>
 <div class="Block">

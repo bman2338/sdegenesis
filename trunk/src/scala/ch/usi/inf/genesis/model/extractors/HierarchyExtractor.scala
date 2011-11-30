@@ -45,7 +45,7 @@ class HierarchyAnalysis(val prop: FAMIX,
 	val nameCloseStr = "\"},\n";
 	val childrenOpenStr = "\"children\": [";
 	val childrenCloseStr = "]},\n";
-	var auxAddNode : (ModelObject) => Unit = (node) => nodes.put(node.getId(), node);;
+	var auxAddNode : (ModelObject) => Unit = (node) => { nodes.put(node.getId(), node) };
 	
 	
 	optAuxAddNode match {
@@ -91,7 +91,7 @@ private def toJSON(modelObject: ModelObject, visited: HashSet[Int]) : String = {
 		var str = "";
 
 		name match {
-		case "" => return ""
+		case "" => visited.add(modelObject.getId()); return "";
 		case _  => { 
 			str += nameOpenStr + name;
 			
