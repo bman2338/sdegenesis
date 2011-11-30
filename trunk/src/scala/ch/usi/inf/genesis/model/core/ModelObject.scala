@@ -6,12 +6,8 @@ import ch.usi.inf.genesis.model.navigation.NavigatorOption._
 import ch.usi.inf.genesis.model.navigation.ModelVisitor
 
 abstract class ModelObject {
- val properties: HashMap[String,  ListBuffer[ModelObject]] = new HashMap()
- val id = IdFactory.nextId()
- var typeId: String = "";
- 
- final def getType() = typeId
- 
+	val properties: HashMap[String,  ListBuffer[ModelObject]] = new HashMap()
+	val id = IdFactory.nextId()  
  
    final def addProperty (propertyName: String, propertyValue: ModelObject) : Unit = {
 	if (!checkProperty(propertyName,propertyValue))
