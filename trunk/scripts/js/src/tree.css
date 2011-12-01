@@ -66,11 +66,6 @@ ul.Menu li a {
     font: 9px sans-serif;
 }
 
-::-webkit-scrollbar {
-    width: 13px;
-    height: 10px;
-}
-
 .node text {
     font-size:20px;
     stroke: #999;
