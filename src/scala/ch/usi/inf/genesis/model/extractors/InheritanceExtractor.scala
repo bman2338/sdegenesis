@@ -48,7 +48,7 @@ def visit(obj: ModelObject): NavigatorOption = {
 
 class InheritanceAnalysis extends Analysis {
 	val classes: HashMap[Int, ModelObject] = new HashMap();
-
+	var title = "";
 var title = ""
 val nameOpenStr = "{ \"name\": \"";
 val nameCloseStr = "\"},\n";
