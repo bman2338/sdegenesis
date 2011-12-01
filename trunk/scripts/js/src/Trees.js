@@ -17,9 +17,11 @@ function invSortNodes(a, b) {
 
 
 function roots(data) {
+    var title = data.name;
     var target = "#chart";
     var rootsTarget = "#roots";
-    
+    var titleTarget = "#treename";
+    d3.select(titleTarget).html(title);
     d3.select(rootsTarget).html("");
     
     var json = data.children;

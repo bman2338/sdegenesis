@@ -1,4 +1,4 @@
-function data4() { var json = { "name": "ROOT", "children": [
+function data4() { var json = { "name": "ArgoUML", "children": [
 { "name": "CommentEdge"},
 { "name": "TestUMLDeploymentDiagram"},
 { "name": "ActionClassDiagram"},

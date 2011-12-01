@@ -53,7 +53,8 @@ object InvocationExtractorFactory {
 			
 			
 			
-			var analysisFactory = () => { new HierarchyAnalysis(INVOKINGMETHODS_PROP, Some(addNodeAux)); };		
+			var analysisFactory = () => { new HierarchyAnalysis(INVOKINGMETHODS_PROP, Some(addNodeAux)); };	
+			
 			val extractor =  new HierarchyExtractor(INVOKINGMETHODS_PROP, selection, Some(analysisFactory));
 
 			return extractor;
