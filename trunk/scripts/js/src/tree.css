@@ -1,33 +1,69 @@
 /* {
-    border: 1px solid red;
+border: 1px solid red;
+
 } /**/
 
+* {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    color: #555;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 body {
- color: #555;
- font-family: Arial, Helvetica, sans-serif;
+}
+
+ul.Menu {
+    background-color: #2D2D2D;
+    border-bottom: 1px solid black;
+    font-size: 18px;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    z-index: 990;
+    height: 29px;
+    font: Arial,sans-serif;
+    color: #ddd;
 }
 
 .Menu li {
- display:inline;
- margin: 20px;
+    display:inline;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-top: 3px;
+    margin-bottom:0;
 }
 
 
+.Menu li:hover {
+ background-color: #666;
+ 
+}
 
+ul.Menu li a:hover {
+    background-color: #666;
+}
+
+ul.Menu li a {
+    color: #ddd;
+    text-decoration: none;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+}
 
 .Branch:hover, .Root:hover, .node circle:hover {
-     stroke: steelblue;
-     stroke-width: 6.5px;
+    stroke: steelblue;
+    stroke-width: 6.5px;
 }
 
 .node circle {
-  fill: #fff;
-  stroke: steelblue;
-  stroke-width: 1.5px;
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
 }
 
 .node {
-  font: 9px sans-serif;
+    font: 9px sans-serif;
 }
 
 ::-webkit-scrollbar {
@@ -44,22 +80,22 @@ body {
 
 
 
- 
+
 .Branch {
-     fill: #f60;
+    fill: #f60;
     stroke: steelblue;
-     stroke-width: 2.5px;
-     z-index:10;
-     cursor: pointer;
+    stroke-width: 2.5px;
+    z-index:10;
+    cursor: pointer;
 }
 
 .Root {
     fill: #d5d;
     stroke: steelblue;
-     stroke-width: 2.5px;
-     z-index:10;
-     cursor: pointer;
-
+    stroke-width: 2.5px;
+    z-index:10;
+    cursor: pointer;
+    
 }
 
 .Branch text, .Root text {
@@ -72,20 +108,29 @@ body {
 }
 
 .link {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 1.5px;
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
 }
 
 
 #monitor {
+    
+    margin-top: 29px;
     text-align: center;
-    font-size: 20px;
+    font-size: 40px;
+}
+
+#treename {
+ margin-top: 2px;
+    position: absolute;
+      font-size: 40px;
+      margin-left: 20px;
 }
 
 .Block {
     display:block
-
+    
 }
 
 .Left {
@@ -101,6 +146,8 @@ body {
 }
 
 .List {
+    margin-top: 20px;
+    margin-left: 10px;
     list-style-type:none;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -120,7 +167,7 @@ body {
 }
 
 .List li { 
-    color: #636;
+    color: #2D2D2D;
     cursor: pointer;
     font-size: 13px;
     margin-bottom: 3px;

@@ -72,12 +72,12 @@ def toJSON() : String = {
 		})
 
 		if (classes.size == 1) {
-			str = str.substring(0,str.length()-2)
+			str = str.substring(0,str.length()-1)
 					str += "; return json; }";
 		}
 		else
 			str += "]}; return json; }";
-		str = str.replace("'", "");
+		//str = str.replace("'", "");
 		return str;
 }
 
