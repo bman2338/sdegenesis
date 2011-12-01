@@ -4,6 +4,7 @@ import scala.collection.mutable.ListBuffer
 import ch.usi.inf.genesis.model.core.famix.Property
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
 import ch.usi.inf.genesis.model.navigation.ModelVisitor
+import ch.usi.inf.genesis.model.core.famix.Property
 
 abstract class ModelObject {
 	val properties: HashMap[String,  ListBuffer[ModelObject]] = new HashMap()
@@ -57,7 +58,7 @@ abstract class ModelObject {
  def getProperties (key :String) = properties.get(key);
  
  def getProperty (key : String): Option[ModelObject] = properties.get(key) match {
-   case Some(xs) if !xs.isEmpty => xs.first 
+   case Some(xs) if !xs.isEmpty => Some(xs.first) 
    case None => None
  }
  

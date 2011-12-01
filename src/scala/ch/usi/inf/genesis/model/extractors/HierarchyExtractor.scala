@@ -10,9 +10,9 @@ import scala.collection.mutable.HashSet
 
 class HierarchyExtractor(val prop: FAMIX, 
     					 var getSelection: (ModelObject => Boolean),
-    					 var getAnalysis: Option[(()=> HierarchyAnalysis)] = None) extends Extractor {
+    					 var getAnalysis: Option[(()=> AbstractHierarchyAnalysis)] = None) extends Extractor {
 
-	var analysis: HierarchyAnalysis = null;
+	var analysis: AbstractHierarchyAnalysis = null;
 	
 def extract(model: ModelObject): Analysis = { 
 		getAnalysis match {
@@ -37,9 +37,15 @@ def visit(obj: ModelObject): NavigatorOption = {
 
 }
 
+abstract class AbstractHierarchyAnalysis extends Analysis {
+  def addNode(node: ModelObject) : Unit;
+  def clean() : Unit;
+  def opt() : NavigatorOption;
+}
+
 
 class HierarchyAnalysis(val prop: FAMIX,
-						val optAuxAddNode : Option[(ModelObject, HierarchyAnalysis) => Unit] = None) extends Analysis {
+						val optAuxAddNode : Option[(ModelObject, HierarchyAnalysis) => Unit] = None) extends AbstractHierarchyAnalysis {
 	val nodes: HashMap[Int, ModelObject] = new HashMap();
 	val nameOpenStr = "{ \"name\": \"";
 	val nameCloseStr = "\"},\n";

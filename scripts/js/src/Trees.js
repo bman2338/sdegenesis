@@ -11,7 +11,9 @@ function sortNodes(a, b) {
     else return -1;
 }
 
-
+function invSortNodes(a, b) {
+    return -sortNodes(a, b);
+}
 
 
 function roots(data) {
@@ -30,7 +32,7 @@ function roots(data) {
     jQuery.each(json, function() {
         var that = this;
         if(that.children) {
-            that.children = that.children.sort(sortNodes);
+            that.children = that.children.sort(invSortNodes);
         }
         
         
