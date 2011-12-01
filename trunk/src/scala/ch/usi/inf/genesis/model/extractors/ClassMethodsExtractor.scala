@@ -27,7 +27,7 @@ def extract(model: ModelObject) : Analysis = {
 		str = "function data() { var json = { \"name\": \"" + model.getName() + "\", \"children\": [";
 		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection));
 		str += "]}; return json; }";
-		str = str.replace("'", "");
+		//str = str.replace("'", "");
 		new StringAnalysis(str);
 }
 
