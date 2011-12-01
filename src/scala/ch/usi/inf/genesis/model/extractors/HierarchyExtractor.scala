@@ -80,7 +80,7 @@ def toJSON() : String = {
 		nodes.foreach(pair => {
 			val node = pair._2;
 			str += toJSON(node, visited);
-			
+			visited.clear();
 		})
 
 		if (nodes.size == 1) {
