@@ -56,7 +56,7 @@ abstract class ModelObject {
  
  def getProperties (key :String) = properties.get(key);
  
- def getProperty (key : String) = properties.get(key) match {
+ def getProperty (key : String): Option[ModelObject] = properties.get(key) match {
    case Some(xs) if !xs.isEmpty => xs.first 
    case None => None
  }
