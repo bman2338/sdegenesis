@@ -237,7 +237,7 @@ object MSEParser extends RegexParsers {
 			new Value(new IntValue(retNumber.toInt))
 		}
 	}
-	def string = "'[^']*'".r ^^ { str => new Value(new StringValue(str.substring(1,str.length()-2))) }
+	def string = "'[^']*'".r ^^ { str => new Value(new StringValue(str.substring(1,str.length()-1))) }
 
 	def parse(a: String) : Option[ModelObject] = {
 	  IdFactory.reset()
