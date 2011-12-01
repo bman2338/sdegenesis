@@ -14,7 +14,9 @@ body {
 }
 
 ul.Menu {
-    background-color: #2D2D2D;
+   /* background-color: #2D2D2D;*/
+    background: -webkit-gradient(linear, left top, left bottom, from(#444), to(#2D2D2D));
+    
     border-bottom: 1px solid black;
     font-size: 18px;
     position: absolute;
@@ -110,7 +112,7 @@ ul.Menu li a {
 
 
 #monitor {
-    
+    color: steelblue;
     margin-top: 29px;
     text-align: center;
     font-size: 40px;
@@ -152,14 +154,12 @@ ul.Menu li a {
 
 
 .List li:hover {
-    color: #d44;
-    background-color: #eee;
+    color: #eee;
+    background: -webkit-gradient(linear, left top, right bottom, from(#d5d), to(#fff));
 }
 
 
-.List li:visited {
-    color: #995;
-}
+
 
 .List li { 
     color: #2D2D2D;
@@ -169,3 +169,6 @@ ul.Menu li a {
     border: 1px solid #eee;
 }
 
+.List li:visited {
+    color: #995;
+}
