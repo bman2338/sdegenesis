@@ -64,8 +64,8 @@ function hTree(root, target) {
 	
     //	function(json) {
     
-    var offset = 0;
-    var r = 1024/2;
+    var offset = -10;
+    var r = 900/2;
     var tree = d3.layout.tree()
 		.size([360, r - 120])
 		.separation(function(a,b) { return (a.parent == b.parent ? 1: 2)/a.depth });

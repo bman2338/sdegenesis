@@ -72,9 +72,9 @@ def toJSON() : String = {
 	
 		var str = "";
 		if (nodes.size == 1)
-			str = "function " + title + "_data() { var json = ";			  
+			str = "function " + title.replace(" ", "_") + "_data() { var json = ";			  
 		else 
-			str = "function " + title + "_data() { var json = { \"name\": \"" + title + "\", \"children\": [\n";	
+			str = "function " + title.replace(" ", "_") + "_data() { var json = { \"name\": \"" + title + "\", \"children\": [\n";	
 		
 		
 		nodes.foreach(pair => {
@@ -131,11 +131,17 @@ private def toJSON(modelObject: ModelObject, visited: HashSet[Int]) : String = {
  * Removes all children classes from root
  */
 def clean() = {
-	nodes.foreach(pair => {
+  
+	val nodesCopy = nodes.clone();
+	nodesCopy.foreach(pair => {
 		val node = pair._2;
-		 node.properties.get(prop) match {
-		case None =>
+		
+		 node.getProperties(prop) match {
+		case None => nodes.remove(node.getId())
 		case Some(children) => {
+			if(children.isEmpty) {
+			  nodes.remove(node.getId());
+			} else
 			children.foreach(child => {
 				nodes.remove(child.getId());
 			});
