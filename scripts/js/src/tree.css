@@ -26,6 +26,7 @@ ul.Menu {
     height: 29px;
     font: Arial,sans-serif;
     color: #ddd;
+    padding-top:10px;
 }
 
 .Menu li {
@@ -113,7 +114,7 @@ ul.Menu li a {
 
 #monitor {
     color: steelblue;
-    margin-top: 29px;
+    margin-top: 49px;
     text-align: center;
     font-size: 40px;
 }
@@ -171,4 +172,11 @@ ul.Menu li a {
 
 .List li:visited {
     color: #995;
+}
+
+#slider_controls {
+  display:none;
+  position: fixed;
+  bottom:2%; 
+  right:2%;
 }

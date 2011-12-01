@@ -16,6 +16,33 @@
 <script type="text/javascript" src="ModelGraph.js"></script>
 <script type="text/javascript" src="Trees.js"></script>
 <script type="text/javascript" src="Sunbursts.js"></script>
+
+<script type="text/javascript">
+
+function update () {
+//	var chart = document.getElementById("chart");
+//	var children = chart.getElementsByTagName('svg');
+//	var h = children[0].height.baseVal.value;
+//	document.getElementById("container").style.height = (h) + "px";
+	document.getElementById("slider_controls").style.display = "block";
+}
+
+			function showValue(newValue) {
+				//document.getElementById("range").innerHTML=newValue;
+			}
+			
+			function play(){
+				var src = document.getElementById("playbutton").src;
+				var file = src.substring(src.lastIndexOf("/")+1, src.length);
+			
+				if(file == "img/play.png"){
+					document.getElementById("playbutton").src="img/pause.png";
+				}else if(file =="img/pause.png"){
+					document.getElementById("playbutton").src = "img/play.png";
+				}
+			}			
+</script>
+
 <link type="text/css" rel="stylesheet" href="scrollbar.css"/>
 <link type="text/css" rel="stylesheet" href="tree.css"/>
 </head>
@@ -25,26 +52,27 @@
 <li><a href="javascript:tree()"> Tree </li>
 <li><a href="javascript:graph()"> Graph </a> </li>
 <li><a href="javascript:hist()"> Histogram </a> </li> -->
-<li><a href="javascript:javascript:sunburst(data4())"> Inheritance Sunburst <a> </li>
-<li><a href="javascript:javascript:sunburst(Genesis_data())"> Invocations Sunburst <a> </li>
+<li><a href="javascript:javascript:sunburst(data4());update();"> Inheritance Sunburst <a> </li>
+<li><a href="javascript:javascript:sunburst(Genesis_data());update()"> Invocations Sunburst <a> </li>
     <li>
-        <a href="javascript:roots(data4())"> Inheritance Tree</a> 
+        <a href="javascript:roots(data4());update()"> Inheritance Tree</a> 
     </li>
     <li>
-        <a href="javascript:roots(ArgoUML_r666_data())"> Invocations Tree</a> 
+        <a href="javascript:roots(ArgoUML_r666_data());update()"> Invocations Tree</a> 
     </li>
  
 </ul>
 <div id="treename"></div>
 <div id="monitor"></div>
 <div class="Block">
-<div id="chart" class="Block Right" style="overflow:visible"> </div>
-<div id="roots" class="Block Left List"</div>
+	<div id="chart" class="Block Right" style="overflow:visible"> </div>
+	<div id="roots" class="Block Left List"></div>
 </div>
 
-<script type="text/javascript">
-
-</script>
+<div id="slider_controls"> 
+	<input id="playbutton" type="image" src="play.png" name="image" width="60" height="60" onClick="play()" />
+	<input type="range" min="0" max="50" value="0" step="5" onchange="showValue(this.value)" />
+</div>
 
 </body>
 </html>
