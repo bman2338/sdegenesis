@@ -24,6 +24,7 @@ def getSelection(obj:ModelObject) : Boolean = {
 
 def extract(model: ModelObject): Analysis = { 
 		analysis = new InheritanceAnalysis();
+		analysis.title = model.getName()
 		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection));
 		analysis.clean();
 		return analysis;
@@ -48,6 +49,7 @@ def visit(obj: ModelObject): NavigatorOption = {
 class InheritanceAnalysis extends Analysis {
 	val classes: HashMap[Int, ModelObject] = new HashMap();
 
+var title = ""
 val nameOpenStr = "{ \"name\": \"";
 val nameCloseStr = "\"},\n";
 val childrenOpenStr = "\"children\": [";
@@ -62,9 +64,9 @@ def opt() : NavigatorOption = {
 def toJSON() : String = {
 		var str = "";
 		if (classes.size == 1)
-			str = "function data() { var json = ";			  
+			str = "function " + title + "_data() { var json = ";			  
 		else 
-			str = "function data() { var json = { \"name\": \"" + "ROOT" + "\", \"children\": [\n";	
+			str = "function " + title + "_data() { var json = { \"name\": \"" + title + "\", \"children\": [\n";	
 		classes.foreach(pair => {
 			val clazz = pair._2;
 			str += toJSON(clazz);

@@ -19,7 +19,7 @@ def extract(model: ModelObject): Analysis = {
 		  case None => analysis = new HierarchyAnalysis(prop);
 		  case Some(getAnalysis) => analysis = getAnalysis();
 		}
-		
+		analysis.title = model.getName()
 		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection));
 		analysis.clean();
 		return analysis;
@@ -38,6 +38,7 @@ def visit(obj: ModelObject): NavigatorOption = {
 }
 
 abstract class AbstractHierarchyAnalysis extends Analysis {
+  var title = ""
   def addNode(node: ModelObject) : Unit;
   def clean() : Unit;
   def opt() : NavigatorOption;
@@ -71,9 +72,9 @@ def toJSON() : String = {
 	
 		var str = "";
 		if (nodes.size == 1)
-			str = "function data() { var json = ";			  
+			str = "function " + title + "_data() { var json = ";			  
 		else 
-			str = "function data() { var json = { \"name\": \"" + "ROOT" + "\", \"children\": [\n";	
+			str = "function " + title + "_data() { var json = { \"name\": \"" + title + "\", \"children\": [\n";	
 		
 		
 		nodes.foreach(pair => {

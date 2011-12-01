@@ -8,6 +8,8 @@ import ch.usi.inf.genesis.model.extractors._
 import ch.usi.inf.genesis.model.navigation.ModelSaver
 import ch.usi.inf.genesis.model.core.famix.ClassEntity
 import ch.usi.inf.genesis.model.core.famix.MethodEntity
+import ch.usi.inf.genesis.model.core.FAMIX
+import ch.usi.inf.genesis.model.core.StringValue
 
 object ParserTest {
 
@@ -35,6 +37,7 @@ object ParserTest {
 					  
 					  case Some(res) =>  {
 					    
+					    res.addProperty(FAMIX.NAME_PROP,new StringValue("ArgoUML r666"))
 					    
 //					  new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), 
 //					 new DepthFirstNavigator().walkModel(res, new ModelPrinter(), 
