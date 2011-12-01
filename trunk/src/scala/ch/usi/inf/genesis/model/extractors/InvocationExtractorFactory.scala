@@ -3,6 +3,7 @@ import ch.usi.inf.genesis.model.extractors._
 import ch.usi.inf.genesis.model.core.FAMIX._
 import ch.usi.inf.genesis.model.core.famix._
 import ch.usi.inf.genesis.model.core.ModelObject
+import ch.usi.inf.genesis.model.core.famix.MethodEntity
 
 object InvocationExtractorFactory {
 
@@ -35,7 +36,6 @@ object InvocationExtractorFactory {
 			        	 		    case None =>
 			        	 		    case Some(invokedList) =>
 			        	 		      invokedList.foreach(invoked => {
-			        	 		       // println(invoked.getName())
 			        	 		        if(invoked.getName() != "") {
 			        	 		        	m.addProperty(INVOKINGMETHODS_PROP, invoked);
 			        	 		        }
