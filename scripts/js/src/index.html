@@ -34,10 +34,10 @@ function update () {
 			function play(){
 				var src = document.getElementById("playbutton").src;
 				var file = src.substring(src.lastIndexOf("/")+1, src.length);
-			
-				if(file == "img/play.png"){
+						
+				if(file == "play.png"){
 					document.getElementById("playbutton").src="img/pause.png";
-				}else if(file =="img/pause.png"){
+				}else if(file =="pause.png"){
 					document.getElementById("playbutton").src = "img/play.png";
 				}
 			}			
@@ -70,7 +70,7 @@ function update () {
 </div>
 
 <div id="slider_controls"> 
-	<input id="playbutton" type="image" src="play.png" name="image" width="60" height="60" onClick="play()" />
+	<input id="playbutton" type="image" src="img/play.png" name="image" width="60" height="60" onClick="play()" />
 	<input type="range" min="0" max="50" value="0" step="5" onchange="showValue(this.value)" />
 </div>
 
