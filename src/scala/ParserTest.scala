@@ -43,12 +43,13 @@ object ParserTest {
 //					   obj match {
 //					     case ClassEntity() => true
 //					     case _ => false
-//					   }}));
-		
-					  //new BreadthFirstNavigator().walkModel(res, new  ModelSaver(), saver.getSelection());
-					 println("/* Invocations */")
-					 println(InvocationExtractorFactory.getSimpleInvocationExtractor().extract(res));
-
+//					   }}))
+					  // println(new ClassMethodsExtractor().extract(res))
+					  //println(new InheritanceExtractor().extract(res));
+					 val saver = new  ModelSaver();
+					 new BreadthFirstNavigator().walkModel(res, saver, Some(saver.getSelection()));
+					 println(InvocationExtractorFactory.getSimpleInvocationExtractor().extract(res))
+					 
 					  
 					  
 					}
