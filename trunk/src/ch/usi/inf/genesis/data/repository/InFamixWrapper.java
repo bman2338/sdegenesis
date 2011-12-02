@@ -1,6 +1,9 @@
 package ch.usi.inf.genesis.data.repository;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 
 public class InFamixWrapper implements IExternalModelParserWrapper{
@@ -27,6 +30,15 @@ public class InFamixWrapper implements IExternalModelParserWrapper{
 			outputFileName.mkdirs();
 		
 		final Process p = Runtime.getRuntime().exec(String.format("%s -lang %s -path %s -mse %s", famixPath, language.getId(), sourceFile.getAbsolutePath(), outputFileName.getAbsolutePath()));
+        InputStream stderr = p.getInputStream();
+        InputStreamReader isr = new InputStreamReader(stderr);
+        BufferedReader br = new BufferedReader(isr);
+        String line = null;
+        
+        while ( (line = br.readLine()) != null)
+            System.out.println(line);
+        
+
 		if(!asynchronous){
 			try {
 				p.waitFor();
@@ -35,7 +47,9 @@ public class InFamixWrapper implements IExternalModelParserWrapper{
 			}
 		}
 		//Delete Workspace
-		new File(famixPath.substring(0,famixPath.lastIndexOf("/"))).delete();
+		final File f = new File(famixPath.substring(0,famixPath.lastIndexOf("/"))+"/workspace");
+		System.out.println("DELETE: "+ f.getAbsolutePath());
+		f.delete();
 		return outputFileName;
 	}
 
