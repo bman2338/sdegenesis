@@ -94,9 +94,8 @@ def attrToJSON(model: ModelObject, buffer: StringBuffer) : Unit = {
 	model.properties.foreach(pair => {
 		val key = pair._1;
 		val property = pair._2;
-		if(key != prop) {
-			
-			buffer.append(key);
+		if(key != prop && key != NAME_PROP) {
+		
 			if(property.length > 1) {
 				// 		  buffer.append(": [")
 				// property.foreach(value => {
@@ -106,9 +105,11 @@ def attrToJSON(model: ModelObject, buffer: StringBuffer) : Unit = {
 				// })
 				// buffer.append("],");
 		}else {
-			buffer.append("{\"");
+			buffer.append(", ");
+			buffer.append(key);
+			buffer.append(": \"");
 			buffer.append(property.first.toString());
-			buffer.append("}\"");
+			buffer.append("\", ");
 		}
 		
 		}
@@ -132,7 +133,7 @@ private def toJSON(modelObject: ModelObject, visited: HashSet[Int], buffer: Stri
 			  visited.add(modelObject.getId());
 			}
 			
-			//attrToJSON(modelObject, buffer);
+			attrToJSON(modelObject, buffer);
 
 			modelObject.getProperties(prop) match {
 			case None => buffer.append(nameCloseStr);

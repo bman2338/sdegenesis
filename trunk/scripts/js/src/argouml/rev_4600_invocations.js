@@ -1,4 +1,4 @@
-function ArgoUML_r666_data() { var json = { "name": "ArgoUML r666", "children": [
+function ArgoUML_r666_data() { var json = { "name": "ArgoUML: revision 4600", "children": [
 { "name": "initialiseListener","children": [{ "name": "isASignal"},
 { "name": "addElementListener","children": [{ "name": "addElementListener","children": [{ "name": "getPump","children": [{ "name": "getModelEventPump"},
 ]},
