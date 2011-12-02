@@ -1,4 +1,5 @@
-function Genesis_data() { var json = { "name": "Genesis(Java)", "children": [
+/* Invocations */
+function Genesis_data() { var json = { "name": "ArgoUML r666", "children": [
 { "name": "methodHeader","children": [{ "name": "index"},
 { "name": "rulePostProcessing"},
 { "name": "getTree"},
