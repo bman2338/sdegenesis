@@ -8,6 +8,7 @@ import scala.collection.mutable.HashMap
 import ch.usi.inf.genesis.model.core.FAMIX._
 import scala.collection.mutable.HashSet
 
+
 class HierarchyExtractor(val prop: FAMIX, 
     					 var getSelection: (ModelObject => Boolean),
     					 var getAnalysis: Option[(()=> AbstractHierarchyAnalysis)] = None) extends Extractor {
@@ -27,11 +28,12 @@ def extract(model: ModelObject): Analysis = {
 }
 
 def visit(obj: ModelObject): NavigatorOption = { 
-		val name = obj.getName();
-		name match {
-			case "" => CONTINUE
-			case _  =>  analysis.addNode(obj);
-			} 
+	//	val name = obj.getName();
+	//	name match {
+		//	case "" => CONTINUE
+			//case _  => 
+			 analysis.addNode(obj);
+			//} 
 }
 
 }
@@ -87,6 +89,32 @@ def toJSON() : String = {
 		return buffer.toString();
 }
 
+def attrToJSON(model: ModelObject, buffer: StringBuffer) : Unit = {
+//	println("/* attrToJSON */");
+	model.properties.foreach(pair => {
+		val key = pair._1;
+		val property = pair._2;
+		if(key != prop) {
+			
+			buffer.append(key);
+			if(property.length > 1) {
+				// 		  buffer.append(": [")
+				// property.foreach(value => {
+				// 	buffer.append("{\"");
+				// 	buffer.append(value.toString());
+				// 	buffer.append("}\"");
+				// })
+				// buffer.append("],");
+		}else {
+			buffer.append("{\"");
+			buffer.append(property.first.toString());
+			buffer.append("}\"");
+		}
+		
+		}
+	});
+}
+
 private def toJSON(modelObject: ModelObject, visited: HashSet[Int], buffer: StringBuffer) : Unit = {
   
 		
@@ -103,7 +131,8 @@ private def toJSON(modelObject: ModelObject, visited: HashSet[Int], buffer: Stri
 			} else {
 			  visited.add(modelObject.getId());
 			}
-
+			
+			//attrToJSON(modelObject, buffer);
 
 			modelObject.getProperties(prop) match {
 			case None => buffer.append(nameCloseStr);

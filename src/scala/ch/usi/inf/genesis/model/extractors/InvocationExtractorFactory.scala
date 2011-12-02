@@ -5,7 +5,7 @@ import ch.usi.inf.genesis.model.core.famix._
 import ch.usi.inf.genesis.model.core.ModelObject
 import ch.usi.inf.genesis.model.core.famix.MethodEntity
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
-
+import ch.usi.inf.genesis.model.extractors.HierarchyExtractor
 
 object InvocationExtractorFactory {
 
@@ -14,7 +14,7 @@ object InvocationExtractorFactory {
 			//select only method entities
 			val selection = (obj: ModelObject) => {
 						obj match {
-						case MethodEntity() => true;
+						case MethodEntity() => if(obj.getName() != "") true else false;
 						case _ => false;
 						} };
 			
