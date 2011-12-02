@@ -11,6 +11,7 @@ border: 1px solid red;
 }
 
 body {
+	/*background: -webkit-gradient(linear, left top, right bottom, from(#D2D2D2), to(#fff));*/
 }
 
 ul.Menu {
@@ -113,17 +114,19 @@ ul.Menu li a {
 
 
 #monitor {
-    color: steelblue;
+    /*color: steelblue;*/
+	color: #555;
     margin-top: 49px;
     text-align: center;
     font-size: 40px;
 }
 
 #treename {
- margin-top: 2px;
+	color: steelblue;
+    margin-top: 2px;
     position: absolute;
-      font-size: 40px;
-      margin-left: 20px;
+    font-size: 40px;
+    margin-left: 20px;
 }
 
 .Block {
@@ -156,7 +159,7 @@ ul.Menu li a {
 
 .List li:hover {
     color: #eee;
-    background: -webkit-gradient(linear, left top, right bottom, from(#d5d), to(#fff));
+    background: -webkit-gradient(linear, left top, right bottom, from(#393939), to(#fff));
 }
 
 
@@ -180,3 +183,9 @@ ul.Menu li a {
   bottom:2%; 
   right:2%;
 }
+
+#timewarp {
+  padding-bottom: 22px;
+  padding-top: 22px;
+}
+
