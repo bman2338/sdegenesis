@@ -4,10 +4,10 @@ import javax.sql.*;
 public class DatabaseInterface{
     
 	static String dbtime;
-	static String dbUrl = "jdbc:mysql://127.0.0.1/Genesis_db";
+	static String dbUrl = "jdbc:mysql://76.162.254.140/sbackG_SDE";
 	String dbClass = "com.mysql.jdbc.Driver";
-	final static String username = "root";
-	final static String pass = "";
+	final static String username = "sbackG_minelli";
+	final static String pass = "m1nell1SDe";
 	static String query = "INSERT INTO Developers (name) VALUES ('Dev1');";
     
     
@@ -86,7 +86,7 @@ public class DatabaseInterface{
 		try {
             
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			String addProjectQuery = "INSERT INTO Projects (name, source_language, source_dialect) " +
@@ -130,7 +130,7 @@ public class DatabaseInterface{
 		try {
             
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			//First: get the id of the owner
@@ -251,7 +251,7 @@ public class DatabaseInterface{
 		try {
             
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			
 			//first, add the class to the class table
@@ -297,7 +297,7 @@ public class DatabaseInterface{
 		try {
             
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			//add method to the database
@@ -342,7 +342,7 @@ public class DatabaseInterface{
 		try {
             
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			//add attribute to the database
@@ -378,7 +378,7 @@ public class DatabaseInterface{
 	public static void addDeveloper(String name){
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			String addDeveloperQuery = "INSERT INTO Developers (name) " +
@@ -405,7 +405,7 @@ public class DatabaseInterface{
 	public static void addBugTrackerDeveloper(String name, String email){
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			String addBTDeveloperQuery = "INSERT INTO BugTrackerDevelopers (name, email) " +
@@ -439,7 +439,7 @@ public class DatabaseInterface{
 		try {
             
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			String addBugQuery = "INSERT INTO BugTrackerInfo (name, description, belongs_to_project, status, assignee) " +
@@ -471,7 +471,7 @@ public class DatabaseInterface{
 		
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			String addBugHistoryQuery = "INSERT INTO BugTrackerHistory (bug_id, previous_assignee) " +
@@ -505,7 +505,7 @@ public class DatabaseInterface{
 		try {
             
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			String addBugQuery = "INSERT INTO Revisions (project_id, comment, revision_number, developer_id, revision_date) " +
@@ -539,7 +539,7 @@ public class DatabaseInterface{
 		try {
             
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			String addInheritanceQuery = "INSERT INTO Inheritance (subclass, superclass, revision_number) " +
@@ -573,7 +573,7 @@ public class DatabaseInterface{
 		try {
             
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			String addMethodMetricQuery = "INSERT INTO MethodMetrics (method_id, name, value, revision_number) " +
@@ -607,7 +607,7 @@ public class DatabaseInterface{
 		try {
             
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
             
 			String addClassMetricQuery = "INSERT INTO ClassMetrics (class_id, name, value, revision_number) " +
@@ -647,7 +647,7 @@ public class DatabaseInterface{
 		try {
             
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			
 			//put the invoked method in the table by adding the revision in which it has been invoked
@@ -687,7 +687,7 @@ public class DatabaseInterface{
 		int projId = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			
 			String getProjectIdQuery = "SELECT id FROM Projects WHERE name = '" + projectName + "'";
@@ -722,7 +722,7 @@ public class DatabaseInterface{
 		int packId = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			
 			String getProjectIdQuery = "SELECT * FROM Packages WHERE name = '" + packageName + "' AND " +
@@ -771,7 +771,7 @@ public class DatabaseInterface{
 		int ownerId = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			
 			String getOwnerQuery = "SELECT id FROM Developers WHERE name = '" + owner + "';";
@@ -806,7 +806,7 @@ public class DatabaseInterface{
 		int classId = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			
 			String getClassIdQuery = "SELECT * FROM Classes WHERE name = '" + name + "' AND " +
@@ -842,7 +842,7 @@ public class DatabaseInterface{
 		int classId = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			
 			String getClassesIdQuery = "SELECT * FROM Classes WHERE name = '" + name + "' AND " +
@@ -893,7 +893,7 @@ public class DatabaseInterface{
 		int methodId = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			
 			String getMethodIdQuery = "SELECT * FROM Methods WHERE name = '" + methodName + "' AND " +
@@ -928,7 +928,7 @@ public class DatabaseInterface{
 		int attributeId = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			
 			String getAttributeIdQuery = "SELECT * FROM Attributes WHERE name = '" + attributeName + "' AND " +
@@ -961,7 +961,7 @@ public class DatabaseInterface{
 		int assigneeId = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			
 			String getAssigneeIdQuery = "SELECT id FROM BugTrackerDevelopers WHERE name = '" + assignee + "';";
@@ -994,7 +994,7 @@ public class DatabaseInterface{
 		int bugId = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			Connection con = DriverManager.getConnection (dbUrl, "root", "");
+			Connection con = DriverManager.getConnection (dbUrl, username, pass);
 			Statement stmt = con.createStatement();
 			
 			String getBugIdQuery = "SELECT * FROM BugTrackerInfo WHERE name = '" + bugName + "' AND " +
