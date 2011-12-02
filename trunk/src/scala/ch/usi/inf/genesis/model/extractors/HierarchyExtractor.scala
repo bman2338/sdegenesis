@@ -22,37 +22,35 @@ def extract(model: ModelObject): Analysis = {
 		analysis.title = model.getName()
 		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection));
 		analysis.clean();
+		println("/* Hierarchycal analysis*/");
 		return analysis;
 }
 
 def visit(obj: ModelObject): NavigatorOption = { 
 		val name = obj.getName();
 		name match {
-			case "" =>
+			case "" => CONTINUE
 			case _  =>  analysis.addNode(obj);
 			} 
-	
-		return analysis.opt();
 }
 
 }
 
 abstract class AbstractHierarchyAnalysis extends Analysis {
   var title = ""
-  def addNode(node: ModelObject) : Unit;
+  def addNode(node: ModelObject) : NavigatorOption;
   def clean() : Unit;
-  def opt() : NavigatorOption;
 }
 
 
 class HierarchyAnalysis(val prop: FAMIX,
-						val optAuxAddNode : Option[(ModelObject, HierarchyAnalysis) => Unit] = None) extends AbstractHierarchyAnalysis {
+						val optAuxAddNode : Option[(ModelObject, HierarchyAnalysis) => NavigatorOption] = None) extends AbstractHierarchyAnalysis {
 	val nodes: HashMap[Int, ModelObject] = new HashMap();
 	val nameOpenStr = "{ \"name\": \"";
 	val nameCloseStr = "\"},\n";
 	val childrenOpenStr = "\"children\": [";
 	val childrenCloseStr = "]},\n";
-	var auxAddNode : (ModelObject) => Unit = (node) => { nodes.put(node.getId(), node) };
+	var auxAddNode : (ModelObject) => NavigatorOption = (node) => { nodes.put(node.getId(), node); SKIP_SUBTREE };
 	
 	
 	optAuxAddNode match {
@@ -63,68 +61,64 @@ class HierarchyAnalysis(val prop: FAMIX,
 
 override def toString() = { toJSON() }
 
-def opt() : NavigatorOption = {
-		return CONTINUE;
-}
 
 def toJSON() : String = {
 		var visited = new HashSet[Int]();
-	
-		var str = "";
-		if (nodes.size == 1)
-			str = "function " + title.replace(" ", "_") + "_data() { var json = ";			  
-		else 
-			str = "function " + title.replace(" ", "_") + "_data() { var json = { \"name\": \"" + title + "\", \"children\": [\n";	
+		val buffer = new StringBuffer;
 		
+		 
+		if (nodes.size == 1)
+			buffer.append("function " + title.replace(" ", "_") + "_data() { var json = ");			  
+		else 
+			buffer.append("function " + title.replace(" ", "_") + "_data() { var json = { \"name\": \"" + title + "\", \"children\": [\n");	
 		
 		nodes.foreach(pair => {
 			val node = pair._2;
-			str += toJSON(node, visited);
+			toJSON(node, visited, buffer);
 			visited.clear();
 		})
 
 		if (nodes.size == 1) {
-			str = str.substring(0,str.length()-1)
-					str += "; return json; }";
+			buffer.deleteCharAt(buffer.length()-1);
+			buffer.append("; return json; }");
 		}
 		else
-			str += "]}; return json; }";
-		//str = str.replace("'", "");
-		return str;
+			buffer.append("]}; return json; }");
+		return buffer.toString();
 }
 
-private def toJSON(modelObject: ModelObject, visited: HashSet[Int]) : String = {
+private def toJSON(modelObject: ModelObject, visited: HashSet[Int], buffer: StringBuffer) : Unit = {
+  
+		
 		val name = modelObject.getName();
-		var str = "";
-
+		
 		name match {
-		case "" => visited.add(modelObject.getId()); return "";
+		case "" => visited.add(modelObject.getId()); return;
 		case _  => { 
-			str += nameOpenStr + name;
+			buffer.append(nameOpenStr + name);
 			
 			if(visited.contains(modelObject.getId())) {
-			   str += nameCloseStr;
-			   return str;
+			   buffer.append(nameCloseStr);
+			   return;
 			} else {
 			  visited.add(modelObject.getId());
 			}
 
 
 			modelObject.getProperties(prop) match {
-			case None => str += nameCloseStr;
+			case None => buffer.append(nameCloseStr);
 			case Some(children) => {
-				str +=   "\"," + childrenOpenStr;
+				buffer.append( "\"," + childrenOpenStr);
 
 				children.foreach(child => {
-					str += toJSON(child, visited);
+					 toJSON(child, visited, buffer);
 				});
 
-				str += childrenCloseStr;
+				buffer.append(childrenCloseStr);
 			}
 			}
 		}
 		}
-		return str;
 }
 
 /**
@@ -150,7 +144,7 @@ def clean() = {
 	});
 }
 
-def addNode(node: ModelObject) = {
+def addNode(node: ModelObject) : NavigatorOption = {
 	auxAddNode(node);
 }
 

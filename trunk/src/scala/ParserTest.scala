@@ -37,25 +37,18 @@ object ParserTest {
 					  
 					  case Some(res) =>  {
 					    
-					    res.addProperty(FAMIX.NAME_PROP,new StringValue("ArgoUML r666"))
-					    
-//					  new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), 
-//					 new DepthFirstNavigator().walkModel(res, new ModelPrinter(), 
-//					     Some((obj) => {
+					 res.addProperty(FAMIX.NAME_PROP,new StringValue("ArgoUML r666"));
+//					 new BreadthFirstNavigator().walkModel(res, new ModelPrinter(), 
+//				     Some((obj) => {
 //					   obj match {
 //					     case ClassEntity() => true
 //					     case _ => false
-//					   }}))
-					  // println(new ClassMethodsExtractor().extract(res))
-					  //println(new InheritanceExtractor().extract(res));
-					 //val saver = new  ModelSaver();
-					   //new BreadthFirstNavigator().walkModel(res, saver, saver.getSelection());
-					 println(InvocationExtractorFactory.getSimpleInvocationExtractor().extract(res))
-					 
-					  
-					  
-					  
-					  
+//					   }}));
+		
+					  //new BreadthFirstNavigator().walkModel(res, new  ModelSaver(), saver.getSelection());
+					 println("/* Invocations */")
+					 println(InvocationExtractorFactory.getSimpleInvocationExtractor().extract(res));
+
 					  
 					  
 					}

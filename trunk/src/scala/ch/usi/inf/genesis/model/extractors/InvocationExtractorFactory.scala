@@ -4,6 +4,8 @@ import ch.usi.inf.genesis.model.core.FAMIX._
 import ch.usi.inf.genesis.model.core.famix._
 import ch.usi.inf.genesis.model.core.ModelObject
 import ch.usi.inf.genesis.model.core.famix.MethodEntity
+import ch.usi.inf.genesis.model.navigation.NavigatorOption._
+
 
 object InvocationExtractorFactory {
 
@@ -48,7 +50,7 @@ object InvocationExtractorFactory {
 			        	 	case None =>
 			        	 }
 			        }}}}
-			  ()
+			  SKIP_SUBTREE
 			};
 			
 			
