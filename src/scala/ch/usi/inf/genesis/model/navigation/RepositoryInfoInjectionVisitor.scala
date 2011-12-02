@@ -25,6 +25,7 @@ class RepositoryInfoInjectionVisitor(revisionInfo : RevisionInformation) extends
 //			}
 	  
 			//TODO if visited, add repository information. Already filtered out by selectionMethod
+			STOP
 	}
 	
 	
