@@ -74,8 +74,14 @@ class ModelSaver extends ModelVisitor {
 				}
 				
 				rev match{
-		      		case Some(s : StringValue) =>
-		      			DatabaseInterface.addClass(projectName, belongsToPackage.toString(), obj.getName(), owner.toString(), Integer.parseInt(s.value))
+		      		case Some(s : StringValue) => belongsToPackage match{
+		      	  		case Some(btp: StringValue) => owner match{
+		      	  			case Some(own: StringValue) =>
+		      	  				DatabaseInterface.addClass(projectName, btp.value, obj.getName().replace('\'', ' '), own.value, Integer.parseInt(s.value))
+		      	  			case _ =>
+		      	  		}
+		      	  		case _ =>
+		      		}
 		      		case _ =>
 				}
 				//now save the inheritance
@@ -84,8 +90,11 @@ class ModelSaver extends ModelVisitor {
 				  case Some(x) => 
 				    for(superclass <- x){
 				    	rev match{
-				    	  case Some(s: StringValue) =>
-				    	    DatabaseInterface.addInheritance(projectName, superclass.toString(), obj.getName(), Integer.parseInt(s.value))
+				    	  case Some(s: StringValue) => belongsToPackage match{
+		      	  			case Some(spr: StringValue) => 
+		      	  				DatabaseInterface.addInheritance(projectName, spr.value, obj.getName().replace('\'', ' '), Integer.parseInt(s.value))
+		      	  			case _ =>
+				    	  }
 				    	  case _ =>
 				    	}
 					}
@@ -127,25 +136,33 @@ class ModelSaver extends ModelVisitor {
 				  className = Some(new StringValue(""));
 				}
 				
-				if(modifiers == None){
 				  rev match{
-				  	case Some(s: StringValue) =>
-				  		DatabaseInterface.addMethod(projectName, className.toString(), obj.getName(), signature.toString(), "", returnType.toString(), owner.toString(), Integer.parseInt(s.value))
+				  	case Some(r: StringValue) => owner match{
+				  	  case Some(own: StringValue) => signature match {
+				  	    case Some(sig: StringValue) => returnType match {
+				  	      case Some(rtyp: StringValue) => className match {
+				  	        case Some(cname: StringValue) => modifiers match {
+				  	          //if none, modifiers given as ""
+				  	          case None => DatabaseInterface.addMethod(projectName, cname.value, obj.getName().replace('\'', ' '), sig.value, "", rtyp.value, own.value, Integer.parseInt(r.value))
+				  	          case _ =>
+				  	            //otherwise if it contains something, build a string and pass it
+				  	            var modif = "";
+				  	            for(i <- modifiers){
+				  	            	modif += i + " ";
+				  	            }
+				  	            DatabaseInterface.addMethod(projectName, cname.value, obj.getName().replace('\'', ' '), sig.value, modif, rtyp.value, own.value, Integer.parseInt(r.value))
+				  	        }
+				  	        case _ =>
+				  	      }
+				  	      case _ =>
+				  	    }
+				  	    case _ =>
+				  	  }
+				  	  case _ =>
+				  	}
 				  	case _ =>
 				  }
-				} else {
-				  var modif = "";
-				  for(i <- modifiers){
-				    modif += i + " ";
-				  }
-				  
-				  rev match{
-				  	case Some(s: StringValue) =>
-				  		DatabaseInterface.addMethod(projectName, className.toString(), obj.getName(), signature.toString(), modif, returnType.toString(), owner.toString(), Integer.parseInt(s.value))
-				  	case _ =>
-				  }
-				  
-				}
+				
 			
 				//HOW TO ADD METHOD INVOKATIONS? WE ARE NOT SURE IF METHODS ARE ALREADY THERE
 				//IN THE DATABASE IN THE FIRST PLACE
@@ -185,32 +202,37 @@ class ModelSaver extends ModelVisitor {
 				  className = Some(new StringValue(""));
 				}
 				
-				if(modifiers == None){
-				  DatabaseInterface.addMethod(projectName, className.toString(), obj.getName(), signature.toString(), "", declaredType.toString(), owner.toString(), Integer.parseInt(rev.toString()))
-				} else {
-				  var modif = "";
-				  for(i <- modifiers){
-				    modif += i + " ";
-				  }
-				  
-				  rev match{
-				  	case Some(s: StringValue) =>
-				  		DatabaseInterface.addMethod(projectName, className.toString(), obj.getName(), signature.toString(), modif, declaredType.toString(), owner.toString(), Integer.parseInt(s.value))
-				  	case _ =>
-				  }
-				  
-				}
-				
 				rev match{
-				  	case Some(s: StringValue) =>
-				  		DatabaseInterface.addAttribute(projectName, className.toString(), obj.getName(), signature.toString(), modifiers.toString(), declaredType.toString(), Integer.parseInt(s.value))
+				  	case Some(r: StringValue) => owner match{
+				  	  case Some(own: StringValue) => signature match {
+				  	    case Some(sig: StringValue) => declaredType match {
+				  	      case Some(dtyp: StringValue) => className match {
+				  	        case Some(cname: StringValue) => modifiers match {
+				  	          //if none, modifiers given as ""
+				  	          case None => DatabaseInterface.addAttribute(projectName, cname.value, obj.getName().replace('\'', ' '), sig.value, "", dtyp.value, Integer.parseInt(r.value))
+				  	          case _ =>
+				  	            //otherwise if it contains something, build a string and pass it
+				  	            var modif = "";
+				  	            for(i <- modifiers){
+				  	            	modif += i + " ";
+				  	            }
+				  	            DatabaseInterface.addAttribute(projectName, cname.value, obj.getName().replace('\'', ' '), sig.value, modif, dtyp.value, Integer.parseInt(r.value))
+				  	        }
+				  	        case _ =>
+				  	      }
+				  	      case _ =>
+				  	    }
+				  	    case _ =>
+				  	  }
+				  	  case _ =>
+				  	}
 				  	case _ =>
-				}
+				  }
 			}
 			
 			//add a developer
 			case DeveloperEntity() => {
-			  DatabaseInterface.addDeveloper(obj.getName());
+			  DatabaseInterface.addDeveloper(obj.getName().replace('\'', ' '));
 			}
 			
 			//add a bug tracker developer
@@ -220,8 +242,11 @@ class ModelSaver extends ModelVisitor {
 			  if(btdevEmail == None){
 			    btdevEmail = Some(new StringValue(""));
 			  }
-			  
-			  DatabaseInterface.addBugTrackerDeveloper(obj.getName(), btdevEmail.toString());
+			  btdevEmail match {
+			    case Some(btde: StringValue) =>
+			      DatabaseInterface.addBugTrackerDeveloper(obj.getName().replace('\'', ' '), btde.value);
+			    case _ =>
+			  }
 			}
 			
 			//add a bug
@@ -242,13 +267,23 @@ class ModelSaver extends ModelVisitor {
 			    assignee = Some(new StringValue(""));
 			  }
 			  
-			  DatabaseInterface.addBug(projectName, obj.getName(), desc.toString(), status.toString(), assignee.toString())
+			  desc match{
+			    case Some(d: StringValue) => status match{
+			      case Some(stat: StringValue) => assignee match {
+			        case Some(assign: StringValue) => 
+			          DatabaseInterface.addBug(projectName, obj.getName().replace('\'', ' '), d.value, stat.value, assign.value)
+			        case _ =>
+			      }
+			      case _ =>
+			    }
+			    case _ =>
+			  }
 			  
 			  //add history for a bug
 			  var assignees = obj.properties.get(PREVIOUS_ASSIGNEES_PROP);
 			  assignees match {
 				case Some(x) => for (i <- x){
-				  	DatabaseInterface.addBugTrackerHistory(projectName, obj.getName(), i.getName())
+				  	DatabaseInterface.addBugTrackerHistory(projectName, obj.getName().replace('\'', ' '), i.getName().replace('\'', ' '))
 				}
 				case _ =>
 			  }
@@ -279,9 +314,18 @@ class ModelSaver extends ModelVisitor {
 			  }
 			  
 			  rev match{
-				  	case Some(s: StringValue) =>
-				  		DatabaseInterface.addRevision(projectName, comment.toString(), Integer.parseInt(s.value), dev.toString(), date.toString())
-				  	case _ =>
+			  	case Some(s: StringValue) => comment match {
+			  	  case Some(comm: StringValue) => dev match {
+			  	    case Some(d: StringValue) => date match {
+			  	      case Some(dat: StringValue) =>
+			  	        DatabaseInterface.addRevision(projectName, comment.toString(), Integer.parseInt(s.value), d.value, dat.value)
+			  	      case _ =>
+			  	    }
+			  	    case _ =>
+			  	  }
+			  	  case _ =>
+			  	}
+				case _ =>
 			  }
 			}
 			
@@ -299,8 +343,8 @@ class ModelSaver extends ModelVisitor {
 			  }
 			  
 			  rev match{
-			  	case Some(s: StringValue) =>
-			  		DatabaseInterface.addClassMetric(projectName, ClassName, metricName, value, Integer.parseInt(s.value))
+			  	case Some(s: StringValue) => 
+			  	      DatabaseInterface.addClassMetric(projectName, ClassName, metricName, value, Integer.parseInt(s.value))
 				case _ =>
 			  }
 			}
