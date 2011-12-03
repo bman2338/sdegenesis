@@ -13,36 +13,27 @@ import java.util.ArrayList
  *
  * Injects Repository Information inside the original MSE meta-model.
  * Structure:
- *          Entity["revision"] => RevisionEntity["number"]      =>  IntValue
- *                                RevisionEntity["comment"]     =>  StringValue
- *                                RevisionEntity["date"]        =>  StringValue
- *                                RevisionEntity["author"]      =>  BTDeveloperEntity
- *                                RevisionEntity["fileAdded"]   =>  ListBuffer[StringValue]
- *                                RevisionEntity["fileRemoved"] =>  ListBuffer[StringValue]
- *                                RevisionEntity["fileDeleted"] =>  ListBuffer[StringValue]
+ *          Entity["revision"] => RevisionEntity["number"]        =>  IntValue
+ *                                RevisionEntity["comment"]       =>  StringValue
+ *                                RevisionEntity["date"]          =>  StringValue
+ *                                RevisionEntity["author"]        =>  BTDeveloperEntity
+ *                                RevisionEntity["addedFiles"]    =>  ListBuffer[StringValue]
+ *                                RevisionEntity["modifiedFiles"] =>  ListBuffer[StringValue]
+ *                                RevisionEntity["deletedFiles"]  =>  ListBuffer[StringValue]
  *
  */
 
-class RepositoryInfoInjectionVisitor(revisionInfo : RevisionInformation) extends ModelVisitor {
+class RevisionInfoInjectionVisitor(revisionInfo : RevisionInformation) extends ModelVisitor {
 
   def visit(obj: ModelObject): NavigatorOption = {
-	  obj.getProperty("sourceAnchor") match {
-		  case Some(fileAnchor) =>
-			  println("File Anchor: " + fileAnchor.getName())
-				fileAnchor.getProperty("fileName") match{
-  			  case Some(fileName : StringValue) => println(fileName.value); CONTINUE
-  				case _ =>	CONTINUE
-				}
-			case _ =>
-			  CONTINUE
-			}
-
-      val revEntity = new RevisionEntity
+      //BugTracker Dev. Entity
       val btDev = new BTDeveloperEntity
       btDev.addProperty("name", new StringValue(revisionInfo.getAuthor))
 
+      //Revision Entity
+      val revEntity = new RevisionEntity
+      revEntity.addProperty("number", new IntValue(revisionInfo.getRevisionNumber.toString.toInt))
       revEntity.addProperty("author", btDev)
-      revEntity.addProperty("number", new IntValue(-1))    //TODO change RevisionInformation number field to Integer
       revEntity.addProperty("comment", new StringValue(revisionInfo.getComment))
       revEntity.addProperty("date", new StringValue(revisionInfo.getDate.toString))
 
@@ -64,10 +55,19 @@ class RepositoryInfoInjectionVisitor(revisionInfo : RevisionInformation) extends
         revEntity.addProperty("deletedFiles", new StringValue(file.getName))
       }
 
+      obj.addProperty("revision", revEntity)
+
 			CONTINUE
 	}
 
-
+  /**
+   * @author Luca Ponzanelli
+   * @return A function pointer to the selection method.
+   *
+   * It filters out all the ModelObjects that not have a reference to a SourceAnchor and its related FileAnchor.
+   * In case the reference to those anchors is found, it filters out objects whose FileAnchor's "fileName" property
+   * is not included in the files affected by the revision.
+   */
 	def selectionMethod() : (ModelObject => Boolean) = {
 			((obj) => obj.getProperty("sourceAnchor") match {
 				case Some(fileAnchor :ModelObject) =>
@@ -80,17 +80,15 @@ class RepositoryInfoInjectionVisitor(revisionInfo : RevisionInformation) extends
 	}
 	
 	private def isFileAffected(fileName : String) : Boolean = {
-			val fileToCheck = new File(fileName)
 			val updated = new ArrayList[File] 
 			updated.addAll(revisionInfo.getAddedFiles)
 			updated.addAll(revisionInfo.getModifiedFiles)
 			val it = updated.iterator
-			while(it.hasNext()){
-				val file = it.next()	
-				println(file.getName + "\t" + fileToCheck.getName);
-				if(file.getName.equals(fileToCheck.getName))
-					true
-				
+			while(it.hasNext){
+				val file = it.next
+				if(file.toString.contains(fileName)){
+					return true
+        }
 			}
 			false
 	}

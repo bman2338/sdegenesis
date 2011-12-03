@@ -17,7 +17,7 @@ public class RevisionInformation {
 	
 	
 	public RevisionInformation(final String author, final Date date, final String comment, 
-			final long revisionNumber, final List<File> addedFiles, final List<File> deletedFiles, 
+			final long revisionNumber, final List<File> addedFiles, final List<File> deletedFiles,
 			final List<File> modifiedFiles, final File mseFile){
 		this.author = author;
 		this.comment = comment;
@@ -69,10 +69,8 @@ public class RevisionInformation {
 	
 	@Override
 	public boolean equals(final Object o){
-		if(o.getClass() != RevisionInformation.class)
-			return false;
-		
-		return revisionNumber == ((RevisionInformation)o).revisionNumber;
+		return o.getClass() != RevisionInformation.class &&
+               revisionNumber == ((RevisionInformation)o).revisionNumber;
 	}
 	
 	@Override
