@@ -10,13 +10,17 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Luca Ponzanelli
+ *
+ * The class provide the basic functionalities to crawl a Bugzilla bug tracker to retrieve bugs list.
+ */
 public class BugzillaCrawler implements IBugTrackerCrawler{
 
 	private final URL bugzillaURL;
 	
 	/**
-	 * @author Luca Ponzanelli
-	 * @param url the url to bugzilla bugtracker
+	 * @param url the url to Bugzilla bug tracker
 	 * @throws MalformedURLException
 	 * 
 	 * Example of url: https://issues.apache.org/bugzilla/
@@ -25,21 +29,17 @@ public class BugzillaCrawler implements IBugTrackerCrawler{
 		bugzillaURL = new URL(url);
 	}
 
-	
-
 	/**
-	 * @author Luca Ponzanelli
 	 * @param product The id of the project's bugs to crawl
 	 * @param component The id of the component's bugs to crawl
-	 * @return The list of the bugs to be retrieved
-	 * @throws MalformedURLException
-	 * @throws IOException
+	 * @return The list of the bugs' id to be retrieved
+	 * @throws IOException In case it is impossible to establish a connection
 	 */
-	private List<Integer> retrieveBugList(final String product, final String component) throws MalformedURLException, IOException{
+	private List<Integer> retrieveBugList(final String product, final String component) throws IOException{
 		//Format Parameters String
-		final String formattedProduct = URLEncoder.encode(product, "UTF-8");//product.replaceAll(" ", "%20");
-		final String formattedComponent = URLEncoder.encode(component, "UTF-8");//component.replaceAll(" ", "%20");
-		
+		final String formattedProduct = URLEncoder.encode(product, "UTF-8");
+		final String formattedComponent = URLEncoder.encode(component, "UTF-8");
+
 		final String csvBugListParams = String.format("buglist.cgi?ctype=csv&query_format=advanced&order=bug_id&product=%s&component=%s", formattedProduct,formattedComponent);
 		final String url = bugzillaURL.toString();
 		final List<Integer> bugIdList = new ArrayList<Integer>();
@@ -48,7 +48,7 @@ public class BugzillaCrawler implements IBugTrackerCrawler{
 		final URLConnection con = new URL(concatenateURLs(url,csvBugListParams)).openConnection();
 		final BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		String bugEntry;
-		while ((bugEntry = in.readLine()) != null){ 
+		while ((bugEntry = in.readLine()) != null){
 			final int index = bugEntry.indexOf(",");
 			final String str = bugEntry.substring(0, index);
 			if(!str.matches("[\\d]*"))
@@ -67,12 +67,19 @@ public class BugzillaCrawler implements IBugTrackerCrawler{
 		return first+second;
 	}
 
-
+    /**
+     * @return The full list of bugs for every project and every component.
+     */
 	@Override
 	public List<BugInfo> getBugList() {
 		return getBugList("","");
 	}
 
+    /**
+     * @param project The project's name
+     * @param component The component's name
+     * @return The list of the bugs concerning the project and the component indicated.
+     */
 	@Override
 	public List<BugInfo> getBugList(final String project, final String component) {
 		final List<BugInfo> bugList = new ArrayList<BugInfo>();

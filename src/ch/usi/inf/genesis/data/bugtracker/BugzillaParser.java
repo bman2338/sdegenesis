@@ -30,8 +30,10 @@ import net.htmlparser.jericho.Source;
 
 public class BugzillaParser {
 
-	public static List<BugHistoryEntry> parseHistory(final URL historyUrl){
-		final List<BugHistoryEntry> history = new ArrayList<BugHistoryEntry>();
+	public static BugHistory parseHistory(final URL historyUrl){
+		final BugHistory history = new BugHistory();
+        String lastWho = "";
+        Date lastWhen = null;
 		try {
 			final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			MicrosoftConditionalCommentTagTypes.register();
@@ -52,30 +54,32 @@ public class BugzillaParser {
 						final String rowSpan = childs.get(0).getAttributeValue("rowspan");
 						final int localRowSpanValue = rowSpan == null? 0 : Integer.parseInt(rowSpan);
 
-						final BugHistoryEntry entry = new BugHistoryEntry();
+						final BugHistoryTransition transition = new BugHistoryTransition();
 						if(rowSpanValue <= 0){
-							entry.setWho(childs.get(0).getContent().toString().replaceAll("[\\s]*",""));
+							transition.setWho(childs.get(0).getContent().toString().replaceAll("[\\s]*",""));
 							try{
-								entry.setWhen(formatter.parse(childs.get(1).getContent().toString()));
+								transition.setWhen(formatter.parse(childs.get(1).getContent().toString()));
 							}catch (final ParseException pex) {
-								entry.setWhen(null);
+								transition.setWhen(null);
 							}
-							entry.setWhat(childs.get(2).getContent().toString().replaceAll("[\\s]*",""));
-							entry.setAdded(childs.get(3).getContent().toString().replaceAll("[\\s]*",""));
-							entry.setRemoved(childs.get(4).getContent().toString());
+							transition.setAdded(childs.get(3).getContent().toString().replaceAll("[\\s]*",""));
+							transition.setRemoved(childs.get(4).getContent().toString());
+                            lastWho = transition.getWho();
+                            lastWhen = transition.getWhen();
+                            history.addTransition(childs.get(2).getContent().toString().replaceAll("[\\s]*",""), transition);
 
 							if(localRowSpanValue != 0)
 								rowSpanValue = localRowSpanValue-1;
 						}
 						else{
-							entry.setWho(history.get(history.size()-1).getWho());
-							entry.setWhen(history.get(history.size()-1).getWhen());
-							entry.setWhat(childs.get(0).getContent().toString().replaceAll("[\\s]*",""));
-							entry.setAdded(childs.get(1).getContent().toString().replaceAll("[\\s]*",""));
-							entry.setRemoved(childs.get(2).getContent().toString());
+                            final String what = childs.get(0).getContent().toString().replaceAll("[\\s]*", "");
+                            transition.setWhen(lastWhen);
+                            transition.setWho(lastWho);
+							transition.setAdded(childs.get(1).getContent().toString().replaceAll("[\\s]*", ""));
+							transition.setRemoved(childs.get(2).getContent().toString());
+                            history.addTransition(what, transition);
 							--rowSpanValue;
 						}
-						history.add(entry);
 					}
 				}
 			}
@@ -83,8 +87,7 @@ public class BugzillaParser {
 			e1.printStackTrace();
 		} catch (final IOException e1) {
 			e1.printStackTrace();
-		} 
-
+		}
 		return history;
 	}
 
@@ -126,7 +129,6 @@ public class BugzillaParser {
 						}
 						else
 							bugFound = false;
-
 					}
 					else if(element.getName().equals(new QName("bug_id")) && bugFound){
 						final XMLEvent el = (XMLEvent) filteredEventReader.next();

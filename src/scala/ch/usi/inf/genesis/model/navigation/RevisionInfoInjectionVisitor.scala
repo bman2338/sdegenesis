@@ -16,7 +16,7 @@ import java.util.ArrayList
  *          Entity["revision"] => RevisionEntity["number"]        =>  IntValue
  *                                RevisionEntity["comment"]       =>  StringValue
  *                                RevisionEntity["date"]          =>  StringValue
- *                                RevisionEntity["author"]        =>  BTDeveloperEntity
+ *                                RevisionEntity["author"]        =>  DeveloperEntity
  *                                RevisionEntity["addedFiles"]    =>  ListBuffer[StringValue]
  *                                RevisionEntity["modifiedFiles"] =>  ListBuffer[StringValue]
  *                                RevisionEntity["deletedFiles"]  =>  ListBuffer[StringValue]
@@ -27,13 +27,13 @@ class RevisionInfoInjectionVisitor(revisionInfo : RevisionInformation) extends M
 
   def visit(obj: ModelObject): NavigatorOption = {
       //BugTracker Dev. Entity
-      val btDev = new BTDeveloperEntity
-      btDev.addProperty("name", new StringValue(revisionInfo.getAuthor))
+      val dev = new BTDeveloperEntity
+      dev.addProperty("name", new StringValue(revisionInfo.getAuthor))
 
       //Revision Entity
       val revEntity = new RevisionEntity
       revEntity.addProperty("number", new IntValue(revisionInfo.getRevisionNumber.toString.toInt))
-      revEntity.addProperty("author", btDev)
+      revEntity.addProperty("author", dev)
       revEntity.addProperty("comment", new StringValue(revisionInfo.getComment))
       revEntity.addProperty("date", new StringValue(revisionInfo.getDate.toString))
 

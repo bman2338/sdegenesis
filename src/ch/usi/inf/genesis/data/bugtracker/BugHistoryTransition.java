@@ -2,21 +2,19 @@ package ch.usi.inf.genesis.data.bugtracker;
 
 import java.util.Date;
 
-public class BugHistoryEntry {
+public class BugHistoryTransition {
 
 	private String who;
 	private Date when;
-	private String what;
 	private String removed;
 	private String added;
 
-	public BugHistoryEntry(){}
+	public BugHistoryTransition(){}
 
-	public BugHistoryEntry(final String who, final Date when, final String what,
-			final String removed, final String added) {
+	public BugHistoryTransition(final String who, final Date when,
+                                final String removed, final String added) {
 		this.who = who;
 		this.when = when;
-		this.what = what;
 		this.removed = removed;
 		this.added = added;
 	}
@@ -38,14 +36,6 @@ public class BugHistoryEntry {
 		this.when = when;
 	}
 
-	public String getWhat() {
-		return what;
-	}
-
-	public void setWhat(final String what) {
-		this.what = what;
-	}
-
 	public String getRemoved() {
 		return removed;
 	}
@@ -63,6 +53,6 @@ public class BugHistoryEntry {
 	}
 
 	public String toString(){
-		return String.format("WHO: %s\nWHEN: %s\nWHAT: %s\nADDED: %s\nREMOVED: %s\n",who,when,what,added,removed);
+		return String.format("WHO: %s\nWHEN: %s\nADDED: %s\nREMOVED: %s\n",who,when,added,removed);
 	}
 }
