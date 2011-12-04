@@ -42,6 +42,10 @@ public class BugHistory {
         return this.entries.get(key).get(0);
     }
 
+    public HashMap<String, List<BugHistoryTransition>> getEntries(){
+        return this.entries;
+    }
+
     @Override
     public String toString(){
         return entries.toString();

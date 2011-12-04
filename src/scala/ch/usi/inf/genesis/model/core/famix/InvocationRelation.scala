@@ -4,7 +4,7 @@ import scala.collection.mutable.HashMap
 import ch.usi.inf.genesis.model.core.ModelObject
 import ch.usi.inf.genesis.model.core.FAMIX
 
-case class InvocationRelation extends OneToManyRelation {
+case class InvocationRelation() extends OneToManyRelation {
 	override def internalAddProperty(propertyName:String,propertyValue:ModelObject) = {
 	  propertyName match {
 	   	//case FAMIX.RECEIVER => propertyValue.addProperty(FAMIX.RECV_INVOCATIONS_PROP,this)
