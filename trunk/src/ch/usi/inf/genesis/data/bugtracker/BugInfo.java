@@ -26,12 +26,13 @@ public class BugInfo {
 	private String priority;
 	private String severity;
 	private long votes;
-	private List<BugHistoryEntry> history;
+    private BugHistory history;
+
 
 
 	public BugInfo(){
 		this.ccUsers = new ArrayList<BugTrackerUser>();
-		this.history = new ArrayList<BugHistoryEntry>();
+        this.history = new BugHistory();
 		this.components = new ArrayList<String>();
 		this.versions = new ArrayList<String>();
 	}
@@ -55,7 +56,8 @@ public class BugInfo {
 		this.severity = severity;
 		this.priority = priority;
 		this.ccUsers = ccUsers;
-		this.history = new ArrayList<BugHistoryEntry>();
+		//this.history = new ArrayList<BugHistoryTransition>();
+        this.history = new BugHistory();
 		this.project = product;
 		this.components = component;
 		this.versions = versions;
@@ -163,16 +165,16 @@ public class BugInfo {
 				String.format("HISTORY: %s\n", history);
 	}
 
-	public List<BugHistoryEntry> getHistory() {
+	public BugHistory getHistory() {
 		return history;
 	}
 
-	public void setHistory(final List<BugHistoryEntry> history) {
+	public void setHistory(final BugHistory history) {
 		this.history = history;
 	}
 
-	public void addHistory(final BugHistoryEntry entry){
-		this.history.add(entry);
+	public void addHistory(final String key, final BugHistoryTransition transition){
+		this.history.addTransition(key, transition);
 	}
 
 	public String getProduct() {
