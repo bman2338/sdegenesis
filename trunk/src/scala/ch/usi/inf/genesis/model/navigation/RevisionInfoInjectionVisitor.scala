@@ -26,8 +26,8 @@ import java.util.ArrayList
 class RevisionInfoInjectionVisitor(revisionInfo : RevisionInformation) extends ModelVisitor {
 
   def visit(obj: ModelObject): NavigatorOption = {
-      //BugTracker Dev. Entity
-      val dev = new BTDeveloperEntity
+      //Developer Entity
+      val dev = new DeveloperEntity
       dev.addProperty("name", new StringValue(revisionInfo.getAuthor))
 
       //Revision Entity
