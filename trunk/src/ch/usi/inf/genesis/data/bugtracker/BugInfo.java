@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
+//TODO Refactor BugInfo and all ch.usi.inf.genesis.data.bugtracker. Rewrite it to Scala and use model core entities.
 public class BugInfo {
 
 	private String id;
@@ -18,14 +18,14 @@ public class BugInfo {
 	private List<String> versions;
 	private BugTrackerUser assignee;
 	private List<BugTrackerUser> ccUsers;
-	private long watches;
+	private int watches;
 	private BugTrackerUser reporter;
 	private String uri;
 	private Date creationDate;
 	private Date updateDate;
 	private String priority;
 	private String severity;
-	private long votes;
+	private int votes;
     private BugHistory history;
 
 
@@ -39,9 +39,9 @@ public class BugInfo {
 
 	public BugInfo(final String id,final String status,final String resolution, final String summary, final String product, 
 			final List<String> component, final String opertatingSys, final String platform, final List<String> versions, final BugTrackerUser assignee,
-			final long watches, final BugTrackerUser reporter, final List<BugTrackerUser> ccUsers, final String uri,
+			final int watches, final BugTrackerUser reporter, final List<BugTrackerUser> ccUsers, final String uri,
 			final Date creationDate, final Date updateDate, final String priority, final String severity,
-			final long votes) {
+			final int votes) {
 		this.id = id;
 		this.status = status;
 		this.resolution = resolution;
@@ -90,12 +90,7 @@ public class BugInfo {
 	public void setAssignee(final BugTrackerUser assignee) {
 		this.assignee = assignee;
 	}
-	public long getWatchers() {
-		return watches;
-	}
-	public void setWatchers(final long watches) {
-		this.watches = watches;
-	}
+
 	public BugTrackerUser getReporter() {
 		return reporter;
 	}
@@ -120,10 +115,10 @@ public class BugInfo {
 	public void setUpdateDate(final Date updateDate) {
 		this.updateDate = updateDate;
 	}
-	public long getVotes() {
+	public int getVotes() {
 		return votes;
 	}
-	public void setVotes(final long votes) {
+	public void setVotes(final int votes) {
 		this.votes = votes;
 	}
 	public String getResolution() {
@@ -177,12 +172,12 @@ public class BugInfo {
 		this.history.addTransition(key, transition);
 	}
 
-	public String getProduct() {
+	public String getProject() {
 		return project;
 	}
 
-	public void setProduct(final String product) {
-		this.project = product;
+	public void setProject(final String project) {
+		this.project = project;
 	}
 
 	public List<String> getComponent() {
@@ -221,11 +216,11 @@ public class BugInfo {
 		this.versions.add(version);
 	}
 
-	public long getWatches() {
+	public int getWatches() {
 		return watches;
 	}
 
-	public void setWatches(final long watches) {
+	public void setWatches(final int watches) {
 		this.watches = watches;
 	}
 

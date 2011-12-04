@@ -1,6 +1,6 @@
 package ch.usi.inf.genesis.data.bugtracker;
 
-class BugTrackerUser{
+public class BugTrackerUser{
 	
 	private String name;
 	private String displayName;

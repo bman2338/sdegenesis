@@ -60,7 +60,7 @@ public class BugzillaParser {
 							try{
 								transition.setWhen(formatter.parse(childs.get(1).getContent().toString()));
 							}catch (final ParseException pex) {
-								transition.setWhen(null);
+								transition.setWhen(new Date(0));
 							}
 							transition.setAdded(childs.get(3).getContent().toString().replaceAll("[\\s]*",""));
 							transition.setRemoved(childs.get(4).getContent().toString());
@@ -200,7 +200,7 @@ public class BugzillaParser {
 					}
 					else if(element.getName().equals(new QName("product"))){
 						final XMLEvent el = (XMLEvent) filteredEventReader.next();
-						bug.setProduct(el.asCharacters().getData());
+						bug.setProject(el.asCharacters().getData());
 					}
 					else if(element.getName().equals(new QName("component"))){
 						final XMLEvent el = (XMLEvent) filteredEventReader.next();
