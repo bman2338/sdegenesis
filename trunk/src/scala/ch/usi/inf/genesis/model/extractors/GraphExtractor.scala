@@ -8,7 +8,7 @@ import ch.usi.inf.genesis.model.core._
 class GraphExtractor extends ModelVisitor {
   val graph: ModelGraph = new ModelGraph();
 
-  def getSelection(): (ModelObject => Boolean) = {
+  override def getSelection(): (ModelObject => Boolean) = {
     ((element) => {
       if (ModelType.isValue(element))
         false
@@ -16,7 +16,7 @@ class GraphExtractor extends ModelVisitor {
     })
   }
 
-  def visit(obj: ModelObject): NavigatorOption = {
+  override def visit(obj: ModelObject): NavigatorOption = {
 
     var identifier = ""
 

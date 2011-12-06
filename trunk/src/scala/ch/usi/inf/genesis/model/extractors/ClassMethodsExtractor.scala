@@ -25,14 +25,14 @@ class ClassMethodsExtractor extends Extractor {
 	
 def extract(model: ModelObject) : Analysis = {
 		str = "function data() { var json = { \"name\": \"" + model.getName() + "\", \"children\": [";
-		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection));
+		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection()));
 		str += "]}; return json; }";
 		//str = str.replace("'", "");
 		new StringAnalysis(str);
 }
 
-def getSelection(obj:ModelObject) : Boolean = {
-  
+override def getSelection()  = {
+  (obj) =>
   obj match {
     case ClassEntity() => true
     case _ => false

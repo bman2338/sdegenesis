@@ -9,6 +9,7 @@ import ch.usi.inf.genesis.model.core.famix.Property
 abstract class ModelObject {
   val properties: HashMap[String, ListBuffer[ModelObject]] = new HashMap()
   val id = IdFactory.nextId()
+  var uniqueId: Option[String] = None;
 
   final def addProperty(propertyName: String, propertyValue: ModelObject): Unit = {
     if (!checkProperty(propertyName, propertyValue))
@@ -50,7 +51,7 @@ abstract class ModelObject {
     val name = properties.get(FAMIX.NAME_PROP)
     name match {
       case Some(xs) if (xs.length > 0) => {
-        xs.first.toString()
+        xs.head.toString()
       }
       case _ => ""
     }
@@ -59,16 +60,21 @@ abstract class ModelObject {
   def getProperties(key: String) = properties.get(key);
 
   def getProperty(key: String): Option[ModelObject] = properties.get(key) match {
-    case Some(xs) if !xs.isEmpty => Some(xs.first)
+    case Some(xs) if !xs.isEmpty => Some(xs.head)
     case None => None
   }
 
   def getUniqueId(): Option[String] = {
-    var name = getProperty(FAMIX.NAME_PROP)
-    name match {
-      case None => None
-      case Some(n) => Some(n + "_" + id.toString)
-    }
+//    var name = getProperty(FAMIX.NAME_PROP)
+//    name match {
+//      case None => None
+//      case Some(n) => Some(n + "_" + id.toString)
+//    }
+
+    uniqueId
   }
 
+  def setUniqueId(uniqueId: String): Unit = {
+    this.uniqueId = Some(uniqueId);
+  }
 }
