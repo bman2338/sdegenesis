@@ -1,16 +1,17 @@
 package scala.ch.usi.inf.genesis.database
 
 import ch.usi.inf.genesis.model.graph.ModelGraph
-import com.mongodb.casbah.commons.{MongoDBList, MongoDBObject}
 import ch.usi.inf.genesis.model.core._
-import com.mongodb.casbah.{MongoDB, MongoConnection}
+
+import com.mongodb.casbah.Imports._
+import com.mongodb.casbah.MongoDB
 
 /**
  * @author Remo Lemma
  */
 
 
-class MongoDB (val host:String, val port:Int, val dbName: String) extends Database {
+class MongoDBWrapper (val host:String, val port:Int, val dbName: String) extends Database {
 
   def convertToDBNode (graph:ModelGraph, node:ModelObject) : MongoDBObject = {
     val dbNode = MongoDBObject.newBuilder
@@ -33,10 +34,9 @@ class MongoDB (val host:String, val port:Int, val dbName: String) extends Databa
     dbNode.result()
   }
 
-  def save (graph:ModelGraph) : Boolean = {
+  def save (graph:ModelGraph,identifier:String) : Boolean = {
 
-    val connection = MongoConnection(host,port)
-    val db: MongoDB = connection(dbName)
+    var db: MongoCollection = MongoConnection(host,port)(dbName)(identifier)
 
     val nodesList = MongoDBList.newBuilder
     val edgesList = MongoDBList.newBuilder
@@ -51,13 +51,14 @@ class MongoDB (val host:String, val port:Int, val dbName: String) extends Databa
       val relationKey = pair._1
       val relations = pair._2
       relations foreach ((relation) => {
-        var relationNode = MongoDBObject("from" -> convertToDBNode (graph,relation.from), "to" -> convertToDBNode (graph,relation.to))
+        var relationNode = MongoDBObject("from" -> relation.from, "to" -> relation.to)
         relationList += relationNode
       })
-      edgesList += relationKey -> relationList
+      edgesList += relationKey -> relationList.result
     })
-    val graphDBObj = MongoDBObject("nodes" -> nodesList, "edges" -> edgesList)
+    val graphDBObj = MongoDBObject("nodes" -> nodesList.result, "edges" -> edgesList.result)
     db += graphDBObj
+    false
   }
 
 }

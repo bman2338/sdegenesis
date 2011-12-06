@@ -1,5 +1,6 @@
 import ch.usi.inf.genesis.model.ModelGenerator
 import ch.usi.inf.genesis.model.extractors._
+import scala.ch.usi.inf.genesis.database.MongoDBWrapper
 
 object ParserTest {
 
@@ -22,9 +23,12 @@ object ParserTest {
           try {
             val in = source()
             val mse = try in.mkString finally in.close
-            val res = new ModelGenerator("ProjectExample").generateFromString(mse) match {
+            val res = new ModelGenerator("ProjectExample").generateFromString(mse)
+            res match {
               case Some(node) => {
-                println(new GraphExtractor().extractGraph(node))
+                var graph = new GraphExtractor().extractGraph(node)
+                var mongo = new MongoDBWrapper("127.0.0.1",4321,"genesis_db")
+                mongo.save(graph,"Genesis_r1")
               }
               case None =>
             }

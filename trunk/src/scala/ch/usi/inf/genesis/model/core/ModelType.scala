@@ -1,7 +1,5 @@
 package ch.usi.inf.genesis.model.core
 
-//import ch.usi.inf.genesis.model.core.{DoubleValue, IntValue, StringValue, BooleanValue}
-
 /**
  * @author Remo Lemma
  */
