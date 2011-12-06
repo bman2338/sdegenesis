@@ -1,11 +1,11 @@
-package ch.usi.inf.genesis.model.navigation
+package ch.usi.inf.genesis.model.mutators
 
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
-import ch.usi.inf.genesis.data.repository.RevisionInformation
 import ch.usi.inf.genesis.model.core.famix._
 import ch.usi.inf.genesis.model.core._
 import java.io.File
-import java.util.ArrayList
+import collection.mutable.ListBuffer
+import ch.usi.inf.genesis.model.mutators.ModelMutator
 
 /**
  * @author Luca Ponzanelli
@@ -23,39 +23,11 @@ import java.util.ArrayList
  *
  */
 
-class RevisionInfoInjectionVisitor(revisionInfo : RevisionInformation) extends ModelVisitor {
+class RevisionInfoMutator(revisionInfo : RevisionEntity) extends ModelMutator {
 
   def visit(obj: ModelObject): NavigatorOption = {
-      //Developer Entity
-      val dev = new DeveloperEntity
-      dev.addProperty("name", new StringValue(revisionInfo.getAuthor))
 
-      //Revision Entity
-      val revEntity = new RevisionEntity
-      revEntity.addProperty("number", new IntValue(revisionInfo.getRevisionNumber.toString.toInt))
-      revEntity.addProperty("author", dev)
-      revEntity.addProperty("comment", new StringValue(revisionInfo.getComment))
-      revEntity.addProperty("date", new StringValue(revisionInfo.getDate.toString))
-
-      var it = revisionInfo.getAddedFiles.iterator
-      while(it.hasNext){
-        val file = it.next
-        revEntity.addProperty("addedFiles", new StringValue(file.getName))
-      }
-
-      it = revisionInfo.getModifiedFiles.iterator
-      while(it.hasNext){
-        val file = it.next
-        revEntity.addProperty("modifiedFiles", new StringValue(file.getName))
-      }
-
-      it = revisionInfo.getDeletedFiles.iterator
-      while(it.hasNext){
-        val file = it.next
-        revEntity.addProperty("deletedFiles", new StringValue(file.getName))
-      }
-
-      obj.addProperty("revision", revEntity)
+      obj.addProperty("revision", revisionInfo)
 
 			CONTINUE
 	}
@@ -68,7 +40,7 @@ class RevisionInfoInjectionVisitor(revisionInfo : RevisionInformation) extends M
    * In case the reference to those anchors is found, it filters out objects whose FileAnchor's "fileName" property
    * is not included in the files affected by the revision.
    */
-	def selectionMethod() : (ModelObject => Boolean) = {
+	def getSelection() : (ModelObject => Boolean) = {
 			((obj) => obj.getProperty("sourceAnchor") match {
 				case Some(fileAnchor :ModelObject) =>
 					fileAnchor.getProperty("fileName") match{
@@ -80,16 +52,21 @@ class RevisionInfoInjectionVisitor(revisionInfo : RevisionInformation) extends M
 	}
 	
 	private def isFileAffected(fileName : String) : Boolean = {
-			val updated = new ArrayList[File] 
-			updated.addAll(revisionInfo.getAddedFiles)
-			updated.addAll(revisionInfo.getModifiedFiles)
-			val it = updated.iterator
-			while(it.hasNext){
-				val file = it.next
-				if(file.toString.contains(fileName)){
-					return true
-        }
-			}
+			val updated = new ListBuffer[File]
+      revisionInfo.getProperty("addedFiles") match{
+        case Some(name : StringValue) =>
+          if(name.value.contains(fileName))
+            return true
+        case _ =>
+      }
+
+      revisionInfo.getProperty("modifiedFiles") match{
+        case Some(name : StringValue) =>
+          if(name.value.contains(fileName))
+            return true
+        case _ =>
+      }
+
 			false
 	}
 }
