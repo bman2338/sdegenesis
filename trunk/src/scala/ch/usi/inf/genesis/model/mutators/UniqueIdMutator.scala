@@ -18,7 +18,12 @@ class UniqueIdMutator extends ModelMutator {
 
   def visit(obj: ModelObject): NavigatorOption.NavigatorOption = {
     obj match {
-      case Project() => println("UniqueIdMutator.visit(): project has no name. set it before mutation"); return STOP;
+      case Project() => {
+        if (obj.getUniqueId() == None) {
+          println("UniqueIdMutator.visit(): project has no name. set it before mutation");
+          return STOP;
+        }
+      }
       case _ =>
     }
 
