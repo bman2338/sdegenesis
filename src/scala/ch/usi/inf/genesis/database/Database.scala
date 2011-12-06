@@ -8,5 +8,5 @@ import ch.usi.inf.genesis.model.graph.ModelGraph
 
 
 trait Database {
-  def save (graph: ModelGraph) : Boolean
+  def save (graph: ModelGraph,identifier:String) : Boolean
 }
