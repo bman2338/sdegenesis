@@ -1,6 +1,6 @@
 package ch.usi.inf.genesis.model.mutators
 
-import ch.usi.inf.genesis.model.navigation.{NavigatorOption}
+import ch.usi.inf.genesis.model.navigation.NavigatorOption
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
 import ch.usi.inf.genesis.model.core.{ModelType, Project, ModelObject}
 
@@ -26,17 +26,23 @@ class UniqueIdMutator extends ModelMutator {
       }
       case _ =>
     }
+    var objId = "";
+    obj.getUniqueId() match {
+      case Some(uid) => objId = uid;
+      case None =>
+        println("UniqueIdMutator.visit():" + obj.getName() + " has no id");
+        return SKIP_SUBTREE;
+    }
+
 
     obj.properties.foreach((pair) => {
       // val key = pair._1;
       val value = pair._2;
       value.foreach((child) => {
         if (!ModelType.isValue(child)) {
-
-          obj.getUniqueId() match {
-            case Some(objId) => child.setUniqueId(objId + separator + child.getName());
-            case None => println("UniqueIdMutator.visit():" + obj.getName() + " has no id");
-          }
+          val childName = child.getName()
+          if (childName.length() != 0)
+            child.setUniqueId(objId + separator + child.getName());
         }
       });
     });
