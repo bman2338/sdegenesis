@@ -1,7 +1,5 @@
-import ch.usi.inf.genesis.parser.mse.MSEParser
+import ch.usi.inf.genesis.model.ModelGenerator
 import ch.usi.inf.genesis.model.extractors._
-import ch.usi.inf.genesis.model.core.FAMIX
-import ch.usi.inf.genesis.model.core.StringValue
 
 object ParserTest {
 
@@ -23,31 +21,13 @@ object ParserTest {
         case Task(source) =>
           try {
             val in = source()
-            val a = try in.mkString finally in.close
-            val res = MSEParser.parse(a) match {
-              //Trying navigator with visitor interface
-
-              case Some(res) => {
-
-                res.addProperty(FAMIX.NAME_PROP, new StringValue("ArgoUML r666"));
-                //					 new BreadthFirstNavigator().walkModel(res, new ModelPrinter(),
-                //				     Some((obj) => {
-                //					   obj match {
-                //					     case ClassEntity() => true
-                //					     case _ => false
-                //					   }}))
-                // println(new ClassMethodsExtractor().extract(res))
-                //println(new InheritanceExtractor().extract(res));
-                // val saver = new  ModelSaver();
-                // new BreadthFirstNavigator().walkModel(res, saver, Some(saver.getSelection()));
-                // println(InvocationExtractorFactory.getSimpleInvocationExtractor().extract(res))
-                println(new GraphExtractor().extractGraph(res))
-
-
+            val mse = try in.mkString finally in.close
+            val res = new ModelGenerator("ProjectExample").generateFromString(mse) match {
+              case Some(node) => {
+                println(new GraphExtractor().extractGraph(node))
               }
               case None =>
             }
-            //println(res.toString)
           }
           catch {
             case ex: IOException =>
