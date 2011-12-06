@@ -13,14 +13,14 @@ import ch.usi.inf.genesis.model.core.StringValue
 class ModelSaver extends ModelVisitor {
 	var projectName : String = "ArgoUML";
 	
-  def getSelection(): (ModelObject => Boolean)  = {
+  override def getSelection(): (ModelObject => Boolean)  = {
   	  ((obj) => obj match {
   	    case NamespaceEntity() => true
   	    case _ => false
   	  });
   }
 
-  def visit(obj: ModelObject): NavigatorOption = {
+  override def visit(obj: ModelObject): NavigatorOption = {
 		  //project is already added to the database...
 		  // obj match  {
 		  // 		    

@@ -7,7 +7,7 @@ import ch.usi.inf.genesis.model.core.FAMIX
 
 class ModelPrinter extends ModelVisitor {
 	
-  def visit(obj: ModelObject): NavigatorOption = {
+  override def visit(obj: ModelObject): NavigatorOption = {
 
     val name = obj.getName();
     name match {

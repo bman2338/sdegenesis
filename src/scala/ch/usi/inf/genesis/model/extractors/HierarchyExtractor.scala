@@ -10,18 +10,21 @@ import scala.collection.mutable.HashSet
 
 
 class HierarchyExtractor(val prop: FAMIX, 
-    					 var getSelection: (ModelObject => Boolean),
+    					 var selectionFun: (ModelObject => Boolean),
     					 var getAnalysis: Option[(()=> AbstractHierarchyAnalysis)] = None) extends Extractor {
 
 	var analysis: AbstractHierarchyAnalysis = null;
-	
+	override def getSelection() = {
+    selectionFun
+  }
+
 def extract(model: ModelObject): Analysis = { 
 		getAnalysis match {
 		  case None => analysis = new HierarchyAnalysis(prop);
 		  case Some(getAnalysis) => analysis = getAnalysis();
 		}
 		analysis.title = model.getName()
-		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection));
+		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection()));
 		analysis.clean();
 		println("/* Hierarchycal analysis*/");
 		return analysis;
@@ -108,7 +111,7 @@ def attrToJSON(model: ModelObject, buffer: StringBuffer) : Unit = {
 			buffer.append(", ");
 			buffer.append(key);
 			buffer.append(": \"");
-			buffer.append(property.first.toString());
+			buffer.append(property.head.toString());
 			buffer.append("\", ");
 		}
 		
@@ -154,7 +157,7 @@ private def toJSON(modelObject: ModelObject, visited: HashSet[Int], buffer: Stri
 /**
  * Removes all children classes from root
  */
-def clean() = {
+def clean() : Unit = {
   
 	val nodesCopy = nodes.clone();
 	nodesCopy.foreach(pair => {

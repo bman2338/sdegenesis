@@ -14,8 +14,8 @@ class InheritanceExtractor(val classes: Option[HashSet[String]] = None) extends 
 	var analysis: InheritanceAnalysis = null;
 
 
-def getSelection(obj:ModelObject) : Boolean = {
-  
+override def getSelection()  = {
+     (obj) =>
 		obj match {
 		  case ClassEntity() => true
 		  case _ => false
@@ -25,7 +25,7 @@ def getSelection(obj:ModelObject) : Boolean = {
 def extract(model: ModelObject): Analysis = { 
 		analysis = new InheritanceAnalysis();
 		analysis.title = model.getName()
-		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection));
+		new BreadthFirstNavigator().walkModel(model, this, Some(getSelection()));
 		analysis.clean();
 		return analysis;
 }
