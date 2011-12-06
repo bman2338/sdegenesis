@@ -5,21 +5,14 @@ import ch.usi.inf.genesis.model.graph.{ModelEdge, ModelGraph}
 import ch.usi.inf.genesis.model.navigation.{ModelVisitor, BreadthFirstNavigator}
 import ch.usi.inf.genesis.model.core._
 
-/**
- * Created by IntelliJ IDEA.
- * User: patrick
- * Date: 12/6/11
- * Time: 1:48 PM
- * To change this template use File | Settings | File Templates.
- */
-
 class GraphExtractor extends ModelVisitor {
   val graph: ModelGraph = new ModelGraph();
 
   def getSelection(): (ModelObject => Boolean) = {
-    ((element) => element match {
-      case BooleanValue(_) | StringValue(_) | IntValue(_) | DoubleValue(_) => false
-      case _ => true
+    ((element) => {
+      if (ModelType.isValue(element))
+        false
+      true
     })
   }
 
@@ -38,14 +31,11 @@ class GraphExtractor extends ModelVisitor {
       val key = pair._1
       val value = pair._2
       value foreach ((element) => {
-        element match {
-          case BooleanValue(_) | StringValue(_) | IntValue(_) | DoubleValue(_) =>
-          case _ => {
-            element.getUniqueId match {
+        if (!ModelType.isValue(element)) {
+          element.getUniqueId match {
               case None =>
               case Some(elementId) => graph.addEdge(key, new ModelEdge(identifier, elementId))
             }
-          }
         }
       })
     })

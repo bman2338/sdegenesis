@@ -4,11 +4,7 @@ import ch.usi.inf.genesis.model.core.ModelObject
 import collection.mutable.{ListBuffer, HashMap}
 
 /**
- * Created by IntelliJ IDEA.
- * User: patrick
- * Date: 12/6/11
- * Time: 1:19 PM
- * To change this template use File | Settings | File Templates.
+ * @author Patrick Zulian
  */
 
 class ModelGraph() {
