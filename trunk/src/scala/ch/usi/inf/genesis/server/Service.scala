@@ -44,8 +44,6 @@ class Service(val port: Int) {
                 val key = pair._1;
                 val value = pair._2;
                 println(key + ":" + value)
-
-
               })
             });
 
@@ -71,15 +69,18 @@ class Service(val port: Int) {
     val map = new HashMap[String, String]();
 
     while (true) {
-      line = br.readLine()
-      if (line == null)
-        return None;
+      line = br.readLine();
+
+      if (line == null) {
+        return Some(map);
+      }
       val args = line.split(">");
       if (args.length < 2) {
-        println("Bad format: " + line);
+        println("msg: Bad format: " + line);
         return None;
       }
 
+      //println(args.apply(0).trim() + ">" + args.apply(1).trim());
       map.put(args.apply(0).trim(), args.apply(1).trim());
     }
     Some(map);
