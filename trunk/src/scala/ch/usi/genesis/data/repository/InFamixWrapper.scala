@@ -17,15 +17,15 @@ class InFamixWrapper(infamixPath : String, lang : String) extends ExternalParser
     var br: BufferedReader = new BufferedReader(isr)
     var line: String = null
 
-    line = br.readLine
+//    line = br.readLine
 //    while(line != null){
 //      println(line)
 //      line = br.readLine
 //    }
-    println("InFamix Done.")
+    //println("InFamix Done.")
 
     try {
-      println("Waiting...")
+      //println("Generationg MSE files...")
       p.waitFor()
     }
     catch {
