@@ -27,7 +27,7 @@ object ParserTest {
             res match {
               case Some(node) => {
                 var graph = new GraphExtractor().extractGraph(node)
-                println(graph);
+                //println(graph);
                 var mongo = new MongoDBWrapper("127.0.0.1", 4321, "genesis_db")
                 mongo.save(graph, "Genesis_r1")
               }

@@ -64,12 +64,31 @@ abstract class ModelObject {
     case None => None
   }
 
+  def getPropertiesOrAdd(key: String): ListBuffer[ModelObject] = properties.get(key) match {
+    case Some(xs) => xs
+    case None =>
+      val list = new ListBuffer[ModelObject]
+      properties += key -> list
+      list
+  }
+
+  def getPropertyOrAdd(key: String, stub: ModelObject): ModelObject = {
+    var list = getPropertiesOrAdd(key)
+    if (list.isEmpty) {
+      list += stub
+      stub
+    }
+    else
+      list.head
+  }
+
+
   def getUniqueId(): Option[String] = {
-//    var name = getProperty(FAMIX.NAME_PROP)
-//    name match {
-//      case None => None
-//      case Some(n) => Some(n + "_" + id.toString)
-//    }
+    //    var name = getProperty(FAMIX.NAME_PROP)
+    //    name match {
+    //      case None => None
+    //      case Some(n) => Some(n + "_" + id.toString)
+    //    }
 
     uniqueId
   }

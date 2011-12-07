@@ -8,6 +8,7 @@ import ch.usi.inf.genesis.model.navigation.ModelVisitor;
  */
 
 abstract class ModelMutator extends ModelVisitor {
+
       def mutate(modelObject: ModelObject) : Unit = {
          new BreadthFirstNavigator().walkModel( modelObject, this, Some( getSelection()) );
 
