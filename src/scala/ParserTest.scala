@@ -30,6 +30,8 @@ object ParserTest {
                 //println(graph);
                 var mongo = new MongoDBWrapper("127.0.0.1", 4321, "genesis_db")
                 mongo.save(graph, "Genesis_r1")
+
+                //new BreadthFirstNavigator().walkModel(node, new ModelPrinter());
               }
               case None =>
             }

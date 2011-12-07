@@ -29,6 +29,7 @@ object InvocationExtractorFactory {
           val prop = m.getProperties(INVOKINGMETHODS_PROP);
           prop match {
             case Some(p) => h.nodes.put(m.getId(), m);
+
             case None => {
               val invocation = m.getProperties(SEND_INVOCATIONS_PROP);
               invocation match {
