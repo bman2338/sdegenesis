@@ -19,7 +19,7 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     val dbNode = MongoDBObject.newBuilder
 
     node.getUniqueId() match {
-      case Some(id) => dbNode += "uniqueId" -> node.getUniqueId().hashCode
+      case Some(id) => dbNode += "uniqueId" -> nodeAsHashcode(id)
       case None =>
     }
 
@@ -63,6 +63,10 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     dbNode.result()
   }
 
+  def nodeAsHashcode (obj:String) = {
+    obj.hashCode
+  }
+
   def save(graph: ModelGraph, projectName: String, revision: Int): Unit = {
 
     var identifier = projectName + "_rev" + revision
@@ -85,9 +89,9 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
         var adj = relation._2
         val tosRelations = MongoDBList.newBuilder
         adj.targets foreach ((target) => {
-          tosRelations += target.hashCode
+          tosRelations += nodeAsHashcode(target)
         })
-        var relationNode = MongoDBObject("from" -> key.hashCode, "to" -> tosRelations.result)
+        var relationNode = MongoDBObject("from" -> nodeAsHashcode(key), "to" -> tosRelations.result)
         relationList += relationNode
       })
       edgesList += relationKey -> relationList.result
