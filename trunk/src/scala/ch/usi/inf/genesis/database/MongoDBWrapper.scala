@@ -19,7 +19,7 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     val dbNode = MongoDBObject.newBuilder
 
     node.getUniqueId() match {
-      case Some(id) => dbNode += "uniqueId" -> node.getUniqueId()
+      case Some(id) => dbNode += "uniqueId" -> node.getUniqueId().hashCode
       case None =>
     }
 
@@ -69,34 +69,36 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     var db: MongoCollection = MongoConnection(host, port)(dbName)(identifier + "_nodes")
 
     val nodesList = MongoDBList.newBuilder
-    //val edgesList = MongoDBList.newBuilder
+    val edgesList = MongoDBObject.newBuilder
 
     graph.nodes foreach ((pair) => {
       val node = pair._2
       val dbNode = convertToDBNode(node)
       nodesList += dbNode
     })
-    val edgesObjects = new HashMap[String,MongoDBObject]
     graph.edges foreach ((pair) => {
       val relationList = MongoDBList.newBuilder
       val relationKey = pair._1
       val relations = pair._2
       relations foreach ((relation) => {
-        var relationNode = MongoDBObject("from" -> relation.from, "to" -> relation.to)
+        var key = relation._1
+        var adj = relation._2
+        val tosRelations = MongoDBList.newBuilder
+        adj.targets foreach ((target) => {
+          tosRelations += target.hashCode
+        })
+        var relationNode = MongoDBObject("from" -> key.hashCode, "to" -> tosRelations.result)
         relationList += relationNode
       })
-      edgesObjects += relationKey -> MongoDBObject("project" -> projectName, "revision" -> revision, "key" -> relationKey , "edges" -> relationList.result)
+      edgesList += relationKey -> relationList.result
     })
     val graphDBObj = MongoDBObject("project" -> projectName, "revision" -> revision, "nodes" -> nodesList.result)
 
     db += graphDBObj
 
-    edgesObjects foreach ((pair) => {
-      val key = pair._1
-      val value = pair._2
-      db = MongoConnection(host,port)(dbName)(identifier + "_edges_" + key)
-      db += value
-    })
+    db = MongoConnection(host, port)(dbName)(identifier + "_edges")
+    val edgesDBObj = MongoDBObject("project" -> projectName, "revision" -> revision, "edges" -> edgesList.result)
+    db += edgesDBObj
   }
 
 }

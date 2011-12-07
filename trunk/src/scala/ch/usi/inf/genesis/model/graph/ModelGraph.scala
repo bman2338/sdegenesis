@@ -2,6 +2,7 @@ package ch.usi.inf.genesis.model.graph
 
 import ch.usi.inf.genesis.model.core.ModelObject
 import collection.mutable.{ListBuffer, HashMap}
+import scala.ch.usi.inf.genesis.model.graph.AdjacencyList
 
 /**
  * @author Patrick Zulian
@@ -9,7 +10,7 @@ import collection.mutable.{ListBuffer, HashMap}
 
 class ModelGraph() {
   val nodes: HashMap[String, ModelObject] = new HashMap()
-  val edges: HashMap[String, ListBuffer[ModelEdge]] = new HashMap()
+  val edges: HashMap[String, HashMap[String,AdjacencyList]] = new HashMap()
 
   def getNode(id: String): Option[ModelObject] = {
     nodes.get(id);
@@ -19,14 +20,25 @@ class ModelGraph() {
     nodes.put(id, node);
   }
 
-  def getEdgeList(relationName: String): Option[ListBuffer[ModelEdge]] = {
-    edges.get(relationName);
+  def getRelationMap(relationName: String): HashMap[String, AdjacencyList] = {
+    edges.get(relationName) match {
+      case Some(map) => map
+      case None =>
+        val map = new HashMap[String, AdjacencyList]
+        edges += relationName -> map
+        map
+    }
   }
 
   def addEdge(relationName: String, edge: ModelEdge) = {
-    getEdgeList(relationName) match {
-      case Some(list) => list += edge;
-      case None => val list = ListBuffer[ModelEdge](); list += edge; edges.put(relationName, list);
+    var map = getRelationMap(relationName)
+    map.get(edge.from) match {
+      case Some(adj) =>
+        adj.addAdjacent(edge.to)
+      case None =>
+        val adj = new AdjacencyList(relationName,edge.from)
+        adj.addAdjacent(edge.to)
+        map += edge.from -> adj
     }
   }
 
