@@ -24,17 +24,16 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     }
 
     val propsBuilder = MongoDBList.newBuilder
-    val metricsBuilder = MongoDBList.newBuilder
+    var metricsBuilder: MongoDBObject = null
     var propsAdded = false
     var metricsAdded = false
     node.properties foreach ((pair) => {
       val key = pair._1
       val values = pair._2
-      val listBuilder = MongoDBList.newBuilder
       if (ModelType.isMetric(values.head)) {
         metricsAdded = true
         values foreach ((element) => {
-          metricsBuilder += convertToDBNode(element)
+          metricsBuilder = convertToDBNode(element)
         })
       }
       else {
@@ -54,6 +53,9 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
         })
       }
     })
+    if (ModelType.isMetric(node)) {
+      return propsBuilder.result()
+    }
 
     if (propsAdded)
       dbNode += "properties" -> propsBuilder.result
