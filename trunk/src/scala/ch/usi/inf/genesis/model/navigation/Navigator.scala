@@ -1,11 +1,9 @@
 package ch.usi.inf.genesis.model.navigation
 
-import ch.usi.inf.genesis.model.core.ModelObject
-import ch.usi.inf.genesis.model.core.Project
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
 import scala.collection.mutable.HashSet
 import ch.usi.inf.genesis.model.core.FAMIX._
-
+import ch.usi.inf.genesis.model.core.{StringValue, BooleanValue, ModelObject, Project}
 
 
 abstract class Navigator {
@@ -22,7 +20,10 @@ abstract class Navigator {
   protected def hasToIgnore(obj: ModelObject) : Boolean = {
     var ignore =  obj.getName().toString().startsWith(IGNORE_TYPE);
     var isStub = obj.getProperty(ISSTUB_PROP);
-    ignore |= isStub.toString().matches("true");
-    return ignore;
+    isStub match {
+      case Some(value:BooleanValue) => true
+      case Some(value:StringValue) => value.value.equalsIgnoreCase("true")
+      case _ => ignore
+    }
   }
 }

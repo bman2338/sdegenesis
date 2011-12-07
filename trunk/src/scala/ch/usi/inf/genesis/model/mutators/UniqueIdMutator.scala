@@ -2,7 +2,8 @@ package ch.usi.inf.genesis.model.mutators
 
 import ch.usi.inf.genesis.model.navigation.NavigatorOption
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
-import ch.usi.inf.genesis.model.core.{ModelType, Project, ModelObject}
+import ch.usi.inf.genesis.model.core.famix.MethodEntity
+import ch.usi.inf.genesis.model.core._
 
 /**
  * @author Patrick Zulian
@@ -40,9 +41,17 @@ class UniqueIdMutator extends ModelMutator {
       val value = pair._2;
       value.foreach((child) => {
         if (!ModelType.isValue(child)) {
-          val childName = child.getName()
+          var childName = child.getName()
+          child match {
+            case MethodEntity() =>
+              child.getProperty(FAMIX.SIGNATURE) match {
+                case Some(str:StringValue) if !str.value.isEmpty => childName = str.value
+                case _ =>
+              }
+            case _ =>
+          }
           if (childName.length() != 0)
-            child.setUniqueId(objId + separator + child.getName());
+            child.setUniqueId(objId + separator + childName);
         }
       });
     });

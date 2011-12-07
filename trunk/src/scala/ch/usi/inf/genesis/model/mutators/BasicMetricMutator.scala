@@ -48,30 +48,36 @@ class BasicMetricsMutator extends ModelMutator {
     }
   }
 
-  def inheritanceSubclassesDepthCalculator(obj: ModelObject, metric: ModelObject): Unit = {
+  def inheritanceDepthCalculator(obj: ModelObject, metric: ModelObject): Unit = {
 
-    def walkAux(obj: ModelObject, counter: Int): Unit = {
+    def walkAux(obj: ModelObject, counter: Int, prop:FAMIX.FAMIX,metricName: String): Unit = {
       var nodeValue = counter
       var metric = obj.getPropertyOrAdd(FAMIX.METRICS_PROP, new Metric())
       if (counter > 0) {
-        metric.getPropertyOrAdd("subclassesMaxDepth", new IntValue(counter)) match {
+        metric.getPropertyOrAdd(metricName, new IntValue(counter)) match {
           case intValue@IntValue(value) if (counter > value) =>
             intValue.value = counter
             nodeValue = counter
           case _ =>
         }
       }
-      obj.getProperties(FAMIX.SUPERCLASS_PROP) match {
+      obj.getProperties(prop) match {
         case None =>
-        case Some(list) => list foreach ((superclass) => {
-          walkAux(superclass, nodeValue + 1);
+        case Some(list) => list foreach ((cl) => {
+          walkAux(cl, nodeValue + 1,prop,metricName);
         })
       }
     }
 
     obj.getProperties(FAMIX.SUBCLASS_PROP) match {
       case None =>
-        walkAux(obj,0)
+        walkAux(obj,0,FAMIX.SUPERCLASS_PROP,"subclassesMaxDepth")
+      case _ =>
+    }
+
+    obj.getProperties(FAMIX.SUPERCLASS_PROP) match {
+      case None =>
+        walkAux(obj,0,FAMIX.SUBCLASS_PROP,"superclassesMaxDepth")
       case _ =>
     }
   }
@@ -94,7 +100,7 @@ class BasicMetricsMutator extends ModelMutator {
 
   var metrics = new ListBuffer[MetricFunction]
   metrics += new MetricFunction(noMethods, sizeCalculator)
-  metrics += new MetricFunction(onlyClasses, inheritanceSubclassesDepthCalculator)
+  metrics += new MetricFunction(onlyClasses, inheritanceDepthCalculator)
 
   def visit(obj: ModelObject): NavigatorOption.NavigatorOption = {
 
