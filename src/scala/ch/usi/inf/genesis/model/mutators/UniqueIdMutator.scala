@@ -20,7 +20,7 @@ class UniqueIdMutator extends ModelMutator {
     obj match {
       case Project() => {
         if (obj.getUniqueId() == None) {
-          println("UniqueIdMutator.visit(): project has no name. set it before mutation");
+          //println("UniqueIdMutator.visit(): project has no name. set it before mutation");
           return STOP;
         }
       }
@@ -30,7 +30,7 @@ class UniqueIdMutator extends ModelMutator {
     obj.getUniqueId() match {
       case Some(uid) => objId = uid;
       case None =>
-        println("UniqueIdMutator.visit():" + obj.getName() + " has no id");
+       // println("UniqueIdMutator.visit():" + obj.getName() + " has no id");
         return SKIP_SUBTREE;
     }
 
