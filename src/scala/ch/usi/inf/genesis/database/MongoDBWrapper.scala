@@ -6,6 +6,7 @@ import ch.usi.inf.genesis.model.core._
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoDB
 import scala.ch.usi.inf.genesis.model.core.Metric
+import collection.mutable.{HashMap, ListBuffer}
 
 /**
  * @author Remo Lemma
@@ -62,19 +63,20 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     dbNode.result()
   }
 
-  def save(graph: ModelGraph, projectName: String, revision: Int): Boolean = {
+  def save(graph: ModelGraph, projectName: String, revision: Int): Unit = {
 
-    val identifier = projectName + "_rev" + revision
-    var db: MongoCollection = MongoConnection(host, port)(dbName)(identifier)
+    var identifier = projectName + "_rev" + revision
+    var db: MongoCollection = MongoConnection(host, port)(dbName)(identifier + "_nodes")
 
     val nodesList = MongoDBList.newBuilder
-    val edgesList = MongoDBList.newBuilder
+    //val edgesList = MongoDBList.newBuilder
 
     graph.nodes foreach ((pair) => {
       val node = pair._2
       val dbNode = convertToDBNode(node)
       nodesList += dbNode
     })
+    val edgesObjects = new HashMap[String,MongoDBObject]
     graph.edges foreach ((pair) => {
       val relationList = MongoDBList.newBuilder
       val relationKey = pair._1
@@ -83,11 +85,18 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
         var relationNode = MongoDBObject("from" -> relation.from, "to" -> relation.to)
         relationList += relationNode
       })
-      edgesList += relationKey -> relationList.result
+      edgesObjects += relationKey -> MongoDBObject("project" -> projectName, "revision" -> revision, "key" -> relationKey , "edges" -> relationList.result)
     })
-    val graphDBObj = MongoDBObject("nodes" -> nodesList.result, "edges" -> edgesList.result)
+    val graphDBObj = MongoDBObject("project" -> projectName, "revision" -> revision, "nodes" -> nodesList.result)
+
     db += graphDBObj
-    false
+
+    edgesObjects foreach ((pair) => {
+      val key = pair._1
+      val value = pair._2
+      db = MongoConnection(host,port)(dbName)(identifier + "_edges_" + key)
+      db += value
+    })
   }
 
 }
