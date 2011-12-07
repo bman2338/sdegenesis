@@ -36,8 +36,8 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
   val onSourceParsingCompleteDelegates = new ListBuffer[(RevisionEntity, File)=>Unit]
 
 
-  def crawl(firstRev: Int) {
-    crawl(firstRev, lastRevisionNumber.toInt, 1)
+  def crawl(firstRev: Int, step : Int) {
+    crawl(firstRev, lastRevisionNumber.toInt, step)
   }
 
 
@@ -55,6 +55,7 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
     var current = firstRev
 
     while(current < lastRev){
+      println("Updating to Revision " + (current+step))
       manager.getUpdateClient.doUpdate(localPath, SVNRevision.create(current+step), SVNDepth.INFINITY, false, false)
       manager.getDiffClient.doDiffStatus(localPath, SVNRevision.create(current), localPath, SVNRevision.create(current+step), SVNDepth.INFINITY, false, new ISVNDiffStatusHandler {
 
@@ -85,13 +86,17 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
       if (!modifiedFiles.isEmpty || !addedFiles.isEmpty || !deletedFiles.isEmpty) {
         val allUpdatedFiles = modifiedFiles ++ addedFiles
         val files: Array[File] = new Array[File](allUpdatedFiles.size)
+        println("ADDED: " + addedFiles.toString())
+        println("MODIFIED: " + modifiedFiles.toString())
+        println("DELETED: " + modifiedFiles.toString())
         allUpdatedFiles.copyToArray(files)
         manager.getLogClient.doLog(files, SVNRevision.create(current+step), SVNRevision.create(current+step), SVNRevision.create(current+step), false, true, -1.asInstanceOf[Long], new ISVNLogEntryHandler {
           def handleLogEntry(logEntry: SVNLogEntry) {
             try {
-              val mseFilePath = mseOutputPath + "/" + projectName + "_rev_" + (current) + ".mse"
+              println("Generatig MSE files...")
+              val mseFilePath = mseOutputPath + "/" + projectName + "_rev_" + (current+step) + ".mse"
               val mseFile = parser.execute(localPath.getCanonicalPath,  mseFilePath, false)
-
+              println("Generation Done.")
               val revisionEntity = new RevisionEntity
               revisionEntity.addProperty("number", new IntValue(logEntry.getRevision.toString.toInt))
               revisionEntity.addProperty("comment", new StringValue(logEntry.getMessage))
@@ -129,6 +134,7 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
       }
       current += step
     }
+
   }
 
   def pathDifference(firstPath : String, secondPath : String) : String = {

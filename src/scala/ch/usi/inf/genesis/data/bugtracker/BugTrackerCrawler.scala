@@ -16,5 +16,6 @@ import ch.usi.inf.genesis.model.core.famix.BugEntity
 trait BugTrackerCrawler {
   def getBugList(): ListBuffer[BugEntity]
   def getBugList(project : String, component : String): ListBuffer[BugEntity]
+  def getBugList(project : String): ListBuffer[BugEntity]
 }
 

@@ -107,4 +107,8 @@ class BugzillaCrawler(url : String) extends BugTrackerCrawler{
 
     bugList
   }
+
+  def getBugList(project: String): ListBuffer[BugEntity] = {
+    getBugList(project, "")
+  }
 }

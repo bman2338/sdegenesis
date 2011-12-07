@@ -55,7 +55,6 @@ class RevisionInfoMutator(revisionInfo : RevisionEntity) extends ModelMutator {
       revisionInfo.getProperty("addedFiles") match{
         case Some(name : StringValue) =>
           if(name.value.contains(fileName)){
-            println(name.value)
             return true
           }
         case _ =>
