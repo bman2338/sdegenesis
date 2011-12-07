@@ -5,7 +5,6 @@ import ch.usi.inf.genesis.model.core.famix._
 import ch.usi.inf.genesis.model.core._
 import java.io.File
 import collection.mutable.ListBuffer
-import ch.usi.inf.genesis.model.mutators.ModelMutator
 
 /**
  * @author Luca Ponzanelli
@@ -40,7 +39,7 @@ class RevisionInfoMutator(revisionInfo : RevisionEntity) extends ModelMutator {
    * In case the reference to those anchors is found, it filters out objects whose FileAnchor's "fileName" property
    * is not included in the files affected by the revision.
    */
-	def getSelection() : (ModelObject => Boolean) = {
+	override def getSelection() : (ModelObject => Boolean) = {
 			((obj) => obj.getProperty("sourceAnchor") match {
 				case Some(fileAnchor :ModelObject) =>
 					fileAnchor.getProperty("fileName") match{
@@ -55,8 +54,10 @@ class RevisionInfoMutator(revisionInfo : RevisionEntity) extends ModelMutator {
 			val updated = new ListBuffer[File]
       revisionInfo.getProperty("addedFiles") match{
         case Some(name : StringValue) =>
-          if(name.value.contains(fileName))
+          if(name.value.contains(fileName)){
+            println(name.value)
             return true
+          }
         case _ =>
       }
 

@@ -56,7 +56,7 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
 
     while(current < lastRev){
       manager.getUpdateClient.doUpdate(localPath, SVNRevision.create(current+step), SVNDepth.INFINITY, false, false)
-      manager.getDiffClient.doDiffStatus(localPath, SVNRevision.create(current), localPath, SVNRevision.create(current + step), SVNDepth.INFINITY, false, new ISVNDiffStatusHandler {
+      manager.getDiffClient.doDiffStatus(localPath, SVNRevision.create(current), localPath, SVNRevision.create(current+step), SVNDepth.INFINITY, false, new ISVNDiffStatusHandler {
 
         def handleDiffStatus(diffStatus: SVNDiffStatus) {
           val diffFile = diffStatus.getFile
@@ -82,7 +82,6 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
             deletedFiles += diffFile
         }
       })
-
       if (!modifiedFiles.isEmpty || !addedFiles.isEmpty || !deletedFiles.isEmpty) {
         val allUpdatedFiles = modifiedFiles ++ addedFiles
         val files: Array[File] = new Array[File](allUpdatedFiles.size)
@@ -90,7 +89,7 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
         manager.getLogClient.doLog(files, SVNRevision.create(current+step), SVNRevision.create(current+step), SVNRevision.create(current+step), false, true, -1.asInstanceOf[Long], new ISVNLogEntryHandler {
           def handleLogEntry(logEntry: SVNLogEntry) {
             try {
-              val mseFilePath = mseOutputPath + "/" + projectName + "_rev_" + (current+step) + ".mse"
+              val mseFilePath = mseOutputPath + "/" + projectName + "_rev_" + (current) + ".mse"
               val mseFile = parser.execute(localPath.getCanonicalPath,  mseFilePath, false)
 
               val revisionEntity = new RevisionEntity
@@ -104,15 +103,18 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
 
               addedFiles foreach(
                 (f) =>
-                  revisionEntity.addProperty("addedFiles",new StringValue(pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)))
+                  revisionEntity.addProperty("addedFiles",new StringValue(f.getCanonicalPath
+                  /*pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)*/))
                 )
               deletedFiles foreach(
                 (f) =>
-                  revisionEntity.addProperty("deletedFiles",new StringValue(pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)))
+                  revisionEntity.addProperty("deletedFiles",new StringValue(f.getCanonicalPath
+                  /*pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)*/))
                 )
               modifiedFiles foreach(
                 (f) =>
-                  revisionEntity.addProperty("modifiedFiles",new StringValue(pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)))
+                  revisionEntity.addProperty("modifiedFiles",new StringValue(f.getCanonicalPath
+                  /*pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)*/))
                 )
 
               notifyOnParsingComplete(revisionEntity, mseFile)
@@ -125,7 +127,6 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
           }
         })
       }
-
       current += step
     }
   }
