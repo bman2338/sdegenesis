@@ -8,7 +8,7 @@ class ModelPrinter extends ModelVisitor {
 
   override def visit(obj: ModelObject): NavigatorOption = {
 
-    obj.getName() match {
+    obj.getUniqueId() match {
       case None => {
         return CONTINUE
       }
