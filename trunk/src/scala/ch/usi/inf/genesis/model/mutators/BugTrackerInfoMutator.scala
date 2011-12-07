@@ -65,7 +65,13 @@ class BugTrackerInfoMutator(bugList : List[BugEntity]) extends ModelMutator{
     }
   }
 
-  def getSelection():(ModelObject => Boolean) = {
+  /**
+   * @author Luca Ponzanelli
+   * @return the function pointer for the selection method.
+   *
+   * It filters out all the ModelObjects that not have a reference to a RevisionEntity
+   */
+  override def getSelection() = {
     (obj) => (obj.getProperty("revision") match {
       case Some(rev : RevisionEntity) => true
       case _ => false

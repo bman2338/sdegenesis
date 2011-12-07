@@ -18,14 +18,15 @@ class InFamixWrapper(infamixPath : String, lang : String) extends ExternalParser
     var line: String = null
 
     line = br.readLine
-    while(line != null){
-      System.out.println(line)
-      line = br.readLine
-    }
+//    while(line != null){
+//      println(line)
+//      line = br.readLine
+//    }
+    println("InFamix Done.")
 
     try {
-//      println("Waiting...")
-//      p.waitFor()
+      println("Waiting...")
+      p.waitFor()
     }
     catch {
       case e: InterruptedException => {
