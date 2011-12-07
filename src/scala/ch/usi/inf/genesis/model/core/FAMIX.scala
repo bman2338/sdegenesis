@@ -12,6 +12,7 @@ object FAMIX extends Enumeration {
   val INVOCATION = "Invocation";
   val ACCESS = "Access";
 
+  val SIGNATURE = "signature";
   val PARENTTYPE = "parentType";
   val IGNORE_TYPE = "_unknown_";
 

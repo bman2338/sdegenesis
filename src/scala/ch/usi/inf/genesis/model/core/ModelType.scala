@@ -15,4 +15,10 @@ object ModelType {
     }
   }
 
+  def isMetric (obj: ModelObject) : Boolean = {
+    obj match {
+      case Metric() => true
+      case _ => false
+    }
+  }
 }

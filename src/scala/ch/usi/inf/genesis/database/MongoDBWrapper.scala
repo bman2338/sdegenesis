@@ -12,9 +12,9 @@ import scala.ch.usi.inf.genesis.model.core.Metric
  */
 
 
-class MongoDBWrapper (val host:String, val port:Int, val dbName: String) extends Database {
+class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extends Database {
 
-  def convertToDBNode (node:ModelObject) : MongoDBObject = {
+  def convertToDBNode(node: ModelObject): MongoDBObject = {
     val dbNode = MongoDBObject.newBuilder
 
     node.getUniqueId() match {
@@ -22,30 +22,50 @@ class MongoDBWrapper (val host:String, val port:Int, val dbName: String) extends
       case None =>
     }
 
+    val propsBuilder = MongoDBList.newBuilder
+    val metricsBuilder = MongoDBList.newBuilder
+    var propsAdded = false
+    var metricsAdded = false
     node.properties foreach ((pair) => {
       val key = pair._1
       val values = pair._2
       val listBuilder = MongoDBList.newBuilder
-      if (ModelType.isValue(values.head)) {
+      if (ModelType.isMetric(values.head)) {
+        metricsAdded = true
+        values foreach ((element) => {
+          metricsBuilder += convertToDBNode(element)
+        })
+      }
+      else {
+        propsAdded = true
         values foreach ((element) => {
           element match {
-            case StringValue(value) => listBuilder += value
-            case DoubleValue(value) => listBuilder += value
-            case IntValue(value) => listBuilder += value
-            case BooleanValue(value) => listBuilder += value
-            case Metric() => listBuilder += convertToDBNode (element)
+            case StringValue(value) =>
+              propsBuilder += MongoDBObject(key -> value)
+            case DoubleValue(value) =>
+              propsBuilder += MongoDBObject(key -> value)
+            case IntValue(value) =>
+              propsBuilder += MongoDBObject(key -> value)
+            case BooleanValue(value) =>
+              propsBuilder += MongoDBObject(key -> value)
             case _ =>
           }
         })
-        dbNode += key -> listBuilder.result
       }
     })
+
+    if (propsAdded)
+      dbNode += "properties" -> propsBuilder.result
+
+    if (metricsAdded)
+      dbNode += "metrics" -> metricsBuilder.result()
     dbNode.result()
   }
 
-  def save (graph:ModelGraph,identifier:String) : Boolean = {
+  def save(graph: ModelGraph, projectName: String, revision: Int): Boolean = {
 
-    var db: MongoCollection = MongoConnection(host,port)(dbName)(identifier)
+    val identifier = projectName + "_rev" + revision
+    var db: MongoCollection = MongoConnection(host, port)(dbName)(identifier)
 
     val nodesList = MongoDBList.newBuilder
     val edgesList = MongoDBList.newBuilder
