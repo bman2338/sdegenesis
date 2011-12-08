@@ -73,7 +73,7 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     }
 
     if (propsAdded)
-      dbNode += PROJECT -> propsBuilder.result
+      dbNode += PROPERTIES -> propsBuilder.result
 
     if (metricsAdded)
       dbNode += METRICS -> metricsBuilder.result()
