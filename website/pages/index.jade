@@ -1,0 +1,65 @@
+#leftside
+	h1 What is Genesis?
+	p Genesis is an on-demand service for users that want to gather and visualize software analytics for their own projects. The process is computationally intensive hence you may have to wait before having all the software	analytics available. 
+
+#rightside
+	script(type="text/javascript")
+		function login(){
+			document.getElementById("content").innerHTML = '<form name="login" action="login" method="post"><table><tr><td>Username:</td><td><input type="text" id="username" name="user[name]"/></td></tr> <tr><td>Password:</td> <td><input type="password" id="password" name="user[pass]"/></td></tr><tr><td colspan="2" class="but"><span><input type="submit" value="Login" name="submit" class="submit" /></span></td></tr></table></form>';
+		}
+		function register(){
+			document.getElementById("content").innerHTML = '<form id="registration_form" action="register" onsubmit="return validateForm();" method="post"><table><tr><td>Username: </td><td><input type="text" id="username" name="user[name]" /></td></tr><tr><td>Password: </td><td><input type="password" id="password" name="user[pass]"/></td></tr><tr><td>Repeat Password:</td><td> <input type="password" id="password_repeat" name="user[repeatpass]" /></td></tr><tr><td>Email:</td> <td><input type="text" id="email" name="user[email]" /></td></tr><tr><td colspan="2" class="but"><span><input type="submit" value="Register" name="submit" class="submit" /></span></td></tr></table><div id="error_registration" style="color: red;"></div></form>';
+		}		
+
+		function validateForm(){
+			//for now it only does this
+			return registerPressed();
+		}
+		//Handling the register event
+		function registerPressed(){
+			//Checks if the passwords match
+			var p1 = document.getElementById('password');
+			var p2 = document.getElementById('password_repeat');
+			if(p1.value != p2.value){
+				document.getElementById('error_registration').innerHTML = "The passwords doesn't match!";
+				return false;
+			}
+			else{
+				document.getElementById('error_registration').innerHTML = "";
+				return true;
+			}
+		}
+	
+	ul(id="navigation")
+		li(class="selected")
+			a(href="#", onclick="return login()") Login
+		li(class="two")
+			a(href="#", onclick="return register()") Register
+		
+	#content
+		form(name="login", action="login", method="post")
+			table
+				tr
+					td Username:
+					td 
+						input(type="text", id="username", name="user[name]") 
+				tr
+					td Password: 
+					td 
+						input(type="password", id="password", name="user[pass]")
+				tr
+					td(colspan="2", class="but")
+						span 
+							input(type="submit", class="submit", value="Login") Login
+
+#banner
+	img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/banner.png", alt="Sample visualizations")
+				
+script(type="text/javascript")
+	$(document).ready(function(){
+		$("ul#navigation li a").click(function() {
+			$("ul#navigation li").removeClass("selected");
+			$(this).parents().addClass("selected");
+			return false;
+		});
+	});

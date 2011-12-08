@@ -1,0 +1,101 @@
+#topmenu
+	ul(id="menu-nav")
+		li(class="two")
+			a(class="topnav", target="_top", href="#", onclick="clickProjects()") Projects
+		li(class="two")
+			a(class="topnav", target="_top", href="#", onclick="clickNew()") New Project
+		li(class="logout")
+			a(class="topnav", target="_top", href="/logout") Logout
+
+#projects
+	- var items = userInfo.projects
+	- if(items.length > 0)
+		table(id="projectstable")
+			tr
+				th Project Name
+				th Status
+				th(id="deleteid") Delete
+				each item in items
+					tr
+						td= item + ""
+						td status
+						td(id="deleteid") 
+							img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/delete.png")
+	- else
+		li= "No project to show"
+
+#addProject
+	form(name="addProject", action="/addProject", method="post")
+		table
+			tr
+				td(class="caption") Project Name:
+				td 
+					input(type="text", id="projectName", name="project[name]", onblur="validateSubmission()")
+			tr
+				td(class="caption") Project Repository:
+				td
+					input(type="text", id="svnurl", name="project[repo]", onblur="validateSubmission()")
+				td(class="select")
+					select(name="project[repoType]")
+						option SVN
+						option(disabled="disabled") CVS
+						option(disabled="disabled") GIT
+			tr
+				td(class="caption") Project Bugtracker:
+				td 
+					input(type="text", id="bugtracker", name="project[bugtracker]", onblur="validateSubmission()")
+				td(class="select")
+					select(name="project[btType]")
+						option None
+						option Bugzilla
+						option(disabled="disabled") JIRA
+			tr
+				td(class="caption") Bugtracker Name:
+				td 
+					input(type="text", id="projectNameBugtracker", name="project[projectnamebugtracker]", onblur="validateSubmission()")
+			tr
+				td(colspan="3", class="but")
+					span 
+						input(type="submit", class="submit", value="Send", id="submissionButton") Submit request
+		#error
+
+script(type="text/javascript")
+	$(document).ready(function(){
+		$("li.two a").click(function() {
+			$("li.two").removeClass("selected");
+			$(this).parents().addClass("selected");
+			return false;
+		});
+	});
+	
+script
+	function validateSubmission(){
+		//Checks if some field has or is not an url
+		var pname = document.getElementById('projectName');
+		var repourl = document.getElementById('svnurl');
+		var bturl = document.getElementById('bugtracker');
+		var regexp = "/http:\/\/[A-Za-z0-9\.-]{3,}\.[A-Za-z]{3}/";
+		if(!isUrl(repourl.value) || hasLineFeed(pname.value)){
+			document.getElementById('error').innerHTML = "The urls or the name contain invalid characters!";
+			document.getElementById("submissionButton").disabled = true;
+			return false;
+		}
+		else{
+			document.getElementById('error').innerHTML = "";
+			document.getElementById("submissionButton").disabled = false;
+			return true;
+		}
+	}
+	
+	function clickProjects(){
+		document.getElementById("projects").style.visibility = "visible";
+		document.getElementById("addProject").style.visibility = "hidden";
+	}
+	function clickNew(){
+		document.getElementById("addProject").style.visibility = "visible";
+		document.getElementById("projects").style.visibility = "hidden";
+	}
+	
+	document.getElementById("addProject").style.visibility = "hidden";
+	document.getElementById("projects").style.visibility = "hidden";
+	document.getElementById("submissionButton").disabled = true;
