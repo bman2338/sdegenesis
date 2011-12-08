@@ -12,7 +12,6 @@ function getAdjList(relation, nodeId) {
 	return adjList;
 }
 
-
 function getNodeList(nodes, adjList) {
 	var nodeList = [];
 	var i=0;
@@ -25,8 +24,6 @@ function getNodeList(nodes, adjList) {
 	}
 	return nodeList;
 }
-
-
 
 function getSubtreeByRelationName(nodes, edges, relationName, nodeId) {
 	relation = getRelation(edges, relationName);
