@@ -4,9 +4,6 @@ import ch.usi.inf.genesis.model.graph.ModelGraph
 import ch.usi.inf.genesis.model.core._
 
 import com.mongodb.casbah.Imports._
-import com.mongodb.casbah.MongoDB
-import scala.ch.usi.inf.genesis.model.core.Metric
-import collection.mutable.{HashMap, ListBuffer}
 
 /**
  * @author Remo Lemma
@@ -14,16 +11,34 @@ import collection.mutable.{HashMap, ListBuffer}
 
 
 class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extends Database {
+  def PROJECT = "project";
+
+  def PROPERTIES = "properties";
+
+  def METRICS = "metrics";
+
+  def FROM = "from";
+
+  def TO = "to";
+
+  def UNIQUEID = "uniqueId";
+
+  def EDGES = "edges";
+
+  def NODES = "nodes";
+
+  def REVISION = "revision"
+
 
   def convertToDBNode(node: ModelObject): MongoDBObject = {
     val dbNode = MongoDBObject.newBuilder
 
     node.getUniqueId() match {
-      case Some(id) => dbNode += "uniqueId" -> nodeAsHashcode(id)
+      case Some(id) => dbNode += UNIQUEID -> nodeAsHashcode(id)
       case None =>
     }
 
-    val propsBuilder = MongoDBList.newBuilder
+    val propsBuilder = MongoDBObject.newBuilder
     var metricsBuilder: MongoDBObject = null
     var propsAdded = false
     var metricsAdded = false
@@ -41,13 +56,13 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
         values foreach ((element) => {
           element match {
             case StringValue(value) =>
-              propsBuilder += MongoDBObject(key -> value)
+              propsBuilder += key -> value
             case DoubleValue(value) =>
-              propsBuilder += MongoDBObject(key -> value)
+              propsBuilder += key -> value
             case IntValue(value) =>
-              propsBuilder += MongoDBObject(key -> value)
+              propsBuilder += key -> value
             case BooleanValue(value) =>
-              propsBuilder += MongoDBObject(key -> value)
+              propsBuilder += key -> value
             case _ =>
           }
         })
@@ -58,18 +73,18 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     }
 
     if (propsAdded)
-      dbNode += "properties" -> propsBuilder.result
+      dbNode += PROJECT -> propsBuilder.result
 
     if (metricsAdded)
-      dbNode += "metrics" -> metricsBuilder.result()
+      dbNode += METRICS -> metricsBuilder.result()
     dbNode.result()
   }
 
-  def nodeAsHashcode (obj:String) = {
+  def nodeAsHashcode(obj: String) = {
     obj.hashCode
   }
 
-  def save(graph: ModelGraph, projectName: String, revision: Int): Unit = {
+  def save(graph: ModelGraph, projectName: String, revision: Int) {
 
     var identifier = projectName + "_rev" + revision
     var db: MongoCollection = MongoConnection(host, port)(dbName)(identifier + "_nodes")
@@ -82,6 +97,8 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
       val dbNode = convertToDBNode(node)
       nodesList += dbNode
     })
+
+
     graph.edges foreach ((pair) => {
       val relationList = MongoDBList.newBuilder
       val relationKey = pair._1
@@ -93,17 +110,17 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
         adj.targets foreach ((target) => {
           tosRelations += nodeAsHashcode(target)
         })
-        var relationNode = MongoDBObject("from" -> nodeAsHashcode(key), "to" -> tosRelations.result)
+        var relationNode = MongoDBObject(FROM -> nodeAsHashcode(key), TO -> tosRelations.result)
         relationList += relationNode
       })
       edgesList += relationKey -> relationList.result
     })
-    val graphDBObj = MongoDBObject("project" -> projectName, "revision" -> revision, "nodes" -> nodesList.result)
+    val graphDBObj = MongoDBObject(PROJECT -> projectName, REVISION -> revision, NODES -> nodesList.result)
 
     db += graphDBObj
 
     db = MongoConnection(host, port)(dbName)(identifier + "_edges")
-    val edgesDBObj = MongoDBObject("project" -> projectName, "revision" -> revision, "edges" -> edgesList.result)
+    val edgesDBObj = MongoDBObject(PROJECT -> projectName, REVISION -> revision, EDGES -> edgesList.result)
     db += edgesDBObj
   }
 
