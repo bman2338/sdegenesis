@@ -3,7 +3,7 @@ function ObjectId(str) {
 }
 
 
-genesis = { Graph : {}};
+var genesis = { Graph : {}};
 genesis.Graph.create = function(nodes, edges) {
 	//private functions
 	var nodeComparator = function(node1, node2) {
@@ -69,6 +69,7 @@ genesis.Graph.create = function(nodes, edges) {
 		initialize : function(nodes, edges) {
 			this.nodes = nodes.sort(nodeComparator);
 			this.edges = edges;
+            this.oneToOneEdges = {};
 			
 			for(var e in this.edges) {
 				this.edges[e] = this.edges[e].sort(adjListComparator);
@@ -79,6 +80,35 @@ genesis.Graph.create = function(nodes, edges) {
 			}
 			return this;
 		},
+        
+        
+        getOneToOneEdges : function(relationName) {
+            if(this.oneToOneEdges[relationName]) {
+                return this.oneToOneEdges[relationName];
+            }
+            
+            var relation =  this.getRelation(relationName);
+            
+            
+            if(relation) {
+            var oneToOneEdges = [];
+            for(var adj in relation) {
+                var adjList = relation[adj];
+                var from = adjList.from;
+                for(var e in adjList) {
+                    var to = adjList[e];
+                    oneToOneEdges.push({ "from": from, "to": to }); 
+                }
+            }
+            this.oneToOneEdges[relationName] = oneToOneEdges;
+            return oneToOneEdges;
+            
+            
+            } else {
+                return null;
+            }
+        
+        },
 
 		getRelation : function(relationName) {
 			return this.edges[relationName];
@@ -86,25 +116,14 @@ genesis.Graph.create = function(nodes, edges) {
 
 
 		getAdjList : function(relation, nodeId) {
-			// var adjList = null;
-			// for(var i = 0; i < relation.length; i++) {
-			// 	if(relation[i].from == nodeId) {
-			// 		adjList = relation[i];
-			// 	}
-			// }
-			// return adjList;
-			
 				return ifInRangeGet(relation, binarySearch(relation, nodeId, adjListLess, adjListEquals));
-			i
+			
 		},
 
 		getNodeList : function(adjList) {
 			var nodeList = [];
 			if(adjList) {
-				//var startIndex = 
 				for(var i = 0; i < adjList.length; i++) {
-				//	for(var j = 0; j < nodes.length; j++) {
-					//	if(adjList.to[i] == this.nodes[j].uniqueId) {
 						var node = this.getNodeFromId(adjList[i]);
 						if(node)
 							nodeList.push(node);
@@ -117,12 +136,6 @@ genesis.Graph.create = function(nodes, edges) {
 
 
 		getNodeFromId : function(uniqueId){
-			// for(var i = 0; i < nodes.length; i++){
-			// 		if(this.nodes[i].uniqueId == uniqueid){
-			// 			return this.nodes[i];
-			// 		}
-			// 	}
-			
 			return ifInRangeGet(this.nodes, binarySearch(this.nodes, uniqueId, nodeLess, nodeEquals));
 		},
 
@@ -132,7 +145,6 @@ genesis.Graph.create = function(nodes, edges) {
 		if(!relation)	
 		{
 			return null;
-		//	throw new Exception("InvalidName")
 		}
 			var node = this.getNodeFromId(nodeId);
 		if(!node) {
@@ -157,7 +169,7 @@ genesis.Graph.create = function(nodes, edges) {
 				}
 			}
 
-			var obj = { name: node.properties.name, properties: node.properties };
+			var obj = { name: node.properties.name, properties: node.properties, metrics: node.metrics };
 
 			if(childNodes.length != 0)  {
 				obj.children = childNodes

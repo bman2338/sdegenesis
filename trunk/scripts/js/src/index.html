@@ -21,17 +21,28 @@
 
 <script type="text/javascript">
 
-function graphTest() {
+var subclasses = "superclassOf"; var classType = "Class";
+var methods = "methods"; 
+var classes = "classes";
+var attributes = "attributes";
+var namespaces = "namespaces"; packageType = "Namespace";
+
+
+
+function getTreeFromRelation(relationName, elementType) {
 	var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
-	var edges = graph.edges;
-	var inhTree = graph.getSubtreeByRelationName("superclassOf", -2061828931);
 	var c = [];
+    
+    //Example of ho to get the relation edges one to one -> { from: id, to: id }
+   // var edgeList = graph.getOneToOneEdges(relationName);
+    
 	for(var n in graph.nodes) {
 		var node = graph.nodes[n];
-		c.push( graph.getSubtreeByRelationName("superclassOf", node.uniqueId) )
+        if(node.properties.ElementType == elementType)
+            c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
 	}
 		
-	return { name: "CIPPO", children: c };
+	return { name: "Relation: " + relationName, children: c };
 } 
 
 function update () {
@@ -39,43 +50,40 @@ function update () {
 //	var children = chart.getElementsByTagName('svg');
 //	var h = children[0].height.baseVal.value;
 //	document.getElementById("container").style.height = (h) + "px";
-	document.getElementById("slider_controls").style.display = "block";
+//	document.getElementById("slider_controls").style.display = "block";
 }
 
-			function showValue(newValue) {
+//			function showValue(newValue) {
 				//document.getElementById("range").innerHTML=newValue;
-			}
+//			}
 			
-			function play(){
-				var src = document.getElementById("playbutton").src;
-				var file = src.substring(src.lastIndexOf("/")+1, src.length);
+//			function play(){
+//				var src = document.getElementById("playbutton").src;
+//				var file = src.substring(src.lastIndexOf("/")+1, src.length);
 						
-				if(file == "play.png"){
-					document.getElementById("playbutton").src="/img/pause.png";
-				}else if(file =="pause.png"){
-					document.getElementById("playbutton").src = "/img/play.png";
-				}
-			}			
+//				if(file == "play.png"){
+//					document.getElementById("playbutton").src="/img/pause.png";
+//				}else if(file =="pause.png"){
+//					document.getElementById("playbutton").src = "/img/play.png";
+//				}
+//			}			
 </script>
 
 <link type="text/css" rel="stylesheet" href="scrollbar.css"/>
 <link type="text/css" rel="stylesheet" href="tree.css"/>
 </head>
-<body onload="graphTest()">
+<body onload="">
 <ul class="Menu">
 	<!--
 <li><a href="javascript:tree()"> Tree </li>
 <li><a href="javascript:graph()"> Graph </a> </li>
 <li><a href="javascript:hist()"> Histogram </a> </li> -->
-<li><a href="javascript:javascript:sunburst(graphTest());update();"> Inheritance Sunburst <a> </li>
-<li><a href="javascript:javascript:sunburst(ArgoUML_r666_data());update()"> Invocations Sunburst <a> </li>
-    <li>
-        <a href="javascript:roots(graphTest());update()"> Inheritance Tree</a> 
-    </li>
-    <li>
-        <a href="javascript:roots(ArgoUML_r666_data());update()"> Invocations Tree</a> 
-    </li>
- 
+<li><a href="javascript:javascript:sunburst(getTreeFromRelation(subclasses, classType));update();"> Inheritance Sunburst <a> </li>
+<li><a href="javascript:javascript:sunburst(getTreeFromRelation(methods, classType));update()"> Invocations Sunburst <a> </li>
+    <li> <a href="javascript:roots(getTreeFromRelation(subclasses, classType));update()"> Inheritance Tree</a> </li>
+    <li> <a href="javascript:roots(getTreeFromRelation(methods, classType));update()"> Invocations Tree</a> </li>
+    <li> <a href="javascript:roots(getTreeFromRelation(classes, packageType));update()"> Classes in Packages</a> </li>
+     <li> <a href="javascript:roots(getTreeFromRelation(attributes, classType));update()"> Attributes in Classes</a> </li>
 </ul>
 <div id="treename"></div>
 <div id="monitor"></div>
