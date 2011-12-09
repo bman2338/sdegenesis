@@ -25,19 +25,9 @@ function graphTest() {
 	var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
 	var edges = graph.edges;
 	var inhTree = graph.getSubtreeByRelationName("superclassOf", -2061828931);
-	//445942023
-//	1731723935
-	
-	// for(var e in edges) {
-	// 	var rel = edges[e];
-	// 	for(var adj in rel) {
-	// 		d3.select("#monitor").append(
-	// 			adj.from
-	// 			);
-	// 	}
-	// }
 	
 	
+	return { name: "CIPPO", children: [ inhTree ] };
 } 
 
 function update () {
@@ -73,10 +63,10 @@ function update () {
 <li><a href="javascript:tree()"> Tree </li>
 <li><a href="javascript:graph()"> Graph </a> </li>
 <li><a href="javascript:hist()"> Histogram </a> </li> -->
-<li><a href="javascript:javascript:sunburst(ArgoUML_rev__4600_inh_data());update();"> Inheritance Sunburst <a> </li>
+<li><a href="javascript:javascript:sunburst(graphTest());update();"> Inheritance Sunburst <a> </li>
 <li><a href="javascript:javascript:sunburst(ArgoUML_r666_data());update()"> Invocations Sunburst <a> </li>
     <li>
-        <a href="javascript:roots(ArgoUML_rev__4600_inh_data());update()"> Inheritance Tree</a> 
+        <a href="javascript:roots(graphTest());update()"> Inheritance Tree</a> 
     </li>
     <li>
         <a href="javascript:roots(ArgoUML_r666_data());update()"> Invocations Tree</a> 

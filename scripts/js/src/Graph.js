@@ -131,7 +131,8 @@ genesis.Graph.create = function(nodes, edges) {
 			var relation = this.getRelation(relationName);
 		if(!relation)	
 		{
-			throw new Exception("InvalidName")
+			return null;
+		//	throw new Exception("InvalidName")
 		}
 			var node = this.getNodeFromId(nodeId);
 		if(!node) {
