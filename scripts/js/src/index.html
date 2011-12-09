@@ -14,8 +14,28 @@
 <script type="text/javascript" src="ModelGraph.js"></script>
 <script type="text/javascript" src="Trees.js"></script>
 <script type="text/javascript" src="Sunbursts.js"></script>
+<script type="text/javascript" src="Graph.js"></script>
+<script type="text/javascript" src="edge_data.js"></script>
+<script type="text/javascript" src="node_data.js"></script>
 
 <script type="text/javascript">
+
+function graphTest() {
+	var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
+	var edges = graph.edges;
+	graph.getSubtreeByRelationName("superclassOf", -2129459694);
+	
+	// for(var e in edges) {
+	// 	var rel = edges[e];
+	// 	for(var adj in rel) {
+	// 		d3.select("#monitor").append(
+	// 			adj.from
+	// 			);
+	// 	}
+	// }
+	
+	
+} 
 
 function update () {
 //	var chart = document.getElementById("chart");
@@ -44,7 +64,7 @@ function update () {
 <link type="text/css" rel="stylesheet" href="scrollbar.css"/>
 <link type="text/css" rel="stylesheet" href="tree.css"/>
 </head>
-<body onload="">
+<body onload="graphTest()">
 <ul class="Menu">
 	<!--
 <li><a href="javascript:tree()"> Tree </li>
