@@ -104,7 +104,7 @@ function hTree(root, target) {
                 return d.children.length/5 + 4; 
             return  4; })
         .on("mouseover", function(d, i) { 
-                d3.select("#monitor").html(d.name) 
+                d3.select("#monitor").html(createInfo(d)) 
                 var t = d3.select(d3.event.currentTarget.parentNode).selectAll("text");
                 t.attr("visibility", "visible");
                 
