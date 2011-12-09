@@ -22,21 +22,24 @@ import ch.usi.inf.genesis.model.core.famix.{DeveloperEntity, RevisionEntity}
  */
 
 class SVNCrawler(url: String, projectName: String, projectPath: String,
-                  mseOutputPath : String, parser : ExternalParserWrapper,
-                  auth : RepositoryUserAuth, allowedExtensions: String*) extends RepositoryCrawler {
+                 mseOutputPath: String, parser: ExternalParserWrapper,
+                 auth: RepositoryUserAuth, allowedExtensions: String*) extends RepositoryCrawler {
   val svnUrl = SVNURL.parseURIEncoded(url)
   val authManager = if (auth == null) SVNWCUtil.createDefaultAuthenticationManager
                     else SVNWCUtil.createDefaultAuthenticationManager(auth.getUserName, auth.getPassword)
+
   val options = SVNWCUtil.createDefaultOptions(true)
-  val manager= SVNClientManager.newInstance(options, authManager)
+  val manager = SVNClientManager.newInstance(options, authManager)
   val repository = SVNRepositoryFactory.create(svnUrl)
   repository.setAuthenticationManager(authManager)
+
   val lastRevisionNumber = repository.getLatestRevision
   val localPath = new File(projectPath)
-  val onSourceParsingCompleteDelegates = new ListBuffer[(RevisionEntity, File)=>Unit]
+  val onSourceParsingCompleteDelegates = new ListBuffer[(ListBuffer[RevisionEntity], Int, String, File) => Unit]
 
+  private val AllowedExtensions = ("("+ allowedExtensions.foldLeft("")((s1,s2) => {if(s1.length == 0) ".*"+s2 else s1 + "|.*"+s2}) +")$").r
 
-  def crawl(firstRev: Int, step : Int) {
+  def crawl(firstRev: Int, step: Int) {
     crawl(firstRev, lastRevisionNumber.toInt, step)
   }
 
@@ -46,17 +49,39 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
     val modifiedFiles = new ListBuffer[File]
     val deletedFiles = new ListBuffer[File]
 
-
+    //Clean already existing repository to prevent errors on interrupted updates.
+    try{
+        if(localPath.exists()){
+          println("Cleaning up repository")
+          val cmd: String = "svn cleanup " + localPath.getCanonicalPath;
+          Runtime.getRuntime.exec(cmd)
+          println("Cleaning Done.")
+        }
+    } catch{
+      case (e : IOException) => println(e.getMessage)
+    }
     //Project Checkout
+    println("Project Checkout at rev. " + firstRev)
     manager.getUpdateClient.doCheckout(svnUrl, new File(projectPath),
-    SVNRevision.create(firstRev), SVNRevision.create(firstRev), SVNDepth.INFINITY, false)
+      SVNRevision.create(firstRev), SVNRevision.create(firstRev), SVNDepth.INFINITY, false)
 
     //Check Diffs
     var current = firstRev
 
-    while(current < lastRev){
-      println("Updating to Revision " + (current+step))
-      manager.getUpdateClient.doUpdate(localPath, SVNRevision.create(current+step), SVNDepth.INFINITY, false, false)
+    while (current + step < lastRev) {
+      //Clear Lists
+      addedFiles.clear()
+      modifiedFiles.clear()
+      deletedFiles.clear()
+
+      //Update to Revision 'current+step'
+      println("Updating to Revision " + (current + step))
+      manager.getUpdateClient.doUpdate(localPath, SVNRevision.create(current + step), SVNDepth.INFINITY, false, false)
+      println("Getting diff status between rev. " + current + " and rev." + (current + step))
+
+      //TODO Manage Connection Closed.
+
+      //Get Diff Status Logs
       manager.getDiffClient.doDiffStatus(localPath, SVNRevision.create(current), localPath, SVNRevision.create(current+step), SVNDepth.INFINITY, false, new ISVNDiffStatusHandler {
 
         def handleDiffStatus(diffStatus: SVNDiffStatus) {
@@ -66,37 +91,39 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
             return
 
           //Check file extension
-          val dotIndex: Int = diffFile.getName.lastIndexOf('.')
-          if (dotIndex == -1)
-            return
-
-          val extension: String = diffFile.getName.substring(dotIndex, diffFile.getName.length)
-          if (!allowedExtensions.contains(extension))
-            return
-
-          if (diffStatus.getModificationType.equals(SVNStatusType.STATUS_MODIFIED) ||
-            diffStatus.getModificationType.equals(SVNStatusType.STATUS_REPLACED))
-            modifiedFiles += diffFile
-          else if (diffStatus.getModificationType.equals(SVNStatusType.STATUS_ADDED))
-            addedFiles += diffFile
-          else if (diffStatus.getModificationType.equals(SVNStatusType.STATUS_DELETED))
-            deletedFiles += diffFile
+          diffFile.getName match{
+            case AllowedExtensions(_) =>{
+              if (diffStatus.getModificationType.equals(SVNStatusType.STATUS_MODIFIED) ||
+                  diffStatus.getModificationType.equals(SVNStatusType.STATUS_REPLACED) ||
+                  diffStatus.getModificationType.equals(SVNStatusType.MERGED))
+                modifiedFiles += diffFile
+              else if (diffStatus.getModificationType.equals(SVNStatusType.STATUS_ADDED))
+                addedFiles += diffFile
+              else if (diffStatus.getModificationType.equals(SVNStatusType.STATUS_DELETED))
+                deletedFiles += diffFile
+            }
+            case _ => return
+          }
         }
       })
+
+
+
+
       if (!modifiedFiles.isEmpty || !addedFiles.isEmpty || !deletedFiles.isEmpty) {
         val allUpdatedFiles = modifiedFiles ++ addedFiles
         val files: Array[File] = new Array[File](allUpdatedFiles.size)
         println("ADDED: " + addedFiles.toString())
         println("MODIFIED: " + modifiedFiles.toString())
-        println("DELETED: " + modifiedFiles.toString())
+        println("DELETED: " + deletedFiles.toString())
+
         allUpdatedFiles.copyToArray(files)
-        manager.getLogClient.doLog(files, SVNRevision.create(current+step), SVNRevision.create(current+step), SVNRevision.create(current+step), false, true, -1.asInstanceOf[Long], new ISVNLogEntryHandler {
+
+        val revisions =  new ListBuffer[RevisionEntity]
+        try{
+          manager.getLogClient.doLog(files, SVNRevision.create(current+step), SVNRevision.create(current), SVNRevision.create(current + step), false, true, -1.asInstanceOf[Long], new ISVNLogEntryHandler {
           def handleLogEntry(logEntry: SVNLogEntry) {
             try {
-              println("Generatig MSE files...")
-              val mseFilePath = mseOutputPath + "/" + projectName + "_rev_" + (current+step) + ".mse"
-              val mseFile = parser.execute(localPath.getCanonicalPath,  mseFilePath, false)
-              println("Generation Done.")
               val revisionEntity = new RevisionEntity
               revisionEntity.addProperty("number", new IntValue(logEntry.getRevision.toString.toInt))
               revisionEntity.addProperty("comment", new StringValue(logEntry.getMessage))
@@ -106,23 +133,25 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
               revisionEntity.addProperty("author", developerEntity)
 
 
-              addedFiles foreach(
+              addedFiles foreach (
                 (f) =>
-                  revisionEntity.addProperty("addedFiles",new StringValue(f.getCanonicalPath
-                  /*pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)*/))
+                  revisionEntity.addProperty("addedFiles", new StringValue(f.getCanonicalPath
+                    /*pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)*/))
                 )
-              deletedFiles foreach(
+              deletedFiles foreach (
                 (f) =>
-                  revisionEntity.addProperty("deletedFiles",new StringValue(f.getCanonicalPath
-                  /*pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)*/))
+                  revisionEntity.addProperty("deletedFiles", new StringValue(f.getCanonicalPath
+                    /*pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)*/))
                 )
-              modifiedFiles foreach(
+              modifiedFiles foreach (
                 (f) =>
-                  revisionEntity.addProperty("modifiedFiles",new StringValue(f.getCanonicalPath
-                  /*pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)*/))
+                  revisionEntity.addProperty("modifiedFiles", new StringValue(f.getCanonicalPath
+                    /*pathDifference(f.getCanonicalPath,localPath.getCanonicalPath)*/))
                 )
 
-              notifyOnParsingComplete(revisionEntity, mseFile)
+              revisionEntity.addProperty("project", new StringValue(projectName))
+              revisions += revisionEntity
+
             }
             catch {
               case e: IOException => {
@@ -131,28 +160,39 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
             }
           }
         })
+        //Generate MSE File for that revision.
+        println("Generatig MSE files...")
+        val mseFilePath = new File(mseOutputPath + File.separator + projectName + "_rev_" + (current + step) + ".mse").getCanonicalPath
+        val mseFile = parser.execute(localPath.getCanonicalPath, mseFilePath, false)
+        println("Generation Done.")
+        notifyOnParsingComplete(revisions, (current+step) , projectName, mseFile)
+      }catch{
+          case (e : Exception) => println(e)
+        }
       }
       current += step
     }
 
   }
 
-  def pathDifference(firstPath : String, secondPath : String) : String = {
-        var index : Int = 0
-      var go = true
-        while(go && index < firstPath.length && index < secondPath.length){
-        val c1 : Char = firstPath.charAt(index)
-        val c2 : Char  = secondPath.charAt(index)
-        go = (c1 == c2)
-        index+=1
-      }
+  def pathDifference(firstPath: String, secondPath: String): String = {
+    var index: Int = 0
+    var go = true
+    while (go && index < firstPath.length && index < secondPath.length) {
+      val c1: Char = firstPath.charAt(index)
+      val c2: Char = secondPath.charAt(index)
+      go = (c1 == c2)
+      index += 1
+    }
 
-      firstPath.substring(index)
+    firstPath.substring(index)
   }
 
 
-  private def notifyOnParsingComplete(revision : RevisionEntity, mseFile : File){
-    onSourceParsingCompleteDelegates foreach((del) => del(revision, mseFile))
+  private def notifyOnParsingComplete(affectedRevisions : ListBuffer[RevisionEntity],
+                                      currentRevisionNumber: Int, projectName : String,
+                                      mseFile: File) {
+    onSourceParsingCompleteDelegates foreach ((delegate) => delegate(affectedRevisions,currentRevisionNumber, projectName, mseFile))
   }
 
 

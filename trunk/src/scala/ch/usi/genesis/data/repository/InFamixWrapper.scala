@@ -12,20 +12,19 @@ class InFamixWrapper(infamixPath : String, lang : String) extends ExternalParser
     val cmd = "./" +bashScriptPath+" "+infamixPath+" "+lang + " " + sourceFilePath + " " + outputFile
     val p: Process = Runtime.getRuntime.exec(cmd)
 
-    var stderr: InputStream = p.getInputStream
-    var isr: InputStreamReader = new InputStreamReader(stderr)
-    var br: BufferedReader = new BufferedReader(isr)
-    var line: String = null
+//    var stderr: InputStream = p.getInputStream
+//    var isr: InputStreamReader = new InputStreamReader(stderr)
+//    var br: BufferedReader = new BufferedReader(isr)
+//    var line: String = null
 
 //    line = br.readLine
 //    while(line != null){
 //      println(line)
 //      line = br.readLine
 //    }
-    //println("InFamix Done.")
+//    //println("InFamix Done.")
 
     try {
-      //println("Generationg MSE files...")
       p.waitFor()
     }
     catch {

@@ -8,26 +8,25 @@ import collection.mutable.ListBuffer
 
 /**
  * @author Luca Ponzanelli
- * @param revisionInfo the information concerning the revision's information to be pushed
+ * @param revisions the information concerning the revisions' information to be pushed
  *
  * Injects Repository Information inside the original MSE meta-model.
  * Structure:
- *          Entity["revision"] => RevisionEntity["number"]        =>  IntValue
- *                                RevisionEntity["comment"]       =>  StringValue
- *                                RevisionEntity["date"]          =>  StringValue
- *                                RevisionEntity["author"]        =>  DeveloperEntity
- *                                RevisionEntity["addedFiles"]    =>  ListBuffer[StringValue]
- *                                RevisionEntity["modifiedFiles"] =>  ListBuffer[StringValue]
- *                                RevisionEntity["deletedFiles"]  =>  ListBuffer[StringValue]
+ * Entity["revision"] => ListBuffer[RevisionEntity] => RevisionEntity["number"]        =>  IntValue
+ *                                                     RevisionEntity["comment"]       =>  StringValue
+ *                                                     RevisionEntity["date"]          =>  StringValue
+ *                                                     RevisionEntity["author"]        =>  DeveloperEntity
+ *                                                     RevisionEntity["addedFiles"]    =>  ListBuffer[StringValue]
+ *                                                     RevisionEntity["modifiedFiles"] =>  ListBuffer[StringValue]
+ *                                                     RevisionEntity["deletedFiles"]  =>  ListBuffer[StringValue]
  *
  */
 
-class RevisionInfoMutator(revisionInfo : RevisionEntity) extends ModelMutator {
+class RevisionInfoMutator(revisions : ListBuffer[RevisionEntity]) extends ModelMutator {
 
   def visit(obj: ModelObject): NavigatorOption = {
 
-      obj.addProperty("revision", revisionInfo)
-
+      revisions foreach( (rev) => obj.addProperty("revision", rev))
 			CONTINUE
 	}
 
@@ -51,21 +50,24 @@ class RevisionInfoMutator(revisionInfo : RevisionEntity) extends ModelMutator {
 	}
 	
 	private def isFileAffected(fileName : String) : Boolean = {
-			val updated = new ListBuffer[File]
-      revisionInfo.getProperty("addedFiles") match{
-        case Some(name : StringValue) =>
-          if(name.value.contains(fileName)){
-            return true
+      revisions foreach(
+        (revisionInfo) =>{
+          val updated = new ListBuffer[File]
+          revisionInfo.getProperty("addedFiles") match{
+            case Some(name : StringValue) =>
+              if(name.value.contains(fileName)){
+                return true
+              }
+            case _ =>
           }
-        case _ =>
-      }
 
-      revisionInfo.getProperty("modifiedFiles") match{
-        case Some(name : StringValue) =>
-          if(name.value.contains(fileName))
-            return true
-        case _ =>
-      }
+          revisionInfo.getProperty("modifiedFiles") match{
+            case Some(name : StringValue) =>
+              if(name.value.contains(fileName))
+                return true
+            case _ =>
+          }
+        })
 
 			false
 	}
