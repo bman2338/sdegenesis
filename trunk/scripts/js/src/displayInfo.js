@@ -5,7 +5,7 @@ function createInfo(d){
         for(x in d.properties){
             result += x;
             result += ": ";
-            result += d[x];	
+            result += d.properties[x];	
             result += " ";
         }
         result += "</div>";
