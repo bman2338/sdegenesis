@@ -8,6 +8,7 @@
 <script type="text/javascript" src="../lib/mbostock/d3.layout.js"></script>
 <script type="text/javascript" src="../lib/mbostock/lib/jquery/jquery.js"></script>
 <script type="text/javascript" src="../lib/mbostock/lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/mbostock/d3.geom.js"></script>
 
 <script type="text/javascript" src="argouml/rev_4600_inheritance.js"></script>
 <script type="text/javascript" src="argouml/rev_4600_invocations.js"></script>
@@ -15,11 +16,15 @@
 <script type="text/javascript" src="Trees.js"></script>
 <script type="text/javascript" src="Sunbursts.js"></script>
 <script type="text/javascript" src="Graph.js"></script>
+
 <script type="text/javascript" src="edge_data.js"></script>
 <script type="text/javascript" src="node_data.js"></script>
 <script type="text/javascript" src="displayInfo.js"></script>
-
+<script type="text/javascript" src="force.js"></script>
 <script type="text/javascript">
+
+
+
 
 var subclasses = "superclassOf"; var classType = "Class";
 var methods = "methods"; 
@@ -27,6 +32,59 @@ var classes = "classes";
 var attributes = "attributes";
 var namespaces = "namespaces"; packageType = "Namespace";
 
+
+function plotGraph() {
+	var relationName = "invokingMethods";
+	var type = "Method";
+	
+	var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
+	//cloneArray
+	var edges = (graph.getOneToOneEdges(relationName));
+	var nodes = (graph.getNodesByType(type));
+	var source = nodes.length;
+	var sink = source + 1;
+
+	
+	jQuery.each(edges, function(edgeIndex, edgeValue){
+		edgeValue.source = source;
+		edgeValue.target = sink;
+	});
+	
+	jQuery.each(nodes, function(index, value) {
+		var that = value;
+        that.group = 1;
+		that.name = value.properties.name;
+	
+		jQuery.each(edges, function(edgeIndex, edgeValue) {
+			
+	        edgeValue.value = 1;
+		
+			if(edgeValue.from == that.uniqueId) {
+				edgeValue.source = index;	
+				that.group++;		
+			}
+			
+			if(edgeValue.to == that.uniqueId) {
+				edgeValue.target = index;
+				that.group++;
+			}
+			
+			
+		});
+	});
+	
+	
+	var temp = edges;
+	edges = [];
+	jQuery.each(temp, function(index, edge) {
+		if(edge.target != sink && edge.target != source) {
+			edges.push(edge);
+		}
+	});
+	
+	forceDirectedGraph(nodes, edges);
+	
+}
 
 
 function getTreeFromRelation(relationName, elementType) {
@@ -84,6 +142,7 @@ function update () {
     <li> <a href="javascript:roots(getTreeFromRelation(methods, classType));update()"> Invocations Tree</a> </li>
     <li> <a href="javascript:roots(getTreeFromRelation(classes, packageType));update()"> Classes in Packages</a> </li>
      <li> <a href="javascript:roots(getTreeFromRelation(attributes, classType));update()"> Attributes in Classes</a> </li>
+     <li> <a href="javascript: plotGraph()"> CallGraph </a> </li>
 </ul>
 <div id="treename"></div>
 <div id="monitor"></div>

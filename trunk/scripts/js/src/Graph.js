@@ -3,6 +3,53 @@ function ObjectId(str) {
 }
 
 
+var binarySearch = function(array, uniqueId, less, eq, fromIndex){
+	var left = 0;
+	if(fromIndex) {
+		left = fromIndex;
+	}
+	
+	var right = array.length - 1;
+	while (left <= right){
+		var mid = parseInt((left + right)/2);
+		if (eq(array[mid], uniqueId)) {
+			return mid;
+		}
+		else if (less(array[mid], uniqueId)) {
+			left = mid + 1;
+		}
+		else {
+			right = mid - 1;
+		}
+	}
+	
+	return array.length;
+}
+
+var cloneArray = function(array) {
+	var cloned = [];
+	for(var index in array) {
+		cloned.push(cloneObject(array[index]));
+	}
+	return cloned;
+}
+
+
+// unsafe beware
+var cloneObject = function(obj) {
+	if(jQuery.isArray(obj)) {
+		return cloneArray(obj);
+	} else {
+		var cloned = {};
+		for(var key in obj) {
+			cloned[key] = obj[key];
+		}
+		return cloned;
+	}
+}
+
+
+
 var genesis = { Graph : {}};
 genesis.Graph.create = function(nodes, edges) {
 	//private functions
@@ -39,28 +86,7 @@ genesis.Graph.create = function(nodes, edges) {
 		}
 	};
 
-	var binarySearch = function(array, uniqueId, less, eq, fromIndex){
-		var left = 0;
-		if(fromIndex) {
-			left = fromIndex;
-		}
-		
-		var right = array.length - 1;
-		while (left <= right){
-			var mid = parseInt((left + right)/2);
-			if (eq(array[mid], uniqueId)) {
-				return mid;
-			}
-			else if (less(array[mid], uniqueId)) {
-				left = mid + 1;
-			}
-			else {
-				right = mid - 1;
-			}
-		}
-		
-		return array.length;
-	}
+
 
 
 	//public functions
@@ -95,8 +121,8 @@ genesis.Graph.create = function(nodes, edges) {
             for(var adj in relation) {
                 var adjList = relation[adj];
                 var from = adjList.from;
-                for(var e in adjList) {
-                    var to = adjList[e];
+                for(var e in adjList.to) {
+                    var to = adjList.to[e];
                     oneToOneEdges.push({ "from": from, "to": to }); 
                 }
             }
@@ -133,7 +159,31 @@ genesis.Graph.create = function(nodes, edges) {
 			return [];
 		},
 
+		reset : function() {
+			this.oneToOneEdges = null;
+			this.nodesByType = null;
+		},
+		
+		getNodesByType : function(type) {
+			var nodeList = [];
+			if(this.nodesByType) {
+				return this.nodesByType;
+			}
+	
+			for(var n in this.nodes) {
+				var node = this.nodes[n];
+				if(this.getNodeType(node) == type) {
+					nodeList.push(node);
+				}
+			}
+			
+			this.nodesByType = nodeList;
+			return nodeList;
+		},
 
+		getNodeType : function(node) {
+			return node.properties.ElementType;
+		},
 
 		getNodeFromId : function(uniqueId){
 			return ifInRangeGet(this.nodes, binarySearch(this.nodes, uniqueId, nodeLess, nodeEquals));
