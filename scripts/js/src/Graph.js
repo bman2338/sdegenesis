@@ -140,10 +140,10 @@ genesis.Graph.create = function(nodes, edges) {
 
 		getSubtree : function(relation, node) {
 			var adjList = this.getAdjList(relation, node.uniqueId);
-			if (adjList == null)
-			return { name: node.properties.name }
-			var nodeList = this.getNodeList(adjList.to);
-
+			var nodeList = [];
+			if (adjList) {
+				nodeList  = this.getNodeList(adjList.to);
+			}
 			
 			var childNodes = [];
 			for(var i = 0; i < nodeList.length; i++) {
@@ -152,10 +152,12 @@ genesis.Graph.create = function(nodes, edges) {
 				}
 			}
 
-			if(childNodes.length == 0)  {
-				return { name: node.properties.name }
+			var obj = { name: node.properties.name, properties: node.properties };
+
+			if(childNodes.length != 0)  {
+				obj.children = childNodes
 			}
-			return {  name: node.properties.name,  children:  childNodes };
+			return obj;
 		},
 
 		}; return graph.initialize(nodes, edges)
