@@ -17,6 +17,7 @@
 <script type="text/javascript" src="Graph.js"></script>
 <script type="text/javascript" src="edge_data.js"></script>
 <script type="text/javascript" src="node_data.js"></script>
+<script type="text/javascript" src="displayInfo.js"></script>
 
 <script type="text/javascript">
 
@@ -56,9 +57,9 @@ function update () {
 				var file = src.substring(src.lastIndexOf("/")+1, src.length);
 						
 				if(file == "play.png"){
-					document.getElementById("playbutton").src="img/pause.png";
+					document.getElementById("playbutton").src="/img/pause.png";
 				}else if(file =="pause.png"){
-					document.getElementById("playbutton").src = "img/play.png";
+					document.getElementById("playbutton").src = "/img/play.png";
 				}
 			}			
 </script>
