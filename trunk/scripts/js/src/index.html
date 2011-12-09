@@ -25,9 +25,13 @@ function graphTest() {
 	var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
 	var edges = graph.edges;
 	var inhTree = graph.getSubtreeByRelationName("superclassOf", -2061828931);
-	
-	
-	return { name: "CIPPO", children: [ inhTree ] };
+	var c = [];
+	for(var n in graph.nodes) {
+		var node = graph.nodes[n];
+		c.push( graph.getSubtreeByRelationName("superclassOf", node.uniqueId) )
+	}
+		
+	return { name: "CIPPO", children: c };
 } 
 
 function update () {
