@@ -114,8 +114,6 @@ class Service(val port: Int) {
                                 prjName,
                                 new File(analysisPath + File.separator + prjName).getCanonicalPath,
                                 new File(analysisPath + File.separator + "mse").getCanonicalPath,
-//                                "/Users/Ponzanelli/Documents/workspace/Genesis-Scala/"+prjName,
-//                                "/Users/Ponzanelli/Documents/workspace/Genesis-Scala/mse",
                                 inFamix,
                                 null,
                                 ".java")

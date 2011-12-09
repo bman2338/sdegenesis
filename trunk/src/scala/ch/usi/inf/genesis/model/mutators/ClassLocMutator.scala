@@ -41,18 +41,17 @@ class ClassLocMutator(projectPath : String) extends ModelMutator {
     val file = new File(projectPath + File.separator + fileName)
 
     val source = Source.fromFile(file)
-		val content = source.mkString
+		var content = source.mkString
     source.close()
 		var loc = 0
 
-    //remove comments
-    content.replaceAll("/\\*(?:.|[\\n\\r])*?\\*/","")
+    //remove C/C++/JAVA comments
+    content = content.replaceAll("(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)|(//.*)","")
     val lines : Array[String] = content.split("[\n|\r\n]")
     lines foreach( (l) => {
       if (l.length() > 0) loc+=1
     })
 
-    println(fileName + "\tLOC: "+loc)
     loc
   }
 }
