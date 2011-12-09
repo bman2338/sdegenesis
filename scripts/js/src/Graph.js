@@ -107,7 +107,7 @@ genesis.Graph.create = function(nodes, edges) {
 					//	if(adjList.to[i] == this.nodes[j].uniqueId) {
 						var node = this.getNodeFromId(adjList[i]);
 						if(node)
-							nodeList.push(this.nodes[j]);
+							nodeList.push(node);
 				}
 				return nodeList;
 			}
@@ -129,18 +129,22 @@ genesis.Graph.create = function(nodes, edges) {
 
 		getSubtreeByRelationName : function(relationName, nodeId) {
 			var relation = this.getRelation(relationName);
-			if(!relation) {
-				alert("PORC")
-			}
-			
+		if(!relation)	
+		{
+			throw new Exception("InvalidName")
+		}
 			var node = this.getNodeFromId(nodeId);
+			
 			return this.getSubtree(relation, node);
 		},
 
 		getSubtree : function(relation, node) {
 			var adjList = this.getAdjList(relation, node.uniqueId);
-			var nodeList = this.getNodeList(this.nodes, adjList);
+			if (adjList == null)
+			return { name: node.properties.name }
+			var nodeList = this.getNodeList(adjList.to);
 
+			
 			var childNodes = [];
 			for(var i = 0; i < nodeList.length; i++) {
 				if(nodeList[i] && nodeList[i].properties.name){
