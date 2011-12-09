@@ -134,6 +134,10 @@ genesis.Graph.create = function(nodes, edges) {
 			throw new Exception("InvalidName")
 		}
 			var node = this.getNodeFromId(nodeId);
+		if(!node) {
+			return null;
+		}	
+			
 			
 			return this.getSubtree(relation, node);
 		},
