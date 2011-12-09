@@ -42,7 +42,7 @@ function getTreeFromRelation(relationName, elementType) {
             c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
 	}
 		
-	return { name: "Relation: " + relationName, children: c };
+	return { name: elementType + " " + relationName, children: c };
 } 
 
 function update () {
