@@ -38,9 +38,9 @@ function plotGraph() {
 	var type = "Method";
 	
 	var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
-	//cloneArray
-	var edges = (graph.getOneToOneEdges(relationName));
-	var nodes = (graph.getNodesByType(type));
+	
+	var edges = cloneArray(graph.getOneToOneEdges(relationName));
+	var nodes = cloneArray(graph.getNodesByType(type));
 	var source = nodes.length;
 	var sink = source + 1;
 
