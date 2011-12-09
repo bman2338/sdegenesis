@@ -5,7 +5,7 @@ function forceDirectedGraph(nodes, edges) {
     var w = 900,
     h = 600,
     fill = d3.scale.category20();
-
+d3.select("#chart").html("");
 var vis = d3.select("#chart").append("svg:svg")
     .attr("width", w)
     .attr("height", h);
