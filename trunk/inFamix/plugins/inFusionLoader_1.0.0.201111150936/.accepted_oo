@@ -1,0 +1,130 @@
+all ancestors_cpp
+all descendants_cpp
+AMW
+ATFD
+attribute group_cpp
+base classes_cpp
+Blob Class_cpp
+Blob Module
+Blob Operation
+BOVR_cpp
+BUR_cpp
+CATFA
+CBO
+CC
+CDISP
+class group_cpp
+CPFD_cpp
+CYCLO
+DAC_cpp
+Data Class_cpp
+Data Clumps
+Data Module
+derived classes_cpp
+Design Flaws Overview
+Detail
+DR
+Encapsulation Breaker_cpp
+FANIN
+FANOUT
+fanout class group_cpp
+FDP
+Feature Envy
+file group
+foreign data
+foreign data providers
+function group
+variable group
+God Class_cpp
+God Module
+group of changing classes_cpp
+group of changing methods_cpp
+has comments
+HIT_cpp
+ICDO
+ICIO
+IF
+Intensive Coupling
+is abstract_cpp
+is data exposer
+is public
+LAA
+LCOM
+LOCM_cpp
+LDA
+LOC
+MAXNESTING
+Message Chains
+method group_cpp
+methods overriding_cpp
+Method Interaction_cpp
+methods accessing variable_cpp
+methods overriden_cpp
+module group
+NAS
+NOAC_cpp
+NOACCM_cpp
+NOC_cpp
+NOCHLD_cpp
+NOD
+NOGF
+NOGV
+NOLV
+NOOC
+NOM_cpp
+NOP
+NOM
+NOPAR
+NOPRTM_cpp
+NOPUBA
+NrBM
+OCIO
+OCIO_POLY
+OCDO
+OCDO_POLY
+operations called
+operations calling me
+package group
+subsystem group
+PNAS
+Schizophrenic Class_cpp
+Schizophrenic Module
+Severity Refused Interface Bequest_cpp
+Severity Blob Class
+Severity Blob Module
+Severity Blob Operation
+Severity Cyclic Dependencies
+Severity Data Class
+Severity Data Clumps
+Severity Data Module
+Severity Distorted Hierarchy
+Severity Feature Envy
+Severity God Class
+Severity God Module
+Severity Intensive Coupling
+Severity Message Chains
+Severity SAP Breakers
+Severity Schizophrenic Class
+Severity Schizophrenic Module
+Severity Shotgun Surgery
+Severity Significant External Duplication
+Severity Significant Internal Duplication
+Severity Significant Sibling Duplication
+Severity Underutilized Interface
+Severity Unnecessary Coupling
+Severity Unstable Dependencies
+Shotgun Surgery
+Significant External Duplication
+Significant Internal Duplication
+Significant Sibling Duplication_cpp
+System Complexity Overview
+TCC
+THROWN
+THROWS
+TOTALLOC
+Unstable Dependencies
+variables accessed
+WMC
+WOC
+ECGF
+CRIX

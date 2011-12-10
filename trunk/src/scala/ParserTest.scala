@@ -28,7 +28,7 @@ object ParserTest {
               case Some(node) => {
                 var graph = new GraphExtractor().extractGraph(node)
                 //println(graph);
-                var mongo = new MongoDBWrapper("127.0.0.1", 4321, "genesis_db")
+                var mongo = new MongoDBWrapper("127.0.0.1", 8888, "genesis_db")
                 mongo.save(graph, "ArgoUML", 300)
 
                 //new BreadthFirstNavigator().walkModel(node, new ModelPrinter());

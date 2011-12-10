@@ -158,7 +158,7 @@ class Service(val port: Int) {
       case Some(node) => {
         var graph = new GraphExtractor().extractGraph(node)
         //println(graph);
-        var mongo = new MongoDBWrapper("127.0.0.1", 4321, "genesis_db")
+        var mongo = new MongoDBWrapper("127.0.0.1", 8888, "genesis_db")
         mongo.save(graph, projectName, currentRevisionNumber)
 
         //new BreadthFirstNavigator().walkModel(node, new ModelPrinter());

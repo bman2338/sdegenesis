@@ -77,7 +77,7 @@ function plotGraph() {
 	var temp = edges;
 	edges = [];
 	jQuery.each(temp, function(index, edge) {
-		if(edge.target != sink && edge.target != source) {
+		if(edge.target != sink && edge.source != source) {
 			edges.push(edge);
 		}
 	});

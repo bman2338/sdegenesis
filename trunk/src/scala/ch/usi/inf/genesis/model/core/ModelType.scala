@@ -21,4 +21,18 @@ object ModelType {
       case _ => false
     }
   }
+
+
+  def isIgnoredType(obj: ModelObject) : Boolean = {
+      obj.getName().toString().startsWith(FAMIX.IGNORE_TYPE);
+  }
+
+  def isStub(obj: ModelObject) : Boolean = {
+     val isStub = obj.getProperty(FAMIX.ISSTUB_PROP);
+     isStub match {
+      case Some(value:BooleanValue) => true
+      case Some(value:StringValue) => value.value.equalsIgnoreCase("true")
+      case _ => false
+    }
+  }
 }
