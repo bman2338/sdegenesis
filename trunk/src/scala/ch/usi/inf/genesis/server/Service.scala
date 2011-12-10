@@ -39,6 +39,9 @@ object Main {
 
 class Service(val port: Int) {
 
+  val dbHost = "localhost";
+  val dbPort = 8888;
+
   val inFamixPath = "inFamix"
   val defaultAnalysisFolder = "analysis_folder"
 
@@ -158,7 +161,7 @@ class Service(val port: Int) {
       case Some(node) => {
         var graph = new GraphExtractor().extractGraph(node)
         //println(graph);
-        var mongo = new MongoDBWrapper("127.0.0.1", 8888, "genesis_db")
+        var mongo = new MongoDBWrapper(dbHost, dbPort, "genesis_db")
         mongo.save(graph, projectName, currentRevisionNumber)
 
         //new BreadthFirstNavigator().walkModel(node, new ModelPrinter());

@@ -3,6 +3,8 @@ import ch.usi.inf.genesis.model.extractors._
 import scala.ch.usi.inf.genesis.database.MongoDBWrapper
 
 object ParserTest {
+  val dbHost = "localhost";
+  val dbPort = 8888;
 
   class ParseError extends RuntimeException
 
@@ -28,7 +30,7 @@ object ParserTest {
               case Some(node) => {
                 var graph = new GraphExtractor().extractGraph(node)
                 //println(graph);
-                var mongo = new MongoDBWrapper("127.0.0.1", 8888, "genesis_db")
+                var mongo = new MongoDBWrapper(dbHost, dbPort, "genesis_db")
                 mongo.save(graph, "ArgoUML", 300)
 
                 //new BreadthFirstNavigator().walkModel(node, new ModelPrinter());

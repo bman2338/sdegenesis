@@ -15,7 +15,8 @@ var express = require('express')
   , mongoose = require('mongoose')
   , schemas = require('./schemas')
   , Schema   = mongoose.Schema
-  , jade = require('jade');
+  , jade = require('jade')
+  , mongo = require('mongoskin');
 
 var url = require('url')
   , fs = require ('fs');
@@ -35,7 +36,7 @@ var chat = io
   });
 
 //Database connections
-var db = mongoose.connect('mongodb://localhost:8888/genesis_db2');
+var db = mongoose.connect('mongodb://localhost:8888/genesis_db');
 var UserSchema = db.model('User');
 var ProjectSchema = db.model('Project');
 var NodeSchema = db.model('Node');
@@ -80,11 +81,17 @@ app.post('/login', function (req, res) {
 				name: req.session.username,
 				projects: req.session.projects
 			};
-
-			//render the management with user connected
-			res.render(__dirname + '/pages/management.jade', {
-				userInfo: usr,
-			});
+			
+			usr.projects = ["Genesis"];
+			//mongo.db('localhost:8888/genesis_db').collection('').find().toArray(function(err, ress){
+				
+				
+				//render the management with user connected
+				res.render(__dirname + '/pages/management.jade', {
+					userInfo: usr,
+				});
+				
+			//});
 		}
 		else{
 			console.log("login not successfull");
@@ -166,6 +173,11 @@ app.get('/logout', function(req, res){
 	});
 });
 
+/*
+* Handler for adding a project. It sends a request through a socket
+* to the scala service, moreover adds the project to the list of 
+* projects of the user.
+*/
 app.post('/addProject', function(req, res){
 	var projectName = req.body.project.name;
 	var projectrepo = req.body.project.repo;
@@ -175,11 +187,13 @@ app.post('/addProject', function(req, res){
 	var projectNameBugtracker = req.body.project.projectnamebugtracker;
 		
 	//check in the database if there is already there the project
-	ProjectSchema.find({ProjectName: projectName}, function(err, projects){
+	mongo.db('localhost:8888/genesis_db').collection(projectName).find().toArray(function(err, project){
+	//ProjectSchema.findOne({ProjectName: projectName}, function(err, project){
 		//no project with this name, we can send it to the scala backend & save it
-		if(projects.length == 0){
+		console.log("ciao" + projectName);
+		if(!project){
 			var net = require('net');
-			var client = net.connect(6969, '172.16.224.88');
+			var client = net.connect(6969, 'localhost');
 			client.write(
 				"projectName> "+ projectName + 
 				"\n projectRepo> " + projectrepo + 
@@ -190,9 +204,9 @@ app.post('/addProject', function(req, res){
 			client.end();
 			
 			//update the user with a brand new project
-			UserSchema.update({Username: req.session.name}, {$push: {Projects: projectName}}, {}, function(err){
-				
-			});
+			console.log("updating username = " + req.session.name + " with value for project: " +projectName);
+			mongo.db('localhost:8888/genesis_db').collection('users').update({Username: req.session.name}, {$push : {Projects : projectName}});
+			
 		}
 		else {
 			//do nothing, this project is already inside!
@@ -216,33 +230,35 @@ app.post('/addProject', function(req, res){
 */
 app.get('/show_project/:projectname', function(req, res){
 	console.log(req.params.projectname);
-	
-	var mongo = require('mongoskin');
-	mongo.db('localhost:8888/genesis_db').collection('ArgoUML_rev300_edges').find().toArray(function(err, edges){
-		mongo.db('localhost:8888/genesis_db').collection('ArgoUML_rev300_nodes').find().toArray(function(err, nodes){
-
+		
+	mongo.db('localhost:8888/genesis_db').collection('Argo_rev11_edges').find().toArray(function(err, edges){
+		mongo.db('localhost:8888/genesis_db').collection('Argo_rev11_nodes').find().toArray(function(err, nodes){
+			
 			var newJson = {};
 			
 			newJson.name = nodes.project;
 			newJson.children = [];
 						
-			var clazz = "BugzillaCrawler";
-			var uniqueid = getIdFromName(nodes, clazz);
+			//var clazz = "A";
+			//var uniqueid = getIdFromName(nodes, clazz);
 			
-			newJson.children.push(getSubtreeByRelationName(nodes[0].nodes, edges,'attributes', uniqueid));
+			//newJson.children.push(getSubtreeByRelationName(nodes[0].nodes, edges,'superclassOf', uniqueid));
+			console.log(nodes[0]);
+			//test to send nodes and edges
+			//var graph = genesis.Graph.create(!{JSON.stringify(nodes)}, !{JSON.stringify(edges)});
+			/*res.render(__dirname + '/pages/viz.jade', {
+				nodes: nodes[0].nodes,
+				edges: edges[0].edges,
+			});*/
 			
 			res.render(__dirname + '/pages/viz.jade', {
 				vizJson: newJson,
+				nodes: nodes[0].nodes,
+				edges: edges[0].edges,
 			});
 			
 		});
 	});
-	
-	
-	var a = mongoose.connection.db.collection("ArgoUML_rev300_edges", function (err, collection) {
-		collection.find({}, function(err, results) { 
-		});
-	});	
 });
 
 function getRelation(edges, relationName) {
@@ -344,7 +360,7 @@ app.get('/test', function(req, res){
 */
 function registerUser(request, f){
 	console.log("in registerUser");
-	UserSchema.find({Username : request.body.user.name }, function(err, users) { 
+	mongo.db('localhost:8888/genesis_db').collection('users').find().toArray(function(err, users){
 		//No user with the same username was found!
 		if(users.length == 0){
 			console.log("no users with this name and chosen password " + request.body.user.pass);
@@ -373,7 +389,7 @@ function registerUser(request, f){
 * Function to login users
 */
 function loginUser(username, password, f){
-	UserSchema.find({Username: username}, function(err, users) {
+	mongo.db('localhost:8888/genesis_db').collection('users').find().toArray(function(err, users){
   		if (err) {
   	 		throw err; 
   		} 
@@ -411,3 +427,4 @@ var toObjectSource = function(obj)   {
    }
    return str + "]";
 }
+
