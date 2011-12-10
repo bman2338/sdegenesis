@@ -5,6 +5,11 @@ import ch.usi.inf.genesis.model.graph.{ModelEdge, ModelGraph}
 import ch.usi.inf.genesis.model.navigation.{ModelVisitor, BreadthFirstNavigator}
 import ch.usi.inf.genesis.model.core._
 
+
+/**
+ * If the ModelObject is a Value or has no UniqueId, is not added as a node in the graph
+ * (to define a ModelObject as a value see ModelType.isValue)
+ */
 class GraphExtractor extends ModelVisitor {
   val graph: ModelGraph = new ModelGraph();
 
@@ -28,7 +33,7 @@ class GraphExtractor extends ModelVisitor {
     graph.addNode(identifier, obj)
 
     obj.properties foreach ((pair) => {
-      val key = pair._1
+      val key = pair._1       //relation
       val value = pair._2
       value foreach ((element) => {
         if (!ModelType.isValue(element)) {

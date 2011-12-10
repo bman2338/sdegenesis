@@ -1,0 +1,53 @@
+Manifest-Version: 1.0
+Export-Package: com.googlecode.erca,com.googlecode.erca.clf,com.google
+ code.erca.clf.impl,com.googlecode.erca.clf.util,com.googlecode.erca.f
+ ramework.algo,com.googlecode.erca.framework.algo.filtering,com.google
+ code.erca.framework.algo.scaling,com.googlecode.erca.framework.cli,co
+ m.googlecode.erca.framework.io,com.googlecode.erca.framework.io.in,co
+ m.googlecode.erca.framework.io.out,com.googlecode.erca.framework.test
+ ,com.googlecode.erca.framework.ui,com.googlecode.erca.framework.utils
+ ,com.googlecode.erca.impl,com.googlecode.erca.plugin,com.googlecode.e
+ rca.plugin.popup.actions,com.googlecode.erca.rcf,com.googlecode.erca.
+ rcf.impl,com.googlecode.erca.rcf.util,com.googlecode.erca.util,com.go
+ oglecode.exputils,com.intooitus.infusion,com.intooitus.infusion.activ
+ ator,com.intooitus.infusion.constants,com.intooitus.infusion.gui,com.
+ intooitus.infusion.gui.icons,com.intooitus.infusion.gui.loadlistener,
+ com.intooitus.infusion.gui.rcp,com.intooitus.infusion.gui.ui.browser.
+ links,com.intooitus.infusion.gui.ui.browser.links.comparatorlink,com.
+ intooitus.infusion.gui.ui.browser.links.duplicationlink,com.intooitus
+ .infusion.gui.ui.browser.links.gotopagelink,com.intooitus.infusion.gu
+ i.ui.browser.links.graphviewlink,com.intooitus.infusion.gui.ui.browse
+ r.links.groupWithSeveritylink,com.intooitus.infusion.gui.ui.browser.l
+ inks.grouplink,com.intooitus.infusion.gui.ui.browser.links.groupsWith
+ Strings,com.intooitus.infusion.gui.ui.browser.links.helplink,com.into
+ oitus.infusion.gui.ui.browser.links.ignoreDesignFlaw,com.intooitus.in
+ fusion.gui.ui.browser.links.imagemaplink,com.intooitus.infusion.gui.u
+ i.browser.links.multiplelink,com.intooitus.infusion.gui.ui.browser.li
+ nks.opendoublemlt,com.intooitus.infusion.gui.ui.browser.links.openvie
+ wlink,com.intooitus.infusion.gui.ui.browser.links.selfduplicationcomp
+ aratorlink,com.intooitus.infusion.gui.ui.browser.links.sourcelink,com
+ .intooitus.infusion.gui.ui.browser.links.visualizationlink,com.intooi
+ tus.infusion.metamodel,com.intooitus.infusion.plugins.clusters,com.in
+ tooitus.infusion.plugins.clusters.comparators,com.intooitus.infusion.
+ plugins.filters,com.intooitus.infusion.plugins.tools,com.intooitus.in
+ fusion.plugins.util,com.intooitus.infusion.preferences,com.intooitus.
+ infusion.util,com.intooitus.infusion.util.graph,com.intooitus.infusio
+ n.wizard.subsystems,com.intooitus.progress,com.intooitus.util.configu
+ rator
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,lib/erca_1.6.0.jar
+Bundle-Name: InFusionLoader
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.core.runtime,metameta,org.eclipse.jface,me
+ moria,org.eclipse.core.resources,org.eclipse.cdt.core,org.eclipse.ui,
+ org.eclipse.cdt.ui,org.eclipse.jdt.ui,org.eclipse.jdt.core,com.intooi
+ tus.qualitymodel;bundle-version="1.0.0"
+Bundle-Version: 1.0.0.201111150936
+Eclipse-BuddyPolicy: registered
+Bundle-ManifestVersion: 2
+Bundle-Activator: com.intooitus.infusion.Activator
+Bundle-SymbolicName: inFusionLoader;singleton:=true
+Eclipse-RegisterBuddy: metameta, memoria, jmondrian, dude, inFusionRCP
+ , JDTmodelBuilder, modelBuilder, inFusion
+
+

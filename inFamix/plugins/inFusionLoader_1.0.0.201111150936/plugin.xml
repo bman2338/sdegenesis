@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="com.intooitus.infusion.visualizations" name="Visualizations" schema="schema/com.intooitus.infusion.visualizations.exsd"/>
+   <extension-point id="com.intooitus.infusion.icons" name="IconRepository" schema="schema/com.intooitus.infusion.icons.exsd"/>
+   <extension-point id="com.intooitus.inFusion.gui.wizard" name="com.intooitus.inFusion.gui.wizard" schema="schema/com.intooitus.inFusion.gui.wizard.exsd"/>
+   <extension-point id="com.intooitus.infusion.modelbuilder.progress" name="com.intooitus.infusion.modelbuilder.progress" schema="schema/com.intooitus.infusion.modelbuilder.progress.exsd"/>
+   <extension-point id="com.intooitus.infusion.modelBuilder" name="com.intooitus.infusion.modelBuilder" schema="schema/com.intooitus.infusion.modelBuilder.exsd"/>
+   <extension
+         point="com.intooitus.infusion.icons">
+      <repository
+            class="com.intooitus.infusion.gui.icons.XDTIconRepository">
+      </repository>
+   </extension>>
+   
+
+</plugin>

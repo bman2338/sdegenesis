@@ -1,0 +1,96 @@
+Quality {
+1 SizeAndComplexity
+1 Encapsulation
+1 Coupling
+1 Cohesion
+1 Hierarchies
+}
+
+SizeAndComplexity {
+2 BlobClass
+2 SignificantExternalDuplication
+2 SignificantSiblingDuplication
+2 SignificantInternalDuplication
+2 GodClass
+1 DataClumps
+2 IntensiveCoupling
+1 MessageChains
+1 UnnecessaryCoupling
+1 SchizophrenicClass
+1 FeatureEnvy
+2 RefusedParentBequest
+1 TraditionBreaker
+1 SAPBreakers
+2 DistortedHierarchy
+2 BlobOperation
+}
+
+Encapsulation {
+1 SignificantExternalDuplication
+1 SignificantSiblingDuplication
+2 GodClass
+2 DataClass
+2 DataClumps
+2 MessageChains
+2 SchizophrenicClass
+2 FeatureEnvy
+}
+
+Coupling {
+1 BlobClass
+1 SignificantExternalDuplication
+1 SignificantSiblingDuplication
+2 GodClass
+1 DataClass
+1 IntensiveCoupling
+2 MessageChains
+2 ShotgunSurgery
+2 CyclicDependencies
+1 UnnecessaryCoupling
+2 UnstableDependencies
+1 SchizophrenicClass
+2 FeatureEnvy
+1 TraditionBreaker
+2 SAPBreakers
+1 BlobOperation
+}
+
+Cohesion {
+1 BlobClass
+1 GodClass
+1 DataClass
+2 SchizophrenicClass
+1 FeatureEnvy
+2 RefusedParentBequest
+1 TraditionBreaker 
+}
+
+Hierarchies{
+2 SignificantSiblingDuplication
+2 SchizophrenicClass
+2 RefusedParentBequest
+2 TraditionBreaker
+1 SAPBreakers
+2 DistortedHierarchy
+}
+
+BlobClass "Blob Class" impact 1 appliesTo "class"
+SignificantExternalDuplication "Significant External Duplication" impact 1 appliesTo "method"
+SignificantSiblingDuplication "Significant Sibling Duplication" impact 1 appliesTo "method"
+SignificantInternalDuplication "Significant Internal Duplication" impact 1 appliesTo "method"
+GodClass "God Class" impact 5 appliesTo "class"
+DataClass "Data Class" impact 5 appliesTo "class"
+DataClumps "Data Clumps" impact 1 appliesTo "method"
+IntensiveCoupling "Intensive Coupling" impact 1 appliesTo "method"
+MessageChains "Message Chains" impact 5 appliesTo "method"
+ShotgunSurgery "Shotgun Surgery" impact 5 appliesTo "method"
+CyclicDependencies "Cyclic Dependencies" impact 5 appliesTo "subsystem"
+UnnecessaryCoupling "Unnecessary Coupling" impact 5 appliesTo "subsystem"
+UnstableDependencies "Unstable Dependencies" impact 5 appliesTo "subsystem"
+SchizophrenicClass "Schizophrenic Class" impact 1 appliesTo "class"
+FeatureEnvy "Feature Envy" impact 1 appliesTo "method"
+RefusedParentBequest "Refused Parent Bequest" impact 3 appliesTo "class"
+TraditionBreaker "Tradition Breaker" impact 3 appliesTo "class"
+SAPBreakers "SAP Breakers" impact 5 appliesTo "subsystem"
+DistortedHierarchy "Distorted Hierarchy" impact 3 appliesTo "class"
+BlobOperation "Blob Operation" impact 1 appliesTo "method"

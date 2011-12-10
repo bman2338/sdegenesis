@@ -1,0 +1,14 @@
+#Tue Nov 15 09:39:30 EET 2011
+repositories/http\:__www.eclipse.org_modeling_updates/enabled=false
+repositories/http\:__download.eclipse.org_tools_cdt_releases_indigo/enabled=false
+repositories/http\:__www.eclipse.org_modeling_updates/uri=http\://www.eclipse.org/modeling/updates/
+repositories/http\:__download.eclipse.org_modeling_emf_updates/uri=http\://download.eclipse.org/modeling/emf/updates/
+repositories/http\:__download.eclipse.org_tools_cdt_releases_indigo/uri=http\://download.eclipse.org/tools/cdt/releases/indigo
+repositories/http\:__download.eclipse.org_modeling_emf_updates/isSystem=false
+repositories/http\:__www.eclipse.org_modeling_updates/isSystem=false
+eclipse.preferences.version=1
+repositories/http\:__download.eclipse.org_eclipse_updates_3.5/uri=http\://download.eclipse.org/eclipse/updates/3.5
+repositories/http\:__download.eclipse.org_eclipse_updates_3.5/isSystem=false
+repositories/http\:__download.eclipse.org_eclipse_updates_3.5/enabled=false
+repositories/http\:__download.eclipse.org_tools_cdt_releases_indigo/isSystem=false
+repositories/http\:__download.eclipse.org_modeling_emf_updates/enabled=false
