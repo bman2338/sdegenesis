@@ -207,10 +207,7 @@ app.post('/addProject', function(req, res){
 					name : projectName,
 					status: "updated",
 					username: req.session.username,
-					//FIXME: this revision array will be filled with the scala backend
-					//for now it's filled by hand here with 1, 2, 3 just for testing
-					//replace with empty array [] when done in scala part
-					revisions: [1, 2, 3],
+					revisions: [],
 				};
 				mongoskin.collection("projects").insert(projToAdd, function(err){
 					if(err){
