@@ -75,20 +75,21 @@ body.front-page{
 
 
 #logo
-{ width: 940px;
+{ 
+/*  width: 940px;*/
+  width: 90%;
   position: relative;
+  padding-left: 50px;
   height: 70px;
 }
+
+
 
 #logo #logotext 
 { position: absolute; 
   left: 0;}
 
-.front-page #content-div{
-padding-top:0;
-width:1000px;
-position:relative;
-}
+
 
 #topmenu {
 	position:absolute;
@@ -102,6 +103,11 @@ position:relative;
 
 #addProject {
   padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+#addProject form{
+  width: 60%;
 }
 
 #banner img {
@@ -122,18 +128,17 @@ select {
 }
 
 #content-div{
-	width:1000px;
-	padding-top:10px;
+	background: #F4F4F4;
 	margin: auto;
-	padding-top:20px;
-/*	border: 1px solid red;*/
 	display: block;
-	width:920px;
+	padding-left: 30px;
+	padding-right: 30px;
+	width:90%;
 	position:relative;
 	z-index:1;
-	-webkit-border-radius:5px;
-	-moz-border-radius:5px;
-	border-radius:5px;
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border-radius:10px;
 	
 	text-align:left;
 }
@@ -144,7 +149,8 @@ select {
 	padding-top: 69px;
 	position: relative;
 	float: left;
-	width: 500px;
+/*	width: 500px;*/
+	width: 50%;
 }
 
 #rightside{
@@ -220,16 +226,16 @@ a:hover
 { font: normal 200% 'century gothic', arial, sans-serif;
   border-bottom: 0;
   text-transform: none;
-  margin: 0 0 0 9px;}
+  margin: 0 0 0 0px;}
 
 #logotext h1, #logotext h1 a, #logotext h1 a:hover 
 { padding: 0 0 0 0;
-  color: #FFF;
+  color: #777;
   letter-spacing: 0.1em;
   text-decoration: none;}
 
 #logotext h1 a .logo_colour
-{ color: #777;}
+{ color: #555;}
 
 #logotext h2
 { font-size: 100%;
@@ -430,6 +436,7 @@ form{
 	
 /*	border: 2px solid red;*/
 	
+	background: #E7E7E7;
  
     -moz-border-radius: 20px;
     -webkit-border-radius: 20px;
