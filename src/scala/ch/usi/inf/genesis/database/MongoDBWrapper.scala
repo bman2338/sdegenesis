@@ -31,14 +31,16 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
 
   def REVISION = "revision"
 
-  def PROJECT_NAME = "projectName";
+  def PROJECT_NAME = "name";
 
   def REVISIONS = "revisions";
+
+  def PROJECTS = "projects"
 
 
   def updateRevisionRegistry(projectName: String, revision: Int) {
 
-    val collectionName = projectName + "_" + "revision_registry";
+    val collectionName = PROJECTS;
     val registry = MongoConnection(host, port)(dbName)(collectionName);
     var proj = registry.findOne(MongoDBObject(PROJECT_NAME -> projectName));
     if (proj.isEmpty) {

@@ -373,13 +373,13 @@ var getNodeFromId = function(nodes, uniqueid){
 
 
 app.get('/test', function(req, res){
-	ProjectSchema.find({ProjectName: "ArgoUML", Revision: 300}, function(err, results){
+	ProjectSchema.find({ProjectName: "ArgoUML", Revision: 11}, function(err, results){
 	}); 
 	
 	ProjectSchema.where('ProjectName', 'ArgoUML').run(function(err, results){
 	});
 	
-	var a = mongoose.connection.db.collection("ArgoUML_rev300_edges", function (err, collection) {
+	var a = mongoose.connection.db.collection("ArgoUML_rev11_edges", function (err, collection) {
 	    collection.find().toArray(function(a,b) { 
 		});
 	});
