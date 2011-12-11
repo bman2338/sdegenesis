@@ -3,21 +3,28 @@ package ch.usi.inf.genesis.model.mutators
 import ch.usi.inf.genesis.model.core.famix.ClassEntity
 import scala.io._
 import java.io.File
-import ch.usi.inf.genesis.model.core.{IntValue, StringValue, ModelObject}
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
+import ch.usi.inf.genesis.model.core.{FAMIX, IntValue, StringValue, ModelObject}
 
+
+/**
+ * @author Luca Ponzanelli
+ * @param projectPath The path to the repository from which files can be loaded.
+ *
+ * It calculates the LOC for an entire class and adds the LOC property to the class Entity.
+ */
 class ClassLocMutator(projectPath : String) extends ModelMutator {
   override def visit(obj : ModelObject): NavigatorOption = {
-    obj.getProperty("sourceAnchor") match {
+    obj.getProperty(FAMIX.SOURCE_ANCHOR) match {
 				case Some(fileAnchor : ModelObject) =>
-          fileAnchor.getProperty("fileName") match {
+          fileAnchor.getProperty(FAMIX.SOURCE_FILE_NAME) match {
             case Some(fileName : StringValue) =>
-            fileAnchor.getProperty("startLine") match{
+            fileAnchor.getProperty(FAMIX.SOURCE_START_LINE) match{
                 case Some(startLine : IntValue) =>
-                  fileAnchor.getProperty("endLine") match{
+                  fileAnchor.getProperty(FAMIX.SOURCE_END_LINE) match{
                     case Some(endLine : IntValue) =>
                       val loc = getLOC(fileName.value, startLine.value, endLine.value)
-                      fileAnchor.addProperty("loc", new IntValue(loc))
+                      obj.addProperty("loc", new IntValue(loc))
                       STOP
                     case _ => CONTINUE
                   }
@@ -29,6 +36,9 @@ class ClassLocMutator(projectPath : String) extends ModelMutator {
     }
   }
 
+  /**
+   * Just selects Class Entity as entities to analyze
+   */
   override def getSelection() : (ModelObject) => Boolean ={
     ((obj) => obj match {
       case ClassEntity() => true
@@ -36,8 +46,11 @@ class ClassLocMutator(projectPath : String) extends ModelMutator {
     })
   }
 
-  //TODO build your own comment stripper
-  def getLOC(fileName : String, startLine : Int,  endLine : Int) : Int = {
+  /**
+   *   Read an entire file from the repository and strips out JAVA/C like comments
+   *   to calculate the right LOC.
+   */
+  private def getLOC(fileName : String, startLine : Int,  endLine : Int) : Int = {
     val file = new File(projectPath + File.separator + fileName)
 
     val source = Source.fromFile(file)

@@ -55,6 +55,12 @@ object FAMIX extends Enumeration {
   val ISSTUB_PROP = "isStub";
 
 
+  val SOURCE_ANCHOR = "sourceAnchor"
+  val SOURCE_FILE_NAME = "fileName"
+  val SOURCE_START_LINE = "fileName"
+  val SOURCE_END_LINE = "endLine"
+
+
   //missing stuff
   val PREVIOUS_ASSIGNEES_PROP = "TODO" //TODO
   val SIGNATURE_PROP = "TODO" //TODO
