@@ -11,13 +11,13 @@ function VisualizationsRegister () {
 			var vis = register[i];
 			var toAdd = true;
 			for (var j = 0; j < data.length; ++j) {
-				if (!vis.allows(data[j])) {
+				if (!vis().allows(data[j])) {
 					toAdd = false;
 					break;
 				}
 			}
 			if (toAdd)
-				results.push(vis);
+				results.push(new vis());
 		}
 		return results;
 	}
