@@ -21,25 +21,15 @@ var express = require('express')
 var url = require('url')
   , fs = require ('fs');
 
-app.use(express.logger());
-app.use(express.cookieParser());
-app.use(express.session({ secret: 'keyboard cat' }));
-
 var mongoskin = mongo.db("localhost:8888/genesis_db");
 
 app.listen(8079);
 app.configure(function(){
 	app.use(express.bodyParser());
+	app.use(express.logger());
+	app.use(express.cookieParser());
+	app.use(express.session({ secret: 'keyboard cat' }));
 });
-
-var chat = io
-  .of('/')
-  .on('connection', function (socket) {
-    socket.emit('message', {
-        that: 'only'
-      , '/chat': 'will get'
-    });
-  });
 
 //Database connections
 var db = mongoose.connect('mongodb://localhost:8888/genesis_db');
@@ -86,21 +76,14 @@ app.post('/login', function (req, res) {
 			console.log("USERNAME IS : " + req.session.username);
 			
 			var usr = {
-				name: req.session.username,
-				projects: req.session.projects
+				name: result[0].Username,
+				projects: result[0].Projects,
 			};
 			
-			//usr.projects = ["Genesis"];
-			
-			//mongo.db('localhost:8888/genesis_db').collection('').find().toArray(function(err, ress){
-				
-				
-				//render the management with user connected
-				res.render(__dirname + '/pages/management.jade', {
-					userInfo: usr,
-				});
-				
-			//});
+			//render the management with user connected
+			res.render(__dirname + '/pages/management.jade', {
+				userInfo: usr,
+			});
 		}
 		else{
 			console.log("login not successfull");
@@ -172,8 +155,8 @@ app.get('/management', function(req, res) {
 */
 app.get('/logout', function(req, res){
 	//set session variables to logout the user
-	req.session.authenticated = false;
-	req.session.name = undefined;
+	req.session.userAuthenticated = false;
+	req.session.usernamename = undefined;
 	req.session.projects = undefined;
 	
 	//send the user to the index
@@ -208,9 +191,7 @@ app.post('/addProject', function(req, res){
 		if(!found){
 				//make the scala backend do something
 				var net = require('net');
-            
-				//var client = net.connect(6969, 'localhost');
-				var client = net.createConnection(6969, 'localhost');
+				/*var client = net.createConnection(6969, 'localhost');
                 
                 client.write(
 					"projectName> "+ projectName + 
@@ -219,13 +200,17 @@ app.post('/addProject', function(req, res){
 					"\n projectBugTracker> " + projectBugTracker + 
 					"\n bugTrackerType> " + bugtrackerType + 
 					"\n projectBugTrackerName> " + projectNameBugtracker);
-				client.end();
+				client.end();*/
 				
 				//add the new project to the db
 				var projToAdd = {
 					name : projectName,
 					status: "updated",
 					username: req.session.username,
+					//FIXME: this revision array will be filled with the scala backend
+					//for now it's filled by hand here with 1, 2, 3 just for testing
+					//replace with empty array [] when done in scala part
+					revisions: [1, 2, 3],
 				};
 				mongoskin.collection("projects").insert(projToAdd, function(err){
 					if(err){
@@ -266,21 +251,20 @@ app.post('/addProject', function(req, res){
 * Redirect for showing the project
 */
 app.get('/show_project/:projectname', function(req, res){
-	console.log(req.params.projectname);
-		
-	mongo.db('localhost:8888/genesis_db').collection('Argo_rev11_edges').find().toArray(function(err, edges){
-		mongo.db('localhost:8888/genesis_db').collection('Argo_rev11_nodes').find().toArray(function(err, nodes){
+	
+	mongo.db('localhost:8888/genesis_db').collection('projects').find({"name": req.params.projectname}).toArray(function (err, proj){
 			
 			var newJson = {};
+			newJson.revisions = proj[0].revisions;
 			
-			newJson.name = nodes.project;
+			//newJson.name = nodes.project;
 			newJson.children = [];
 						
 			//var clazz = "A";
 			//var uniqueid = getIdFromName(nodes, clazz);
 			
 			//newJson.children.push(getSubtreeByRelationName(nodes[0].nodes, edges,'superclassOf', uniqueid));
-			console.log(nodes[0]);
+			//console.log(nodes[0]);
 			//test to send nodes and edges
 			//var graph = genesis.Graph.create(!{JSON.stringify(nodes)}, !{JSON.stringify(edges)});
 			/*res.render(__dirname + '/pages/viz.jade', {
@@ -290,10 +274,19 @@ app.get('/show_project/:projectname', function(req, res){
 			
 			res.render(__dirname + '/pages/viz.jade', {
 				vizJson: newJson,
-				nodes: nodes[0].nodes,
-				edges: edges[0].edges,
+				nodes: {},
+				edges: {},
 			});
-			
+		});
+});
+
+/*
+* Redirect for the AJAX request of the revisions
+*/
+app.post('/show_project/:projectname/:rev', function(req, res){
+	mongo.db('localhost:8888/genesis_db').collection(req.params.projectname + '_rev' + req.params.rev + '_edges').find().toArray(function(err, edges){
+		mongo.db('localhost:8888/genesis_db').collection(req.params.projectname + '_rev' + req.params.rev + '_nodes').find().toArray(function(err, nodes){
+			//SEND BACK VIA AJAX THE RESULTS nodes[0] and edges[0]
 		});
 	});
 });
