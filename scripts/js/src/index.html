@@ -21,6 +21,7 @@
 <script type="text/javascript" src="node_data.js"></script>
 <script type="text/javascript" src="displayInfo.js"></script>
 <script type="text/javascript" src="force.js"></script>
+<script type="text/javascript" src="VisualizationRegister.js"></script>
 <script type="text/javascript">
 
 
@@ -32,6 +33,34 @@ var classes = "classes";
 var attributes = "attributes";
 var namespaces = "namespaces"; packageType = "Namespace";
 
+var register = new VisualizationsRegister();
+
+function constructVisualization (name,toAllow) {
+	return {
+		name: function() { return name; },
+		allows: function(data) { 
+			for (var i = 0; i < toAllow.length; ++i) {
+				if (data.identifier == toAllow[i].identifier	)
+					return true;
+			}
+			return false;
+		},
+	};
+}
+
+var methodsData = {
+	identifier: "methods",
+};
+
+var classData = {
+	identifier: "classes",
+};
+
+register.addVisualization(constructVisualization("GraphExample", [methodsData,classData]));
+
+var vis = register.getVisualizations([classData]);
+
+alert(vis);
 
 function plotGraph() {
 	var relationName = "invokingMethods";
@@ -44,7 +73,8 @@ function plotGraph() {
 	var source = nodes.length;
 	var sink = source + 1;
 
-	
+
+
 	jQuery.each(edges, function(edgeIndex, edgeValue){
 		edgeValue.source = source;
 		edgeValue.target = sink;
