@@ -9,6 +9,7 @@
 <script type="text/javascript" src="../lib/mbostock/lib/jquery/jquery.js"></script>
 <script type="text/javascript" src="../lib/mbostock/lib/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/mbostock/d3.geom.js"></script>
+<script type="text/javascript" src="deepCopy.js"></script>
 
 <script type="text/javascript" src="argouml/rev_4600_inheritance.js"></script>
 <script type="text/javascript" src="argouml/rev_4600_invocations.js"></script>
@@ -125,8 +126,8 @@ function plotGraph() {
 	
 	var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
 	
-	var edges = cloneArray(graph.getOneToOneEdges(relationName));
-	var nodes = cloneArray(graph.getNodesByType(type));
+	var edges = owl.deepCopy(graph.getOneToOneEdges(relationName));
+	var nodes = owl.deepCopy(graph.getNodesByType(type));
 	var source = nodes.length;
 	var sink = source + 1;
 
