@@ -9,7 +9,7 @@ import ch.usi.inf.genesis.data.repository.FamixLanguage
 import ch.usi.inf.genesis.model.core.famix.RevisionEntity
 import java.io.{File, BufferedReader, InputStream, InputStreamReader}
 import ch.usi.inf.genesis.parser.mse.MSEParser
-import ch.usi.inf.genesis.model.mutators.RevisionInfoMutator
+import ch.usi.inf.genesis.model.mutators.MethodOwnershipMutator
 import org.tmatesoft.svn.core.SVNException
 import scala.ch.usi.inf.genesis.data.bugtracker.{BugzillaCrawler, BugTrackerCrawler}
 import ch.usi.genesis.data.repository.{RepositoryCrawler, SVNCrawler, InFamixWrapper}
@@ -147,7 +147,7 @@ class Service(val port: Int) {
     println("Shutting down..")
   }
 
-  def onParsingCompleted(affectedRevisions: ListBuffer[RevisionEntity],
+  def onParsingCompleted(revision: RevisionEntity,
                          currentRevisionNumber : Int, projectName : String,
                          mseFile : File) {
 	  import scala.io._
