@@ -6,11 +6,11 @@
 
 //import frameworks
 var express = require('express')
-  , app = express.createServer(
+  , app = require('express').createServer()/*express.createServer(
 	express.logger(),
 		express.cookieParser(),
 		express.session({ secret: 'keyboard cat' })
-	)
+	)*/
   , io = require('socket.io').listen(app)
   , mongoose = require('mongoose')
   , schemas = require('./schemas')
@@ -20,6 +20,12 @@ var express = require('express')
 
 var url = require('url')
   , fs = require ('fs');
+
+app.use(express.logger());
+app.use(express.cookieParser());
+app.use(express.session({ secret: 'keyboard cat' }));
+
+var mongoskin = mongo.db("localhost:8888/genesis_db");
 
 app.listen(8079);
 app.configure(function(){
@@ -77,12 +83,15 @@ app.post('/login', function (req, res) {
 			req.session.username = result[0].Username;
 			req.session.projects = result[0].Projects;
 			
+			console.log("USERNAME IS : " + req.session.username);
+			
 			var usr = {
 				name: req.session.username,
 				projects: req.session.projects
 			};
 			
-			usr.projects = ["Genesis"];
+			//usr.projects = ["Genesis"];
+			
 			//mongo.db('localhost:8888/genesis_db').collection('').find().toArray(function(err, ress){
 				
 				
@@ -185,43 +194,68 @@ app.post('/addProject', function(req, res){
 	var projectBugTracker = req.body.project.bugtracker;
 	var bugtrackerType = req.body.project.btType.toLowerCase();
 	var projectNameBugtracker = req.body.project.projectnamebugtracker;
-		
-	//check in the database if there is already there the project
-	mongo.db('localhost:8888/genesis_db').collection(projectName).find().toArray(function(err, project){
-	//ProjectSchema.findOne({ProjectName: projectName}, function(err, project){
-		//no project with this name, we can send it to the scala backend & save it
-		console.log("ciao" + projectName);
-		if(!project){
-			var net = require('net');
-			var client = net.connect(6969, 'localhost');
-			client.write(
-				"projectName> "+ projectName + 
-				"\n projectRepo> " + projectrepo + 
-				"\n repoType> " + repoType + 
-				"\n projectBugTracker> " + projectBugTracker + 
-				"\n bugTrackerType> " + bugtrackerType + 
-				"\n projectBugTrackerName> " + projectNameBugtracker);
-			client.end();
-			
-			//update the user with a brand new project
-			console.log("updating username = " + req.session.name + " with value for project: " +projectName);
-			mongo.db('localhost:8888/genesis_db').collection('users').update({Username: req.session.name}, {$push : {Projects : projectName}});
+	
+	mongo.db("localhost:8888/genesis_db").collection("projects").find().toArray(function(err, projects){
+		console.log("prima del for con username " + req.session.username);
+		var found = false;
+		for(var i = 0; i < projects.length; i++){
+			if(projects[i].name == projectName && projects[i].username == req.session.username){
+				//this user has already a project with this name
+				console.log("WARNING: trying to add a project that already is in the database under this user");
+				found = true;
+			}
+		}
+		if(!found){
+				//make the scala backend do something
+				var net = require('net');
+				var client = net.connect(6969, 'localhost');
+				client.write(
+					"projectName> "+ projectName + 
+					"\n projectRepo> " + projectrepo + 
+					"\n repoType> " + repoType + 
+					"\n projectBugTracker> " + projectBugTracker + 
+					"\n bugTrackerType> " + bugtrackerType + 
+					"\n projectBugTrackerName> " + projectNameBugtracker);
+				client.end();
+				
+				//add the new project to the db
+				var projToAdd = {
+					name : projectName,
+					status: "updated",
+					username: req.session.username,
+				};
+				mongoskin.collection("projects").insert(projToAdd, function(err){
+					if(err){
+						console.log(err);
+					}
+					else {
+						if(req.session.projects){
+							console.log("projects not empty, adding the newly added project to the array")
+							req.session.projects.push(projToAdd);
+						}
+						else{
+							console.log("projects empty, creating new array and saving it")
+							req.session.projects = new Array();
+							req.session.projects.push(projToAdd);
+						}
+					}
+					var usr = {
+						name: req.session.username,
+						projects: req.session.projects,
+					};
+					console.log("username in session: " + req.session.username + " projects in session: " + JSON.stringify(req.session.projects))
+					//return the management page with the updated list of projects for the user
+					res.render(__dirname + '/pages/management.jade', {
+						userInfo: usr,
+					});
+					
+					//update the list of projects for the user, in the meantime
+					mongoskin.collection("users").update({Username: req.session.username}, {$push: {Projects: projToAdd}}, function(err, user){
+						console.log("In the meantime, user updated with new project");
+					});
+				});
 			
 		}
-		else {
-			//do nothing, this project is already inside!
-		}
-	});
-	
-	
-	
-	var usr = {
-		name: req.session.username,
-		projects: req.session.projects
-	};
-	//for now returns management doing nothing
-	res.render(__dirname + '/pages/management.jade', {
-		userInfo: usr,
 	});
 });
 
@@ -427,4 +461,3 @@ var toObjectSource = function(obj)   {
    }
    return str + "]";
 }
-
