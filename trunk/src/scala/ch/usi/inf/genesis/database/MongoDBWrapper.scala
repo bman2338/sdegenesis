@@ -4,6 +4,8 @@ import ch.usi.inf.genesis.model.graph.ModelGraph
 import ch.usi.inf.genesis.model.core._
 
 import com.mongodb.casbah.Imports._
+import com.mongodb.DBCollection
+import com.mongodb.casbah.commons.MongoDBObject
 
 /**
  * @author Remo Lemma
@@ -28,6 +30,28 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
   def NODES = "nodes";
 
   def REVISION = "revision"
+
+  def PROJECT_NAME = "projectName";
+
+  def REVISIONS = "revisions";
+
+
+  def updateRevisionRegistry(projectName: String, revision: Int) {
+
+    val collectionName = projectName + "_" + "revision_registry";
+    val registry = MongoConnection(host, port)(dbName)(collectionName);
+    var proj = registry.findOne(MongoDBObject(PROJECT_NAME -> projectName));
+    if (proj.isEmpty) {
+      registry += MongoDBObject(PROJECT_NAME -> projectName, REVISIONS -> MongoDBList(revision));
+    } else {
+      val query = MongoDBObject(PROJECT_NAME -> projectName);
+      val op: MongoDBObject = $push((REVISIONS, revision));
+      val writeRes = registry.update(query, op);
+      println(writeRes);
+    }
+
+
+  }
 
 
   def convertToDBNode(node: ModelObject): MongoDBObject = {
@@ -85,6 +109,8 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
   }
 
   def save(graph: ModelGraph, projectName: String, revision: Int) {
+
+    updateRevisionRegistry(projectName, revision);
 
     var identifier = projectName + "_rev" + revision
     var db: MongoCollection = MongoConnection(host, port)(dbName)(identifier + "_nodes")

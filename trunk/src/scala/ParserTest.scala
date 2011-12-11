@@ -31,7 +31,7 @@ object ParserTest {
                 var graph = new GraphExtractor().extractGraph(node)
                 //println(graph);
                 var mongo = new MongoDBWrapper(dbHost, dbPort, "genesis_db")
-                mongo.save(graph, "ArgoUML", 11)
+                mongo.save(graph, "ArgoUML", 12)
 
                 //new BreadthFirstNavigator().walkModel(node, new ModelPrinter());
               }
