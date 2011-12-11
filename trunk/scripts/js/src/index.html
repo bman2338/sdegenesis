@@ -24,9 +24,6 @@
 <script type="text/javascript" src="VisualizationRegister.js"></script>
 <script type="text/javascript">
 
-
-
-
 var subclasses = "superclassOf"; var classType = "Class";
 var methods = "methods"; 
 var classes = "classes";
@@ -35,32 +32,92 @@ var namespaces = "namespaces"; packageType = "Namespace";
 
 var register = new VisualizationsRegister();
 
-function constructVisualization (name,toAllow) {
-	return {
-		name: function() { return name; },
-		allows: function(data) { 
-			for (var i = 0; i < toAllow.length; ++i) {
-				if (data.identifier == toAllow[i].identifier	)
-					return true;
-			}
-			return false;
-		},
+var graphVisualization = function() { 
+	this.name = function () { return "Graph" };
+	this.setElements = function (element,data) { elements[element].value = data; };
+	this.setOptions = function (opt,data) { options[opt] = data; };
+	this.setElementOptions = function (element,opt,data) { 
+		var el = elements[element];
+		if (el)
+			el.options[opt] = data;
 	};
+
+	this.options = { };
+	this.elements = {
+		nodes: {
+			options: {
+				sizeFunction: {
+					value: undefined,
+					type: "Metric",
+				},
+			},
+			value: undefined,
+		},
+		edges: {},
+	};
+	this.visualize = function () {
+		var nodes = this.elements["nodes"].value;
+		var edges = this.elements["edges"].value;
+		if (!nodes || !edges)
+			return;
+		var graph = genesis.Graph.create(nodes,edges);
+		var c = [];
+
+		if (this.options["filter"]) {
+			c = this.options["filter"](graph);
+		}
+
+		var name = this.name();
+		if (this.options["name"])
+			name = options[name];
+		return roots({ name: name, children: c });
+	};
+	this.allows = function (data) { return true; };
+	return this;
 }
 
-var methodsData = {
-	identifier: "methods",
-};
 
-var classData = {
-	identifier: "classes",
-};
+function filterNodes (element,relation,graph) {
+	var elementType = element;
+	var relationName = relation;
+	return function (graph) {                                                 
+		var c = [];
+		for(var n in graph.nodes) {
+			var node = graph.nodes[n];
+			if (node.properties.ElementType == elementType) {
+				c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
+			}
+		}
+ 		return c;
+	}
+}
 
-register.addVisualization(constructVisualization("GraphExample", [methodsData,classData]));
 
-var vis = register.getVisualizations([classData]);
+function testRegister() {
+	register.addVisualization(graphVisualization);
 
-alert(vis);
+	var vis = register.getVisualizations([subclasses]);
+
+	if (vis.length != 0) {
+
+		var graph = vis[0];
+		// Example on how to "iterate" through elements, same for options, but they are global options
+		// Specific options are in elements..
+		for (var el in graph.elements) {
+			if (graph.elements[el].options) {
+				for (var opt in graph.elements[el].options) {
+				}
+			}
+		}
+		// This should be done in someway in the UI -> binding the data to the model
+		graph.elements["nodes"].value = node_data.nodes;
+		graph.elements["edges"].value = edge_data.edges;
+		graph.options["name"] = "RegisterTest";
+		graph.options["filter"] = filterNodes(classType,subclasses);
+		return graph.visualize();
+	}
+	return;
+}
 
 function plotGraph() {
 	var relationName = "invokingMethods";
@@ -133,28 +190,6 @@ function getTreeFromRelation(relationName, elementType) {
 	return { name: elementType + " " + relationName, children: c };
 } 
 
-function update () {
-//	var chart = document.getElementById("chart");
-//	var children = chart.getElementsByTagName('svg');
-//	var h = children[0].height.baseVal.value;
-//	document.getElementById("container").style.height = (h) + "px";
-//	document.getElementById("slider_controls").style.display = "block";
-}
-
-//			function showValue(newValue) {
-				//document.getElementById("range").innerHTML=newValue;
-//			}
-			
-//			function play(){
-//				var src = document.getElementById("playbutton").src;
-//				var file = src.substring(src.lastIndexOf("/")+1, src.length);
-						
-//				if(file == "play.png"){
-//					document.getElementById("playbutton").src="/img/pause.png";
-//				}else if(file =="pause.png"){
-//					document.getElementById("playbutton").src = "/img/play.png";
-//				}
-//			}			
 </script>
 
 <link type="text/css" rel="stylesheet" href="scrollbar.css"/>
@@ -166,12 +201,13 @@ function update () {
 <li><a href="javascript:tree()"> Tree </li>
 <li><a href="javascript:graph()"> Graph </a> </li>
 <li><a href="javascript:hist()"> Histogram </a> </li> -->
-<li><a href="javascript:javascript:sunburst(getTreeFromRelation(subclasses, classType));update();"> Inheritance Sunburst <a> </li>
-<li><a href="javascript:javascript:sunburst(getTreeFromRelation(methods, classType));update()"> Invocations Sunburst <a> </li>
-    <li> <a href="javascript:roots(getTreeFromRelation(subclasses, classType));update()"> Inheritance Tree</a> </li>
-    <li> <a href="javascript:roots(getTreeFromRelation(methods, classType));update()"> Invocations Tree</a> </li>
-    <li> <a href="javascript:roots(getTreeFromRelation(classes, packageType));update()"> Classes in Packages</a> </li>
-     <li> <a href="javascript:roots(getTreeFromRelation(attributes, classType));update()"> Attributes in Classes</a> </li>
+<li><a href="javascript:javascript:sunburst(getTreeFromRelation(subclasses, classType));"> Inheritance Sunburst <a> </li>
+<li><a href="javascript:javascript:sunburst(getTreeFromRelation(methods, classType));"> Invocations Sunburst <a> </li>
+    <li> <a href="javascript:roots(getTreeFromRelation(subclasses, classType));"> Inheritance Tree</a> </li>
+    <li> <a href="javascript:testRegister();"> Inheritance Tree With Register</a> </li>
+    <li> <a href="javascript:roots(getTreeFromRelation(methods, classType));"> Invocations Tree</a> </li>
+    <li> <a href="javascript:roots(getTreeFromRelation(classes, packageType));"> Classes in Packages</a> </li>
+     <li> <a href="javascript:roots(getTreeFromRelation(attributes, classType));"> Attributes in Classes</a> </li>
      <li> <a href="javascript: plotGraph()"> CallGraph </a> </li>
 </ul>
 <div id="treename"></div>
