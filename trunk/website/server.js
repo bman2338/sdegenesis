@@ -208,8 +208,11 @@ app.post('/addProject', function(req, res){
 		if(!found){
 				//make the scala backend do something
 				var net = require('net');
-				var client = net.connect(6969, 'localhost');
-				client.write(
+            
+				//var client = net.connect(6969, 'localhost');
+				var client = net.createConnection(6969, 'localhost');
+                
+                client.write(
 					"projectName> "+ projectName + 
 					"\n projectRepo> " + projectrepo + 
 					"\n repoType> " + repoType + 
