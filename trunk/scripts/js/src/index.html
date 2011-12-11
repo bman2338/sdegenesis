@@ -17,6 +17,8 @@
 <script type="text/javascript" src="Trees.js"></script>
 <script type="text/javascript" src="Sunbursts.js"></script>
 <script type="text/javascript" src="Graph.js"></script>
+<script type="text/javascript" src="GraphToD3Graph.js"></script>
+
 
 <script type="text/javascript" src="edge_data.js"></script>
 <script type="text/javascript" src="node_data.js"></script>
@@ -78,16 +80,16 @@ var graphVisualization = function() {
 }
 
 
-function filterNodes (element,relation,graph) {
+function filterNodes (element, relation, graph) {
 	var elementType = element;
 	var relationName = relation;
 	return function (graph) {                                                 
 		var c = [];
-		for(var n in graph.nodes) {
-			var node = graph.nodes[n];
-			if (node.properties.ElementType == elementType) {
-				c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
-			}
+		var nodes = graph.getNodesByType(elementType);
+
+		for(var n in nodes) {
+			var node = nodes[n];
+	        c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
 		}
  		return c;
 	}
@@ -122,73 +124,16 @@ function testRegister() {
 
 function plotGraph() {
 	var relationName = "invokingMethods";
-	var type = "Method";
-	
+	var nodeType = "Method";	
 	var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
-	
-	var edges = owl.deepCopy(graph.getOneToOneEdges(relationName));
-	var nodes = owl.deepCopy(graph.getNodesByType(type));
-	var source = nodes.length;
-	var sink = source + 1;
-
-
-
-	jQuery.each(edges, function(edgeIndex, edgeValue){
-		edgeValue.source = source;
-		edgeValue.target = sink;
-	});
-	
-	jQuery.each(nodes, function(index, value) {
-		var that = value;
-        that.group = 1;
-		that.name = value.properties.name;
-	
-		jQuery.each(edges, function(edgeIndex, edgeValue) {
-			
-	        edgeValue.value = 1;
-		
-			if(edgeValue.from == that.uniqueId) {
-				edgeValue.source = index;	
-				that.group++;		
-			}
-			
-			if(edgeValue.to == that.uniqueId) {
-				edgeValue.target = index;
-				that.group++;
-			}
-			
-			
-		});
-	});
-	
-	
-	var temp = edges;
-	edges = [];
-	jQuery.each(temp, function(index, edge) {
-		if(edge.target != sink && edge.source != source) {
-			edges.push(edge);
-		}
-	});
-	
-	forceDirectedGraph(nodes, edges);
-	
+	var subGraph = toD3SubGraph(graph, relationName, nodeType);
+	forceDirectedGraph(subGraph.nodes, subGraph.edges);
 }
 
 
 function getTreeFromRelation(relationName, elementType) {
 	var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
-	var c = [];
-    
-    //Example of ho to get the relation edges one to one -> { from: id, to: id }
-   // var edgeList = graph.getOneToOneEdges(relationName);
-    
-	for(var n in graph.nodes) {
-		var node = graph.nodes[n];
-        if(node.properties.ElementType == elementType)
-            c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
-	}
-		
-	return { name: elementType + " " + relationName, children: c };
+	return toD3Trees(graph, relationName, elementType);
 } 
 
 </script>
