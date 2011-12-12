@@ -217,22 +217,13 @@ genesis.Graph.create = function(nodes, edges) {
 						var toAdjList = this.getAdjList(relation,check.to[toAdj]);
 						if (toAdjList != null) {
 							toCheck.push(toAdjList);
-						}
+						} else {
+                            connected[check.to[toAdj]] = true;
+                        }
 					}
 				}
 			}
 			
-			//if(connected[adjList.from])
-			//	return;
-			
-						
-			/*adjLists.push(adjList);
-			connected[adjList.from] = true;
-			
-			for(var toAdj in adjList.to) {
-				var toAdjList = this.getAdjList(relation, adjList.to[toAdj])
-				this.getSubgraphAux(toAdjList, adjLists, relation, connected);
-			}*/
 		},
         
 
