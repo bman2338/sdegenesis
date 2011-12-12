@@ -17,8 +17,9 @@
 				th(id="deleteid") Delete
 				each item in items
 					tr
-						td= item + ""
-						td status
+						td
+							a(href="show_project/" + item.name)= item.name + ""
+						td= item.status
 						td(id="deleteid") 
 							img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/delete.png")
 	- else
@@ -88,14 +89,14 @@ script
 	}
 	
 	function clickProjects(){
-		document.getElementById("projects").style.visibility = "visible";
-		document.getElementById("addProject").style.visibility = "hidden";
+		document.getElementById("projects").style.display = "block";
+		document.getElementById("addProject").style.display = "none";
 	}
 	function clickNew(){
-		document.getElementById("addProject").style.visibility = "visible";
-		document.getElementById("projects").style.visibility = "hidden";
+		document.getElementById("addProject").style.display = "block";
+		document.getElementById("projects").style.display = "none";
 	}
 	
-	document.getElementById("addProject").style.visibility = "hidden";
-	document.getElementById("projects").style.visibility = "hidden";
+	document.getElementById("addProject").style.display = "none";
+	document.getElementById("projects").style.display = "none";
 	document.getElementById("submissionButton").disabled = true;
