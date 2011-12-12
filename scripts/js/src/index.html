@@ -118,23 +118,24 @@
 		}
 		return;
 	}
-	
+		
 	
 	function getInvocationSelector() {
 	 	var relationName = "invokingMethods";
 			var nodeType = "Method";	
 
 			var opt = {
-				maxEdges : 200,
-				currentEdges: 0,	
+				// maxEdges : 200,
+				// 		currentEdges: 0,	
 				removeUnconnected : true,
 				selectRelation : function(rel) { return rel == relationName; },
 				selectNode : function(node) {   return node.properties.ElementType == nodeType; },
 				selectEdge : function(nodeFrom, nodeTo) { 
-					var ret = (this.currentEdges <= this.maxEdges); 
-					if(ret)  
-						this.currentEdges++; 
-					return ret 
+					// var ret = (this.currentEdges <= this.maxEdges); 
+					// if(ret)  
+					// 	this.currentEdges++; 
+					// return ret 
+					return true;
 				}
 			};
 		return opt;
@@ -144,9 +145,25 @@
 
 	function plotGraph() {
 		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
-		var opt = getInvocationSelector();
-		var selection = graph.getSelection(opt);
-		var subGraph = toD3Graph(selection.nodes, concat(selection.edges));
+		//var opt = getInvocationSelector();
+		//var selection = graph.getSelection(opt);
+		var nodeName = "main";
+		var relationName = "invokingMethods";
+		var centers = graph.getNodeSelection(function(node) {
+			return node.properties.name == nodeName;
+		});
+		
+		
+		var opt = {
+			center : centers[5],
+			oneToOneEdges : true,
+			selectRelation : function(relName) { return relName == relationName }
+		};
+		
+		var multiSelection = graph.getSubgraph(opt);
+		var selection = { "nodes" : multiSelection.nodes[relationName], "edges" : multiSelection.edges[relationName] };
+		
+		var subGraph = toD3Graph(selection.nodes, selection.edges);
 		forceDirectedGraph(subGraph.nodes, subGraph.edges);
 	}
 

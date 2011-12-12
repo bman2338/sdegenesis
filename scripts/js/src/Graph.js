@@ -27,6 +27,14 @@ function binarySearch(array, uniqueId, less, eq, fromIndex){
 }
 
 	function concat(listOfLists) {
+		if(listsOfLists.length == 0) {
+			return [];
+		}
+		
+		if(listsOfList.length == 1) {
+			return listOfLists[0];
+		}
+		
 		var res = [];
 		for(var ll in listOfLists) {
 			var list = listOfLists[ll];
@@ -120,7 +128,27 @@ genesis.Graph.create = function(nodes, edges) {
 			}
 
 		},
+			//TODO test it and eventually subsitute the code on the above method
+			getOneToOneEdgesFromAdjList : function(adjLists) {
+				var relation =  adjLists;
 
+				if(relation) {
+					var oneToOneEdges = [];
+					for(var adj in relation) {
+						var adjList = relation[adj];
+						var from = adjList.from;
+						for(var e in adjList.to) {
+							var to = adjList.to[e];
+							oneToOneEdges.push({ "from": from, "to": to }); 
+						}
+					}
+					return oneToOneEdges;
+				} else {
+					return null;
+				}
+			},
+
+		
 		getRelation : function(relationName) {
 			return this.edges[relationName];
 		},
@@ -152,19 +180,14 @@ genesis.Graph.create = function(nodes, edges) {
 
         // select(node) -> boolean
         getNodeSelection : function(select) {
-            var nodeList = [];
-			if(this.nodesByType) {
-				return this.nodesByType;
-			}
-
+			var nodeList = [];
 			for(var n in this.nodes) {
 				var node = this.nodes[n];
 				if(select(node)) {
 					nodeList.push(node);
 				}
 			}
-            
-			this.nodesByType = nodeList;
+			
 			return nodeList;
         },
         
@@ -174,8 +197,72 @@ genesis.Graph.create = function(nodes, edges) {
             return ifInRangeGet(nodeList, binarySearch(nodeList, uniqueId, nodeLess, nodeEquals));
         
         },
+
+		getSubgraphAux : function(adjList, adjLists, relation, connected) {
+			if(!adjList) {
+				return;
+			}
+			
+			if(connected[adjList.from])
+				return;
+						
+			adjLists.push(adjList);
+			connected[adjList.from] = true;
+			
+			for(var toAdj in adjList.to) {
+				var toAdjList = this.getAdjList(relation, adjList.to[toAdj])
+				this.getSubgraphAux(toAdjList, adjLists, relation, connected);
+			}
+		},
         
-        
+
+		/**
+		* opt.center : the node from which the graph is built.
+		* opt.selectRelation : (relName) -> boolean, the relation to include in the selection.
+		* opt.oneToOneEdges : boolean, true if an array of edges of the form { from, to } are required
+		* else it will return an array of adjLists.
+		* return { nodes:  { relName : [ nodes* ] },  (edges|adjLists) : { relName : [ (edges|adjLists)* ] }  }
+		*/ 
+        getSubgraph : function(opt) {
+			if(!opt.center) return null;
+			
+			var center = opt.center;
+			var adjLists = {};
+			var nodes = {};
+			
+			for(var r in this.edges) {
+				var relation = this.edges[r];
+				if(opt.selectRelation(r)) {
+					adjLists[r] = [];
+					var connected = {};
+					
+					var adjList = this.getAdjList(relation, center.uniqueId);
+					this.getSubgraphAux(adjList, adjLists[r], relation, connected);
+					nodes[r] = this.getNodesFromIdSet(connected);
+				}
+			}
+			
+			if(opt.oneToOneEdges) {
+				var edges = {};
+				for(var r in adjLists) {
+					edges[r] = this.getOneToOneEdgesFromAdjList(adjLists[r]);
+				}
+				
+				return { "nodes" : nodes, "edges" : edges };
+				
+			}
+			
+			return { "nodes" : nodes, "adjLists" : adjLists };
+		},
+		
+		
+		getNodesFromIdSet: function(idSet) {
+			var nodes = [];
+			for(var id in idSet) {
+				nodes.push(this.getNodeFromId(id));
+			}
+			return nodes;
+		},
         
      
         /**
@@ -239,7 +326,7 @@ genesis.Graph.create = function(nodes, edges) {
             }
             
            }
-           
+           opt.connected = {};
             return { "nodes" : nodeSelection, "edges" : edgeSelection };
         },
         
@@ -279,8 +366,8 @@ genesis.Graph.create = function(nodes, edges) {
         
 		getNodesByType : function(type) {
 			var nodeList = [];
-			if(this.nodesByType) {
-				return this.nodesByType;
+			if(this.nodesByType && this.nodesByType[type]) {
+				return this.nodesByType[type];
 			}
 
 			for(var n in this.nodes) {
@@ -289,8 +376,11 @@ genesis.Graph.create = function(nodes, edges) {
 					nodeList.push(node);
 				}
 			}
+			if(!this.nodesByType) {
+				this.nodesByType = {};
+			}
 
-			this.nodesByType = nodeList;
+			this.nodesByType[type] = nodeList;
 			return nodeList;
 		},
 
