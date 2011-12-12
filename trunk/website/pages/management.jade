@@ -37,19 +37,21 @@
 				td
 					input(type="text", id="svnurl", name="project[repo]", onblur="validateSubmission()")
 				td(class="select")
-					select(name="project[repoType]")
-						option SVN
-						option(disabled="disabled") CVS
-						option(disabled="disabled") GIT
+					label(class="form-select")
+						select(name="project[repoType]")
+							option SVN
+							option(disabled="disabled") CVS
+							option(disabled="disabled") GIT
 			tr
 				td(class="caption") Project Bugtracker:
 				td 
 					input(type="text", id="bugtracker", name="project[bugtracker]", onblur="validateSubmission()")
 				td(class="select")
-					select(name="project[btType]")
-						option None
-						option Bugzilla
-						option(disabled="disabled") JIRA
+					label(class="form-select")
+						select(name="project[btType]")
+							option None
+							option Bugzilla
+							option(disabled="disabled") JIRA
 			tr
 				td(class="caption") Bugtracker Name:
 				td 

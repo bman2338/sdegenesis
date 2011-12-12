@@ -43,13 +43,12 @@ body.front-page{
 }
 
 #projectstable{ 
-  background: #e7e7e7;
-  padding: 2px 2px;
-  text-align: left;
-  width:100%; 
-  border-spacing:1px;
-  border:0px;
-      
+  padding-bottom: 30px;
+  padding-top: 30px;
+  text-align: left;
+  width:100%; 
+  border-spacing:1px;
+  border:0px;    
 }
   
 #projectstable tr, #projectstable tr th, 
@@ -67,6 +66,10 @@ body.front-page{
 
 #deleteid, #deleteid td {
 	width: 50px;
+}
+
+td img {
+  width: 20px;
 }
 
 #projectstable tr td#deleteid {
@@ -113,6 +116,7 @@ body.front-page{
 #banner img {
   width: 100%;
   padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 td.select {
@@ -146,7 +150,7 @@ select {
 #leftside{
 /*	border: 1px solid red;*/
 	display:inline;
-	padding-top: 69px;
+	padding-top: 40px;
 	position: relative;
 	float: left;
 /*	width: 500px;*/
@@ -158,7 +162,7 @@ select {
 	position: relative;
 	display:inline;
 	float: right;
-	padding-top: 69px;
+	padding-top: 40px;
 	width: 340px;
 }
 
@@ -168,11 +172,12 @@ select {
 	width:100%;
     left: 0px;
 	bottom: 0px;
-	background: #DDD;
+	background: #F4F4F4;
 }
 
 #bottompart p
-{ padding: 2px 0 2px 0; }
+{ padding: 2px 0 2px 0; 
+  color: #999; }
 
 p
 { padding: 0 0 20px 0;
@@ -182,14 +187,14 @@ img
 { border: 0;}
 
 
-a, a:hover
+a
 { outline: none;
-  text-decoration: underline;
-  color: #777;}
+  text-decoration: none;
+  color: #555;}
 
 a:hover
-{ text-decoration: none;
-  color: #444;}
+{ text-decoration: underline;
+  color: #777;}
 
 .left
 { float: left;
@@ -270,13 +275,17 @@ input.submit {
     text-shadow: #000 1px 1px;
     border-top: 1px solid #e7e7e7;
     margin-top: 10px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
 }
 
 input {
 	width: 96%;
     background: #999;
     padding: 4px;
-    margin-bottom: 10px;
+	padding-right: 0px;
+    margin: 3px;
     border-top: 1px solid #AAA;
     border-left: 0px;
     border-right: 0px;
@@ -432,7 +441,7 @@ ul#menu-nav li a:link, ul#menu-nav li a:visited {
 
 
 form{
-	padding: 10px 10px;
+	padding: 10px;
 	
 /*	border: 2px solid red;*/
 	
@@ -585,4 +594,67 @@ ul#menu-nav li.selected a:link, ul#navigation li.selected a:link, ul#menu-nav li
 
 .List li:visited {
     color: #995;
+}
+
+/*************************** SELECT **************************************/
+
+label.form-select {
+    position: relative;
+    display: inline-block;
+	width: 100%;
+}
+
+.form-select select {
+	color: #555;
+    display: inline-block;
+    border: 2px solid #999;
+    padding: 4px 3px 3px 5px;
+    margin: 0;
+    font: inherit;
+    outline: none;
+	font-size: 0.8em;
+    line-height: 1.2;
+    background: #F4F4F4;
+    
+    -webkit-appearance: none;
+    
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) { 
+    .form-select select {
+   	padding-right:30px;    
+    }
+}
+
+.form-select select:focus {
+    -webkit-box-shadow: 0 0 3px 1px #333;
+    -moz-box-shadow: 0 0 3px 1px #333;
+    box-shadow: 0 0 3px 1px #333;
+}
+
+/* Select arrow styling */
+.form-select:after {
+    content: "▼";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    font-size: 60%;
+    line-height: 30px;
+    padding: 0 7px;
+    background: #999;
+    color: white;
+    
+    pointer-events:none;
+    
+    -webkit-border-radius: 0 6px 6px 0;
+    -moz-border-radius: 0 6px 6px 0;
+    border-radius: 0 6px 6px 0;
+}
+
+.no-pointer-events .form-select:after {
+    content: none;
 }
