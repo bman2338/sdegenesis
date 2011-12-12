@@ -284,6 +284,10 @@ app.post('/show_project/:projectname/:rev', function(req, res){
 	mongo.db('localhost:8888/genesis_db').collection(req.params.projectname + '_rev' + req.params.rev + '_edges').find().toArray(function(err, edges){
 		mongo.db('localhost:8888/genesis_db').collection(req.params.projectname + '_rev' + req.params.rev + '_nodes').find().toArray(function(err, nodes){
 			//SEND BACK VIA AJAX THE RESULTS nodes[0] and edges[0]
+			 res.partial('data', {
+				nodes: nodes[0].nodes,
+				edges: edges[0].edges,
+			});
 		});
 	});
 });
@@ -370,13 +374,13 @@ var getNodeFromId = function(nodes, uniqueid){
 
 
 app.get('/test', function(req, res){
-	ProjectSchema.find({ProjectName: "ArgoUML", Revision: 11}, function(err, results){
+	ProjectSchema.find({ProjectName: "ArgoUML", Revision: 300}, function(err, results){
 	}); 
 	
 	ProjectSchema.where('ProjectName', 'ArgoUML').run(function(err, results){
 	});
 	
-	var a = mongoose.connection.db.collection("ArgoUML_rev11_edges", function (err, collection) {
+	var a = mongoose.connection.db.collection("ArgoUML_rev300_edges", function (err, collection) {
 	    collection.find().toArray(function(a,b) { 
 		});
 	});
