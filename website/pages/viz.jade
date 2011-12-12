@@ -1,9 +1,303 @@
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/d3.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/d3.layout.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/lib/jquery/jquery.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/lib/jquery/jquery.min.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/d3.geom.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/deepCopy.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/ModelGraph.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Trees.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Sunbursts.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Graph.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/GraphToD3Graph.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/edge_data.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/node_data.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/displayInfo.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/force.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/VisualizationRegister.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Visualization.js")
+
+script(type="text/javascript")
+	
+	var subclasses = "superclassOf"; var classType = "Class";
+	var methods = "methods"; 
+	var classes = "classes";
+	var attributes = "attributes";
+	var namespaces = "namespaces"; packageType = "Namespace";
+	var register = new VisualizationsRegister();
+	var analysis = new Array();
+	
+	//pushing analysis
+	var inheritanceHierarchyAnalysis = {
+		name: "Inheritance Hierarchy",
+		options: { 
+			elementType: "Class",
+			relation: "subclass",
+		}
+	};
+	
+	var callGraph = {
+		name: "Call Graph",
+		options: {
+			elementType: "Method",
+			relation: "Call",
+		}
+	}
+	
+	var revisionRelatedChanges = {
+		name: "Revision Related Changes",
+		options: {
+			elementType: "Class",
+			relation: "Revision",
+		}
+	}
+	
+	var bugAuthorRelation = {
+		name: "Bug-Author Relationship",
+		options: {
+			elementType: "Bug",
+			relation: "Author",
+		}
+	}
+	
+	var entityAuthorRelation = {
+		name: "Entity-Author Relationship",
+		options: {
+			elementType: "Class",
+			relation: "Author",
+		}
+	}
+	
+	var genericGraph = {
+		name: "Generic Graph",
+		options: {
+			elementType: "",
+			relation: "",
+		}
+	}
+	analysis.push(inheritanceHierarchyAnalysis);
+	analysis.push(callGraph);
+	analysis.push(revisionRelatedChanges);
+	analysis.push(bugAuthorRelation);
+	analysis.push(entityAuthorRelation);
+	analysis.push(genericGraph);
+	
+	function filterNodes (element, relation, graph) {
+		var elementType = element;
+		var relationName = relation;
+		return function (graph) {                                                 
+			var c = [];
+			var nodes = graph.getNodesByType(elementType);
+			
+			for(var n in nodes) {
+				var node = nodes[n];
+				c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
+			}
+			return c;
+		}
+	}
+	
+	function filterNodesAndEdges(relationName, nodeType) {
+		return function (graph) {
+			var edges = owl.deepCopy(graph.getOneToOneEdges(relationName));
+			var nodes = owl.deepCopy(graph.getNodesByType(nodeType));
+			return [toD3Graph(nodes, edges)];
+		}
+	}
+	
+	
+	function testRegister() {
+		register.addVisualization(TreeVisualization);
+		register.addVisualization(GraphVisualization);
+		register.addVisualization(SunburstVisualization);
+		
+		var viss = register.getVisualizations([subclasses]);
+		
+		if (viss.length != 0) {
+			
+			var vis = viss[2];
+			// Example on how to "iterate" through elements, same for options, but they are global options
+			// Specific options are in elements..
+			/*for (var el in treeVis.elements) {
+				if (treeVis.elements[el].options) {
+					for (var opt in treeVis.elements[el].options) {
+					}
+				}
+			}*/
+			// This should be done in someway in the UI -> binding the data to the model
+			
+			var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
+			
+			vis.initializeFromGraph(graph);
+		
+			vis.elements["nodes"].options.sizeFunction = function (node) { return 1; }
+			vis.options["name"] = function() { return "RegisterTest"; }
+			vis.options["filter"] = 
+			//filterNodesAndEdges("invokingMethods","Method");
+			filterNodes(classType,subclasses);
+			
+			var roots = vis.candidates();
+			
+			var index = 0;
+			var draw = function(index) { 
+				vis.visualize(roots[index],"#chart",function (root,graph) { d3.select("#monitor").html(root.name) });
+			};
+		
+			var millis = 1000;
+		
+			function setIt () {
+				setTimeout(function() { 
+					draw(index); index = index + 1; 
+					if (index >= roots.length)
+						index = 0;
+					setIt(); 
+				}
+				, millis);
+			}
+			
+			//setIt();
+			draw(index);
+		
+		}
+		return;
+	}
+
+
+	function getInvocationSelector() {
+		var relationName = "invokingMethods";
+			var nodeType = "Method";	
+			
+			var opt = {
+				maxEdges : 200,
+				currentEdges: 0,	
+				removeUnconnected : true,
+				selectRelation : function(rel) { return rel == relationName; },
+				selectNode : function(node) {   return node.properties.ElementType == nodeType; },
+				selectEdge : function(nodeFrom, nodeTo) { 
+					var ret = (this.currentEdges <= this.maxEdges); 
+					if(ret)  
+						this.currentEdges++; 
+					return ret 
+				}
+			};
+		return opt;
+	}
+	
+	
+	
+	function plotGraph() {
+		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
+		var opt = getInvocationSelector();
+		var selection = graph.getSelection(opt);
+		var subGraph = toD3Graph(selection.nodes, concat(selection.edges));
+		forceDirectedGraph(subGraph.nodes, subGraph.edges);
+	}
+	
+	
+	function getTreeFromRelation(relationName, elementType) {
+		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
+		return toD3Trees(graph, relationName, elementType);
+	}
+	
+	
+#topmenu
+	ul(id="menu-nav")
+		li(class="two")
+			a(class="topnav", target="_top", href="#", onclick="clickProjects()") Projects
+		li(class="two")
+			a(class="topnav", target="_top", href="#", onclick="clickNew()") New Project
+		li(class="logout")
+			a(class="topnav", target="_top", href="/logout") Logout
+
+#analysisMenu
+
 #treename
 #monitor
 div(class="Block")
 	#chart(class="Block Right", style="overflow:visible")
 	
-	script
-		roots(!{JSON.stringify(vizJson)})
 	
 	#roots(class="Block Left List")
+	
+	script
+		
+		function graphTest() {
+			var graph = genesis.Graph.create(!{JSON.stringify(nodes)}, !{JSON.stringify(edges)});
+			var edges = graph.edges;
+			var inhTree = graph.getSubtreeByRelationName("superclassOf", -2061828931);
+			
+			var c = [];
+			for(var n in graph.nodes) {
+				var node = graph.nodes[n];
+				c.push( graph.getSubtreeByRelationName("superclassOf", node.uniqueId) )
+			}
+			return { name: "Inheritance Tree", children: c };
+		}
+		
+		function update () {
+			document.getElementById("slider_controls").style.display = "block";
+		}
+		
+		function showValue(newValue) {
+			//document.getElementById("range").innerHTML=newValue;
+		}
+		
+		function play(){
+			var src = document.getElementById("playbutton").src;
+			var file = src.substring(src.lastIndexOf("/")+1, src.length);
+			
+			if(file == "play.png"){
+				document.getElementById("playbutton").src="img/pause.png";
+			}else if(file =="pause.png"){
+				document.getElementById("playbutton").src = "img/play.png";
+			}
+		}
+		//var variousGraphs = graphTest();
+		//roots(variousGraphs);
+		
+		/*$.ajax({
+			url: 'http://127.0.0.1:4321/get_data/Argo/11',
+			success: function( data ) {
+				var nodes = data.nodes;
+				var edges = data.edges;
+				alert(nodes);
+				alert(edges);
+			}
+		});*/
+		
+		var vizs = "<ul>";
+		for(var i = 0; i < analysis.length; i++){
+			//adds directly a hook to get the version by adding as revision number the last element of the array of revisions
+			vizs += "<li onclick='getVersion(\\""+analysis[i].name+"\\", \\"!{vizJson.projectName}\\", !{vizJson.revisions[vizJson.revisions.length - 1]})'>" + analysis[i].name + "</li>"
+		}
+		//getVersion(" + analysis[i].name + ", \\"!{vizJson.projectName}\\", \\"!{vizJson.revisions[vizJson.revisions.length - 1]}\\")
+		vizs += "</ul>"
+		document.getElementById("analysisMenu").innerHTML = vizs;
+		
+		function getVersion(analysisName, projectName, revisionNumber){
+			$.ajax({
+				url: 'http://127.0.0.1:4321/get_data/'+ projectName +'/' + revisionNumber,
+				success: function( data ) {
+					var nodes = data.nodes;
+					var edges = data.edges;
+					alert(JSON.stringify(nodes) + " " + edges);
+					
+					//DO SOMETHING TO VISUALIZE
+					var an = {};
+					for(var i = 0; i < analysis.length; i++){
+						if(analysis[i].name == analysisName){
+							an = analysis[i];
+						}
+					}
+					alert(an.name);
+					var possibleVizs = register.getVisualizations([an]);
+					var graph = genesis.Graph.create(nodes,edges);
+					
+					alert(JSON.stringify(possibleVizs));
+					var vis = possibleVizs[2];
+					vis.initializeFromGraph(graph)
+					alert(vis.candidates());
+					//vis.visualize(candidate, canvas);
+				}
+			});
+		}
+		testRegister();
