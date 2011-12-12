@@ -149,12 +149,20 @@
 		//var selection = graph.getSelection(opt);
 		var nodeName = "main";
 		var relationName = "invokingMethods";
+		var nodeType = "Method";
+				
+		// var nodeName = "EventHandler";
+		// var relationName = "superclassOf";
+		// var nodeType = "Class"
+		
+		
 		var centers = graph.getNodeSelection(function(node) {
-			return node.properties.name == nodeName;
+			return node.properties.name == nodeName && node.properties.ElementType == nodeType;
 		});
 		
+		
 		var opt = {
-			center : centers[6],
+			center : centers[0],
 			oneToOneEdges : true,
 			selectRelation : function(relName) { return relName == relationName }
 		};

@@ -13,8 +13,8 @@ var vis = d3.select("#chart").append("svg:svg")
 
 
   var force = d3.layout.force()
-      .charge(-20)
-      .linkDistance(10)
+      .charge(-50)
+      .linkDistance(50)
       .nodes(nodes)
       .links(edges)
       .size([w, h])
@@ -36,7 +36,7 @@ var vis = d3.select("#chart").append("svg:svg")
       .attr("class", "node")
       .attr("cx", function(d) { return d.x; })
       .attr("cy", function(d) { return d.y; })
-      .attr("r", 5)
+      .attr("r", 10)
       .style("fill", function(d) { return fill(d.group); })
       .call(force.drag);
 
