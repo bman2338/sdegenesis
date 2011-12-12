@@ -1,169 +1,186 @@
 <!DOCTYPE html >
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title> Genesis: Software Analytics Visualization Tool </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title> Genesis: Software Analytics Visualization Tool </title>
 
-<script type="text/javascript" src="../lib/mbostock/d3.js"></script>
-<script type="text/javascript" src="../lib/mbostock/d3.layout.js"></script>
-<script type="text/javascript" src="../lib/mbostock/lib/jquery/jquery.js"></script>
-<script type="text/javascript" src="../lib/mbostock/lib/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="../lib/mbostock/d3.geom.js"></script>
-<script type="text/javascript" src="deepCopy.js"></script>
+	<script type="text/javascript" src="../lib/mbostock/d3.js"></script>
+	<script type="text/javascript" src="../lib/mbostock/d3.layout.js"></script>
+	<script type="text/javascript" src="../lib/mbostock/lib/jquery/jquery.js"></script>
+	<script type="text/javascript" src="../lib/mbostock/lib/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="../lib/mbostock/d3.geom.js"></script>
+	<script type="text/javascript" src="deepCopy.js"></script>
 
-<script type="text/javascript" src="argouml/rev_4600_inheritance.js"></script>
-<script type="text/javascript" src="argouml/rev_4600_invocations.js"></script>
-<script type="text/javascript" src="ModelGraph.js"></script>
-<script type="text/javascript" src="Trees.js"></script>
-<script type="text/javascript" src="Sunbursts.js"></script>
-<script type="text/javascript" src="Graph.js"></script>
-<script type="text/javascript" src="GraphToD3Graph.js"></script>
-
-
-<script type="text/javascript" src="edge_data.js"></script>
-<script type="text/javascript" src="node_data.js"></script>
-<script type="text/javascript" src="displayInfo.js"></script>
-<script type="text/javascript" src="force.js"></script>
-<script type="text/javascript" src="VisualizationRegister.js"></script>
-<script type="text/javascript" src="Visualization.js"></script>
+	<script type="text/javascript" src="argouml/rev_4600_inheritance.js"></script>
+	<script type="text/javascript" src="argouml/rev_4600_invocations.js"></script>
+	<script type="text/javascript" src="ModelGraph.js"></script>
+	<script type="text/javascript" src="Trees.js"></script>
+	<script type="text/javascript" src="Sunbursts.js"></script>
+	<script type="text/javascript" src="Graph.js"></script>
+	<script type="text/javascript" src="GraphToD3Graph.js"></script>
 
 
-<script type="text/javascript">
-
-var subclasses = "superclassOf"; var classType = "Class";
-var methods = "methods"; 
-var classes = "classes";
-var attributes = "attributes";
-var namespaces = "namespaces"; packageType = "Namespace";
-
-var register = new VisualizationsRegister();
+	<script type="text/javascript" src="edge_data.js"></script>
+	<script type="text/javascript" src="node_data.js"></script>
+	<script type="text/javascript" src="displayInfo.js"></script>
+	<script type="text/javascript" src="force.js"></script>
+	<script type="text/javascript" src="VisualizationRegister.js"></script>
+	<script type="text/javascript" src="Visualization.js"></script>
 
 
-function filterNodes (element, relation, graph) {
-	var elementType = element;
-	var relationName = relation;
-	return function (graph) {                                                 
-		var c = [];
-		var nodes = graph.getNodesByType(elementType);
+	<script type="text/javascript">
 
-		for(var n in nodes) {
-			var node = nodes[n];
-	        c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
+	var subclasses = "superclassOf"; var classType = "Class";
+	var methods = "methods"; 
+	var classes = "classes";
+	var attributes = "attributes";
+	var namespaces = "namespaces"; packageType = "Namespace";
+
+	var register = new VisualizationsRegister();
+
+
+	function filterNodes (element, relation, graph) {
+		var elementType = element;
+		var relationName = relation;
+		return function (graph) {                                                 
+			var c = [];
+			var nodes = graph.getNodesByType(elementType);
+
+			for(var n in nodes) {
+				var node = nodes[n];
+				c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
+			}
+			return c;
 		}
- 		return c;
 	}
-}
 
-function filterNodesAndEdges(relationName, nodeType) {
-	return function (graph) {
-		var edges = owl.deepCopy(graph.getOneToOneEdges(relationName));
-		var nodes = owl.deepCopy(graph.getNodesByType(nodeType));
-    	return [toD3Graph(nodes, edges)];
+	function filterNodesAndEdges(relationName, nodeType) {
+		return function (graph) {
+			var edges = owl.deepCopy(graph.getOneToOneEdges(relationName));
+			var nodes = owl.deepCopy(graph.getNodesByType(nodeType));
+			return [toD3Graph(nodes, edges)];
+		}
 	}
-}
 
 
-function testRegister() {
-	register.addVisualization(TreeVisualization);
-	register.addVisualization(GraphVisualization);
-	register.addVisualization(SunburstVisualization);
+	function testRegister() {
+		register.addVisualization(TreeVisualization);
+		register.addVisualization(GraphVisualization);
+		register.addVisualization(SunburstVisualization);
 
-	var viss = register.getVisualizations([subclasses]);
+		var viss = register.getVisualizations([subclasses]);
 
-	if (viss.length != 0) {
+		if (viss.length != 0) {
 
-		var vis = viss[2];
-		// Example on how to "iterate" through elements, same for options, but they are global options
-		// Specific options are in elements..
-		/*for (var el in treeVis.elements) {
+			var vis = viss[2];
+			// Example on how to "iterate" through elements, same for options, but they are global options
+			// Specific options are in elements..
+			/*for (var el in treeVis.elements) {
 			if (treeVis.elements[el].options) {
-				for (var opt in treeVis.elements[el].options) {
-				}
+			for (var opt in treeVis.elements[el].options) {
 			}
-		}*/
-		// This should be done in someway in the UI -> binding the data to the model
-		
-		var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
-		
-		vis.initializeFromGraph(graph);
-		
-		vis.elements["nodes"].options.sizeFunction = function (node) { return 1; }
-		vis.options["name"] = function() { return "RegisterTest"; }
-		vis.options["filter"] = 
-		//filterNodesAndEdges("invokingMethods","Method");
-		filterNodes(classType,subclasses);
-		
-		var roots = vis.candidates();
+			}
+			}*/
+			// This should be done in someway in the UI -> binding the data to the model
 
-		var index = 0;
-		var draw = function(index) { 
-			vis.visualize(roots[index],"#chart",function (root,graph) { d3.select("#monitor").html(root.name) });
-		};
-		
-		var millis = 1000;
-		
-		function setIt () {
-			setTimeout(function() { 
-				draw(index); index = index + 1; 
-				if (index >= roots.length)
+			var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
+
+			vis.initializeFromGraph(graph);
+
+			vis.elements["nodes"].options.sizeFunction = function (node) { return 1; }
+			vis.options["name"] = function() { return "RegisterTest"; }
+			vis.options["filter"] = 
+			//filterNodesAndEdges("invokingMethods","Method");
+			filterNodes(classType,subclasses);
+
+			var roots = vis.candidates();
+
+			var index = 0;
+			var draw = function(index) { 
+				vis.visualize(roots[index],"#chart",function (root,graph) { d3.select("#monitor").html(root.name) });
+			};
+
+			var millis = 1000;
+
+			function setIt () {
+				setTimeout(function() { 
+					draw(index); index = index + 1; 
+					if (index >= roots.length)
 					index = 0;
-				setIt(); 
+					setIt(); 
+				}
+				, millis);
 			}
-			, millis);
+
+			//		setIt();
+			draw(index);
+
 		}
-		
-//		setIt();
-		draw(index);
-	
+		return;
 	}
-	return;
-}
 
-function plotGraph() {
-	var relationName = "invokingMethods";
-	var nodeType = "Method";	
-	var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
-	var subGraph = toD3SubGraph(graph, relationName, nodeType);
-	forceDirectedGraph(subGraph.nodes, subGraph.edges);
-}
+	function plotGraph() {
+		var relationName = "invokingMethods";
+		var nodeType = "Method";	
+
+		var opt = {
+			maxEdges : 200,
+			currentEdges: 0,	
+			removeUnconnected : true,
+			selectRelation : function(rel) { return rel == relationName; },
+			selectNode : function(node) {   return node.properties.ElementType == nodeType; },
+			selectEdge : function(nodeFrom, nodeTo) { 
+				var ret = (this.currentEdges <= this.maxEdges); 
+				if(ret)  
+					this.currentEdges++; 
+				return ret 
+			}
+		};
+
+		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
+		//var subGraph = toD3SubGraph(graph, relationName, nodeType);
+		var selection = graph.getSelection(opt);
+		var subGraph = toD3Graph(selection.nodes, selection.edges[relationName]);
+		forceDirectedGraph(subGraph.nodes, subGraph.edges);
+	}
 
 
-function getTreeFromRelation(relationName, elementType) {
-	var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
-	return toD3Trees(graph, relationName, elementType);
-} 
+	function getTreeFromRelation(relationName, elementType) {
+		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
+		return toD3Trees(graph, relationName, elementType);
+	} 
 
-</script>
+	</script>
 
-<link type="text/css" rel="stylesheet" href="scrollbar.css"/>
-<link type="text/css" rel="stylesheet" href="tree.css"/>
+	<link type="text/css" rel="stylesheet" href="scrollbar.css"/>
+	<link type="text/css" rel="stylesheet" href="tree.css"/>
 </head>
 <body onload="">
-<ul class="Menu">
-	<!--
-<li><a href="javascript:tree()"> Tree </li>
-<li><a href="javascript:graph()"> Graph </a> </li>
-<li><a href="javascript:hist()"> Histogram </a> </li> -->
-<li><a href="javascript:javascript:sunburst(getTreeFromRelation(subclasses, classType));"> Inheritance Sunburst <a> </li>
-<li><a href="javascript:javascript:sunburst(getTreeFromRelation(methods, classType));"> Invocations Sunburst <a> </li>
-    <li> <a href="javascript:roots(getTreeFromRelation(subclasses, classType));"> Inheritance Tree</a> </li>
-    <li> <a href="javascript:testRegister();"> Inheritance Tree With Register</a> </li>
-    <li> <a href="javascript:roots(getTreeFromRelation(methods, classType));"> Invocations Tree</a> </li>
-    <li> <a href="javascript:roots(getTreeFromRelation(classes, packageType));"> Classes in Packages</a> </li>
-     <li> <a href="javascript:roots(getTreeFromRelation(attributes, classType));"> Attributes in Classes</a> </li>
-     <li> <a href="javascript: plotGraph()"> CallGraph </a> </li>
-</ul>
-<div id="treename"></div>
-<div id="monitor"></div>
-<div class="Block">
-	<div id="chart" class="Block Right" style="overflow:visible"> </div>
-	<div id="roots" class="Block Left List"></div>
-</div>
+	<ul class="Menu">
+		<!--
+		<li><a href="javascript:tree()"> Tree </li>
+		<li><a href="javascript:graph()"> Graph </a> </li>
+		<li><a href="javascript:hist()"> Histogram </a> </li> -->
+		<li><a href="javascript:javascript:sunburst(getTreeFromRelation(subclasses, classType));"> Inheritance Sunburst <a> </li>
+			<li><a href="javascript:javascript:sunburst(getTreeFromRelation(methods, classType));"> Invocations Sunburst <a> </li>
+				<li> <a href="javascript:roots(getTreeFromRelation(subclasses, classType));"> Inheritance Tree</a> </li>
+				<li> <a href="javascript:testRegister();"> Inheritance Tree With Register</a> </li>
+				<li> <a href="javascript:roots(getTreeFromRelation(methods, classType));"> Invocations Tree</a> </li>
+				<li> <a href="javascript:roots(getTreeFromRelation(classes, packageType));"> Classes in Packages</a> </li>
+				<li> <a href="javascript:roots(getTreeFromRelation(attributes, classType));"> Attributes in Classes</a> </li>
+				<li> <a href="javascript: plotGraph()"> CallGraph </a> </li>
+			</ul>
+			<div id="treename"></div>
+			<div id="monitor"></div>
+			<div class="Block">
+				<div id="chart" class="Block Right" style="overflow:visible"> </div>
+				<div id="roots" class="Block Left List"></div>
+			</div>
 
 <!--
 <div id="slider_controls"> 
-	<input id="playbutton" type="image" src="img/play.png" name="image" width="60" height="60" onClick="play()" />
-	<input id="timewarp" type="range" min="0" max="50" value="0" step="5" onchange="showValue(this.value)" />
+<input id="playbutton" type="image" src="img/play.png" name="image" width="60" height="60" onClick="play()" />
+<input id="timewarp" type="range" min="0" max="50" value="0" step="5" onchange="showValue(this.value)" />
 </div> -->
 
 </body>

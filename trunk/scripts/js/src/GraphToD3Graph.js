@@ -1,12 +1,12 @@
 //Graph to d3 graph convertion functions
-function toD3SubGraph(graph, relationName, nodeType ) {
+function toD3SubGraph(graph, relationName, nodeType, removeUnconnectedNodes ) {
 	var edges = owl.deepCopy(graph.getOneToOneEdges(relationName));
 	var nodes = owl.deepCopy(graph.getNodesByType(nodeType));
-    toD3Graph(nodes, edges);
+    return toD3Graph(nodes, edges, removeUnconnectedNodes);
 }
 
 
-function toD3Graph(nodes, edges) { 
+function toD3Graph(nodes, edges, removeUnconnectedNodes) { 
 
 	var source = nodes.length;
 	var sink = source + 1;

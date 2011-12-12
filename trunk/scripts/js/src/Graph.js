@@ -137,7 +137,121 @@ genesis.Graph.create = function(nodes, edges) {
 			this.oneToOneEdges = null;
 			this.nodesByType = null;
 		},
+        
 
+        // select(node) -> boolean
+        getNodeSelection : function(select) {
+            var nodeList = [];
+			if(this.nodesByType) {
+				return this.nodesByType;
+			}
+
+			for(var n in this.nodes) {
+				var node = this.nodes[n];
+				if(select(node)) {
+					nodeList.push(node);
+				}
+			}
+            
+			this.nodesByType = nodeList;
+			return nodeList;
+        },
+        
+        
+                
+        getNodeFromListFromId : function(nodeList, uniqueId)  {
+            return ifInRangeGet(nodeList, binarySearch(nodeList, uniqueId, nodeLess, nodeEquals));
+        
+        },
+        
+        /**
+        * opt.selectEdge : (node1, node2) -> boolean
+        * opt.selectRelation : (relationName) -> boolean
+        * opt.selectNode : (node) -> boolean
+        * opt.removeUnconnected : Boolean
+        * returns { nodes: [node*], edges: [ { rel : [ {from, to}* ] }* ] }
+        */
+        getSelection : function(opt) {
+            
+            if(!opt.selectEdge) {
+                opt.selectEdge = function(x, y) { return true; };
+            } 
+            if(!opt.selectRelation) {
+                opt.selectRelation = function(x) { return true; };
+            } 
+            if(!opt.selectNode) {
+                opt.selectNode = function(x) { return true; };
+            } 
+            
+            if(opt.removeUnconnected) {
+                opt.connected = {};
+            }
+            
+            var nodeSelection = [];
+            for(var n in this.nodes) {
+                var node = this.nodes[n];
+                if(opt.selectNode(node)) {
+                    nodeSelection.push(node);
+                }
+            }
+            
+        
+           edgeSelection = [];
+           for(var rel in this.edges) {
+                if(opt.selectRelation(rel)) {
+                    edgeSelection[rel] = (this.getEdgeSelectionFromRelation(opt, nodeSelection, this.edges[rel]));
+                }
+           }
+           
+           if(opt.removeUnconnected) {
+            var temp = nodeSelection;
+            nodeSelection = [];
+            for(var n in temp) {
+                var id = temp[n].uniqueId;
+                if(opt.connected[id]) {
+                    nodeSelection.push(temp[n]);
+                }
+            }
+            
+           }
+           
+            return { "nodes" : nodeSelection, "edges" : edgeSelection };
+        },
+        
+
+
+        getEdgeSelectionFromRelation : function(opt, nodeSelection, relation) {
+            selection = [];
+            for(var r in relation) {
+                var adjList = relation[r];
+                var from = adjList.from;
+                var fromNode = this.getNodeFromListFromId(nodeSelection, from);
+                if(!fromNode) {
+                    continue;
+                }
+                
+                for(var adjTo in adjList.to) {
+                    var to = adjList.to[adjTo];
+                    var toNode = this.getNodeFromListFromId(nodeSelection, to);
+                    if(!toNode) {
+                        continue;     
+                    }
+                    
+                   
+                    
+                    if(opt.selectEdge(fromNode, toNode)) {
+                        selection.push({ "from" : from, "to" : to });
+                         if(opt.removeUnconnected) {
+                            opt.connected[from] = true;
+                            opt.connected[to] = true;
+                    }
+                    }
+                }
+            }   
+            return selection;
+        },
+        
+        
 		getNodesByType : function(type) {
 			var nodeList = [];
 			if(this.nodesByType) {
@@ -210,34 +324,3 @@ genesis.Graph.create = function(nodes, edges) {
 
 		}; return graph.initialize(nodes, edges)
 	}
-
-
-
-
-
-
-
-
-
-	// Utils UNUSED
-	// var cloneArray = function(array) {
-	// 	var cloned = [];
-	// 	for(var index in array) {
-	// 		cloned.push(cloneObject(array[index]));
-	// 	}
-	// 	return cloned;
-	// }
-	// 
-	// 
-	// // unsafe beware
-	// var cloneObject = function(obj) {
-	// 	if(jQuery.isArray(obj)) {
-	// 		return cloneArray(obj);
-	// 	} else {
-	// 		var cloned = {};
-	// 		for(var key in obj) {
-	// 			cloned[key] = obj[key];
-	// 		}
-	// 		return cloned;
-	// 	}
-	// }
