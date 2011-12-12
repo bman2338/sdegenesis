@@ -162,7 +162,14 @@ genesis.Graph.create = function(nodes, edges) {
 		getNodeFromId : function(uniqueId){
 			return ifInRangeGet(this.nodes, binarySearch(this.nodes, uniqueId, nodeLess, nodeEquals));
 		},
+		
+		getNodes: function () {
+			return nodes;
+		},
 
+		getAdjLists: function () {
+			return edges;
+		},
 
 		getSubtreeByRelationName : function(relationName, nodeId) {
 			var relation = this.getRelation(relationName);

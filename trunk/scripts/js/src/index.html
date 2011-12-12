@@ -25,6 +25,9 @@
 <script type="text/javascript" src="displayInfo.js"></script>
 <script type="text/javascript" src="force.js"></script>
 <script type="text/javascript" src="VisualizationRegister.js"></script>
+<script type="text/javascript" src="Visualization.js"></script>
+
+
 <script type="text/javascript">
 
 var subclasses = "superclassOf"; var classType = "Class";
@@ -34,50 +37,6 @@ var attributes = "attributes";
 var namespaces = "namespaces"; packageType = "Namespace";
 
 var register = new VisualizationsRegister();
-
-var graphVisualization = function() { 
-	this.name = function () { return "Graph" };
-	this.setElements = function (element,data) { elements[element].value = data; };
-	this.setOptions = function (opt,data) { options[opt] = data; };
-	this.setElementOptions = function (element,opt,data) { 
-		var el = elements[element];
-		if (el)
-			el.options[opt] = data;
-	};
-
-	this.options = { };
-	this.elements = {
-		nodes: {
-			options: {
-				sizeFunction: {
-					value: undefined,
-					type: "Metric",
-				},
-			},
-			value: undefined,
-		},
-		edges: {},
-	};
-	this.visualize = function () {
-		var nodes = this.elements["nodes"].value;
-		var edges = this.elements["edges"].value;
-		if (!nodes || !edges)
-			return;
-		var graph = genesis.Graph.create(nodes,edges);
-		var c = [];
-
-		if (this.options["filter"]) {
-			c = this.options["filter"](graph);
-		}
-
-		var name = this.name();
-		if (this.options["name"])
-			name = this.options["name"]();
-		return roots({ name: name, children: c });
-	};
-	this.allows = function (data) { return true; };
-	return this;
-}
 
 
 function filterNodes (element, relation, graph) {
@@ -95,29 +54,67 @@ function filterNodes (element, relation, graph) {
 	}
 }
 
+function filterNodesAndEdges(relationName, nodeType) {
+	return function (graph) {
+		var edges = owl.deepCopy(graph.getOneToOneEdges(relationName));
+		var nodes = owl.deepCopy(graph.getNodesByType(nodeType));
+    	return [toD3Graph(nodes, edges)];
+	}
+}
+
 
 function testRegister() {
-	register.addVisualization(graphVisualization);
+	register.addVisualization(TreeVisualization);
+	register.addVisualization(GraphVisualization);
+	register.addVisualization(SunburstVisualization);
 
-	var vis = register.getVisualizations([subclasses]);
+	var viss = register.getVisualizations([subclasses]);
 
-	if (vis.length != 0) {
+	if (viss.length != 0) {
 
-		var graph = vis[0];
+		var vis = viss[2];
 		// Example on how to "iterate" through elements, same for options, but they are global options
 		// Specific options are in elements..
-		for (var el in graph.elements) {
-			if (graph.elements[el].options) {
-				for (var opt in graph.elements[el].options) {
+		/*for (var el in treeVis.elements) {
+			if (treeVis.elements[el].options) {
+				for (var opt in treeVis.elements[el].options) {
 				}
 			}
-		}
+		}*/
 		// This should be done in someway in the UI -> binding the data to the model
-		graph.elements["nodes"].value = node_data.nodes;
-		graph.elements["edges"].value = edge_data.edges;
-		graph.options["name"] = function() { return "RegisterTest"; }
-		graph.options["filter"] = filterNodes(classType,subclasses);
-		return graph.visualize();
+		
+		var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
+		
+		vis.initializeFromGraph(graph);
+		
+		vis.elements["nodes"].options.sizeFunction = function (node) { return 1; }
+		vis.options["name"] = function() { return "RegisterTest"; }
+		vis.options["filter"] = 
+		//filterNodesAndEdges("invokingMethods","Method");
+		filterNodes(classType,subclasses);
+		
+		var roots = vis.candidates();
+
+		var index = 0;
+		var draw = function(index) { 
+			vis.visualize(roots[index],"#chart",function (root,graph) { d3.select("#monitor").html(root.name) });
+		};
+		
+		var millis = 1000;
+		
+		function setIt () {
+			setTimeout(function() { 
+				draw(index); index = index + 1; 
+				if (index >= roots.length)
+					index = 0;
+				setIt(); 
+			}
+			, millis);
+		}
+		
+//		setIt();
+		draw(index);
+	
 	}
 	return;
 }

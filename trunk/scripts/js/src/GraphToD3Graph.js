@@ -2,6 +2,12 @@
 function toD3SubGraph(graph, relationName, nodeType ) {
 	var edges = owl.deepCopy(graph.getOneToOneEdges(relationName));
 	var nodes = owl.deepCopy(graph.getNodesByType(nodeType));
+    toD3Graph(nodes, edges);
+}
+
+
+function toD3Graph(nodes, edges) { 
+
 	var source = nodes.length;
 	var sink = source + 1;
 
