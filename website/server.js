@@ -190,6 +190,7 @@ app.post('/addProject', function(req, res){
 		}
 		if(!found){
 				//make the scala backend do something
+				//FOR NOW ITS COMMENTED BECAUSE THE SERVICE IS NOT ON THE SERVER
 				var net = require('net');
 				/*var client = net.createConnection(6969, 'localhost');
                 
@@ -206,7 +207,6 @@ app.post('/addProject', function(req, res){
 				var projToAdd = {
 					name : projectName,
 					status: "updated",
-					username: req.session.username,
 					revisions: [],
 				};
 				mongoskin.collection("projects").insert(projToAdd, function(err){
@@ -252,23 +252,13 @@ app.get('/show_project/:projectname', function(req, res){
 	mongo.db('localhost:8888/genesis_db').collection('projects').find({"name": req.params.projectname}).toArray(function (err, proj){
 			
 			var newJson = {};
+			newJson.projectName = req.params.projectname;
 			newJson.revisions = proj[0].revisions;
 			
 			//newJson.name = nodes.project;
 			newJson.children = [];
-						
-			//var clazz = "A";
-			//var uniqueid = getIdFromName(nodes, clazz);
 			
-			//newJson.children.push(getSubtreeByRelationName(nodes[0].nodes, edges,'superclassOf', uniqueid));
-			//console.log(nodes[0]);
-			//test to send nodes and edges
-			//var graph = genesis.Graph.create(!{JSON.stringify(nodes)}, !{JSON.stringify(edges)});
-			/*res.render(__dirname + '/pages/viz.jade', {
-				nodes: nodes[0].nodes,
-				edges: edges[0].edges,
-			});*/
-			
+			//nodes: and edges: will be dropped soon
 			res.render(__dirname + '/pages/viz.jade', {
 				vizJson: newJson,
 				nodes: {},
@@ -280,14 +270,19 @@ app.get('/show_project/:projectname', function(req, res){
 /*
 * Redirect for the AJAX request of the revisions
 */
-app.post('/show_project/:projectname/:rev', function(req, res){
+app.get('/get_data/:projectname/:rev', function(req, res){
+	console.log(req.params.projectname + '_rev' + req.params.rev + '_edges');
 	mongo.db('localhost:8888/genesis_db').collection(req.params.projectname + '_rev' + req.params.rev + '_edges').find().toArray(function(err, edges){
 		mongo.db('localhost:8888/genesis_db').collection(req.params.projectname + '_rev' + req.params.rev + '_nodes').find().toArray(function(err, nodes){
 			//SEND BACK VIA AJAX THE RESULTS nodes[0] and edges[0]
-			 res.partial('data', {
+			if (req.xhr) {
+		    // respond with the each user in the collection
+		    // passed to the "user" view
+			 res.send({
 				nodes: nodes[0].nodes,
 				edges: edges[0].edges,
 			});
+		}
 		});
 	});
 });
