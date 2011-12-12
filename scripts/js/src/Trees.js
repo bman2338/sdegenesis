@@ -12,7 +12,7 @@ function sortNodes(a, b) {
 }
 
 function invSortNodes(a, b) {
-    return -sortNodes(a, b);
+    return sortNodes(a, b);
 }
 
 
