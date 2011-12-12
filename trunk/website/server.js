@@ -278,11 +278,11 @@ app.get('/get_data/:projectname/:rev', function(req, res){
 			if (req.xhr) {
 		    // respond with the each user in the collection
 		    // passed to the "user" view
-			 res.send({
-				nodes: nodes[0].nodes,
-				edges: edges[0].edges,
-			});
-		}
+			 	res.send({
+					nodes: nodes[0].nodes,
+					edges: edges[0].edges,
+				});
+			}
 		});
 	});
 });
