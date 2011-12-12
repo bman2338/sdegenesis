@@ -203,16 +203,36 @@ genesis.Graph.create = function(nodes, edges) {
 				return;
 			}
 			
-			if(connected[adjList.from])
-				return;
+			var toCheck = [adjList];
+			
+			while (toCheck.length != 0) {
+				var check = toCheck[0];
+				toCheck = toCheck.slice(1);
+				
+				if (!connected[check.from]) {
+					connected[check.from] = true;
+					adjLists.push(check);
+					
+					for (var toAdj in check.to) {
+						var toAdjList = this.getAdjList(relation,check.to[toAdj]);
+						if (toAdjList != null) {
+							toCheck.push(toAdjList);
+						}
+					}
+				}
+			}
+			
+			//if(connected[adjList.from])
+			//	return;
+			
 						
-			adjLists.push(adjList);
+			/*adjLists.push(adjList);
 			connected[adjList.from] = true;
 			
 			for(var toAdj in adjList.to) {
 				var toAdjList = this.getAdjList(relation, adjList.to[toAdj])
 				this.getSubgraphAux(toAdjList, adjLists, relation, connected);
-			}
+			}*/
 		},
         
 
