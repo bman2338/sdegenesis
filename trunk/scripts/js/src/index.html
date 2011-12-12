@@ -118,29 +118,35 @@
 		}
 		return;
 	}
+	
+	
+	function getInvocationSelector() {
+	 	var relationName = "invokingMethods";
+			var nodeType = "Method";	
+
+			var opt = {
+				maxEdges : 200,
+				currentEdges: 0,	
+				removeUnconnected : true,
+				selectRelation : function(rel) { return rel == relationName; },
+				selectNode : function(node) {   return node.properties.ElementType == nodeType; },
+				selectEdge : function(nodeFrom, nodeTo) { 
+					var ret = (this.currentEdges <= this.maxEdges); 
+					if(ret)  
+						this.currentEdges++; 
+					return ret 
+				}
+			};
+		return opt;
+	}
+	
+
 
 	function plotGraph() {
-		var relationName = "invokingMethods";
-		var nodeType = "Method";	
-
-		var opt = {
-			maxEdges : 200,
-			currentEdges: 0,	
-			removeUnconnected : true,
-			selectRelation : function(rel) { return rel == relationName; },
-			selectNode : function(node) {   return node.properties.ElementType == nodeType; },
-			selectEdge : function(nodeFrom, nodeTo) { 
-				var ret = (this.currentEdges <= this.maxEdges); 
-				if(ret)  
-					this.currentEdges++; 
-				return ret 
-			}
-		};
-
 		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
-		//var subGraph = toD3SubGraph(graph, relationName, nodeType);
+		var opt = getInvocationSelector();
 		var selection = graph.getSelection(opt);
-		var subGraph = toD3Graph(selection.nodes, selection.edges[relationName]);
+		var subGraph = toD3Graph(selection.nodes, concat(selection.edges));
 		forceDirectedGraph(subGraph.nodes, subGraph.edges);
 	}
 

@@ -3,7 +3,7 @@ function ObjectId(str) {
 }
 
 
-var binarySearch = function(array, uniqueId, less, eq, fromIndex){
+function binarySearch(array, uniqueId, less, eq, fromIndex){
 	var left = 0;
 	if(fromIndex) {
 		left = fromIndex;
@@ -25,6 +25,17 @@ var binarySearch = function(array, uniqueId, less, eq, fromIndex){
 
 	return array.length;
 }
+
+	function concat(listOfLists) {
+		var res = [];
+		for(var ll in listOfLists) {
+			var list = listOfLists[ll];
+			for(var l in list) {
+				res.push(list[l]);
+			}
+		}
+		return res;
+	}
 
 
 var genesis = { Graph : {}};
@@ -164,12 +175,24 @@ genesis.Graph.create = function(nodes, edges) {
         
         },
         
+        
+        
+     
         /**
         * opt.selectEdge : (node1, node2) -> boolean
         * opt.selectRelation : (relationName) -> boolean
         * opt.selectNode : (node) -> boolean
         * opt.removeUnconnected : Boolean
         * returns { nodes: [node*], edges: [ { rel : [ {from, to}* ] }* ] }
+        *
+        * Example usage of getSelection(opt);
+            
+        	getSelection({
+                removeUnconnected : true,
+                selectRelation : function(rel) { return rel == anExampleRelationName; },
+                selectNode : function(node) {   return node.properties.ElementType == anExampleNodeType; },
+                selectEdge : function(nodeFrom, nodeTo) { return true; }
+			});
         */
         getSelection : function(opt) {
             
@@ -195,6 +218,8 @@ genesis.Graph.create = function(nodes, edges) {
                 }
             }
             
+        
+        
         
            edgeSelection = [];
            for(var rel in this.edges) {
