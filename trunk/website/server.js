@@ -73,16 +73,25 @@ app.post('/login', function (req, res) {
 			req.session.username = result[0].Username;
 			req.session.projects = result[0].Projects;
 			
-			console.log("USERNAME IS : " + req.session.username);
-			
 			var usr = {
 				name: result[0].Username,
 				projects: result[0].Projects,
 			};
 			
-			//render the management with user connected
-			res.render(__dirname + '/pages/management.jade', {
-				userInfo: usr,
+			mongo.db("localhost:8888/genesis_db").collection("projects").find({open: 1}).toArray(function(err, openProjs){
+				
+				for(var i = 0; i < openProjs.length; i++){
+					console.log(openProjs[i]);
+					//if it's not in usr projects, add it
+					if(checkProjects(usr.projects, openProjs[i])){
+						usr.projects.push(openProjs[i]);
+					}
+				}
+				
+				//render the management with user connected
+				res.render(__dirname + '/pages/management.jade', {
+					userInfo: usr,
+				});
 			});
 		}
 		else{
@@ -96,6 +105,19 @@ app.post('/login', function (req, res) {
 		}
 	});
 });
+
+/*
+* Function to check if the user has already
+* this open project inside his personal projects
+*/
+function checkProjects(userProjects, projectToAdd){
+	for(var i = 0; i < userProjects; i++){
+		console.log(projectToAdd.name + " " + userProjects[i].name)
+		if(userProjects[i].name == projectToAdd.name)
+			return false;
+	}
+	return true;
+}
 
 /*
 * Registration post handler
@@ -413,7 +435,7 @@ function registerUser(request, f){
 * Function to login users
 */
 function loginUser(username, password, f){
-	mongo.db('localhost:8888/genesis_db').collection('users').find().toArray(function(err, users){
+	mongo.db('localhost:8888/genesis_db').collection('users').find({Username: username}).toArray(function(err, users){
   		if (err) {
   	 		throw err; 
   		} 
