@@ -178,7 +178,7 @@ app.post('/addProject', function(req, res){
 	var bugtrackerType = req.body.project.btType.toLowerCase();
 	var projectNameBugtracker = req.body.project.projectnamebugtracker;
 	
-	mongo.db("localhost:8888/genesis_db").collection("projects").find().toArray(function(err, projects){
+	mongo.db("localhost:8888/genesis_db").collection("projects").find({name: projectName}).toArray(function(err, projects){
 		console.log("prima del for con username " + req.session.username);
 		var found = false;
 		for(var i = 0; i < projects.length; i++){
@@ -387,7 +387,7 @@ app.get('/test', function(req, res){
 */
 function registerUser(request, f){
 	console.log("in registerUser");
-	mongo.db('localhost:8888/genesis_db').collection('users').find().toArray(function(err, users){
+	mongo.db('localhost:8888/genesis_db').collection('users').find({Username: request.body.user.name}).toArray(function(err, users){
 		//No user with the same username was found!
 		if(users.length == 0){
 			console.log("no users with this name and chosen password " + request.body.user.pass);
