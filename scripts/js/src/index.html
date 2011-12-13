@@ -27,6 +27,9 @@
 	<script type="text/javascript" src="VisualizationRegister.js"></script>
 	<script type="text/javascript" src="Visualization.js"></script>
 	<script type="text/javascript" src="TimeLine.js"> </script>
+	<script type="text/javascript" src="options/SizeFunction.js"></script>
+	<script type="text/javascript" src="Analysis.js"> </script>
+	
 <style type="text/css">
 #tt {
  position:absolute;
@@ -124,7 +127,7 @@ overflow:hidden;
 			filterNodes(classType,subclasses);
 
 			var roots = vis.candidates();
-
+		
 			var index = 0;
 			var draw = function(index) { 
 				vis.visualize(roots[index],"#chart",function (root,graph) { d3.select("#monitor").html(root.name) });

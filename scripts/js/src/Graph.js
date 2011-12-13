@@ -2,6 +2,16 @@ function ObjectId(str) {
 	return str;
 }
 
+function getMetric (node,metricName,fun,toOverride) {
+	if (!node.metrics) {
+		node.metrics = {};
+	}
+	if (!node.metrics[metricName] || toOverride) {
+		node.metrics[metricName] = fun();		
+	}
+	return node.metrics[metricName];
+}
+
 
 function binarySearch(array, uniqueId, less, eq, fromIndex){
 	var left = 0;
