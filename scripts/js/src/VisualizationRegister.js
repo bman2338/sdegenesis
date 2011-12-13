@@ -17,7 +17,7 @@ function VisualizationsRegister () {
 				}
 			}
 			if (toAdd)
-				results.push(new vis());
+				results.push(vis());
 		}
 		return results;
 	}

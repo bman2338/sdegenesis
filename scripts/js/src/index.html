@@ -48,7 +48,9 @@
 
 			for(var n in nodes) {
 				var node = nodes[n];
-				c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
+				var sTree graph.getSubtreeByRelationName(relationName, node.uniqueId);
+				if (sTree != null)
+					c.push(sTree);
 			}
 			return c;
 		}
