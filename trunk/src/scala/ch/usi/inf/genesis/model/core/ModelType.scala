@@ -1,6 +1,6 @@
 package ch.usi.inf.genesis.model.core
 
-import scala.ch.usi.inf.genesis.model.core.Metric
+import ch.usi.inf.genesis.model.core.Metric
 
 /**
  * @author Remo Lemma

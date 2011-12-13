@@ -117,6 +117,10 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     var identifier = projectName + "_rev" + revision
     var db: MongoCollection = MongoConnection(host, port)(dbName)(identifier + "_nodes")
 
+    if(!db.isEmpty)  {
+      db.dropCollection();
+    }
+
     val nodesList = MongoDBList.newBuilder
     val edgesList = MongoDBObject.newBuilder
 

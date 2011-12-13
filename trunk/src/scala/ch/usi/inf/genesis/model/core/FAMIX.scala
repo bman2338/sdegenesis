@@ -48,7 +48,8 @@ object FAMIX extends Enumeration {
   val METHODS_PROP = "methods";
   val ATTRIBUTES_PROP = "attributes";
   val CLASSES_PROP = "classes";
-  val NAMESPACES_PROP = "namespaces"
+  val NAMESPACES_PROP = "namespaces";
+  val PACKAGES_PROP = "packages";
 
   val NAME_PROP = "name"
   val PARENT_PACKAGE = "TODO" //TODO
