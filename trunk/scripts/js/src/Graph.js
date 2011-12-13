@@ -270,7 +270,10 @@ genesis.Graph.create = function(nodes, edges) {
 		getNodesFromIdSet: function(idSet) {
 			var nodes = [];
 			for(var id in idSet) {
-				nodes.push(this.getNodeFromId(id));
+                var node = this.getNodeFromId(id);
+                if(node) {
+                    nodes.push(node);
+                }
 			}
 			return nodes;
 		},
