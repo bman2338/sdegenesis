@@ -25,13 +25,14 @@ script(type="text/javascript")
 	var namespaces = "namespaces"; packageType = "Namespace";
 	var register = new VisualizationsRegister();
 	var analysis = new Array();
+	var currentDisplayedViz;
 	
 	//pushing analysis
 	var inheritanceHierarchyAnalysis = {
 		name: "Inheritance Hierarchy",
 		options: { 
 			elementType: "Class",
-			relation: "subclass",
+			relation: "superclassOf",
 		}
 	};
 	
@@ -103,64 +104,6 @@ script(type="text/javascript")
 			return [toD3Graph(nodes, edges)];
 		}
 	}
-	
-	
-	function testRegister() {
-		register.addVisualization(TreeVisualization);
-		register.addVisualization(GraphVisualization);
-		register.addVisualization(SunburstVisualization);
-		
-		var viss = register.getVisualizations([subclasses]);
-		
-		if (viss.length != 0) {
-			
-			var vis = viss[2];
-			// Example on how to "iterate" through elements, same for options, but they are global options
-			// Specific options are in elements..
-			/*for (var el in treeVis.elements) {
-				if (treeVis.elements[el].options) {
-					for (var opt in treeVis.elements[el].options) {
-					}
-				}
-			}*/
-			// This should be done in someway in the UI -> binding the data to the model
-			
-			var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
-			
-			vis.initializeFromGraph(graph);
-		
-			vis.elements["nodes"].options.sizeFunction = function (node) { return 1; }
-			vis.options["name"] = function() { return "RegisterTest"; }
-			vis.options["filter"] = 
-			//filterNodesAndEdges("invokingMethods","Method");
-			filterNodes(classType,subclasses);
-			
-			var roots = vis.candidates();
-			
-			var index = 0;
-			var draw = function(index) { 
-				vis.visualize(roots[index],"#chart",function (root,graph) { d3.select("#monitor").html(root.name) });
-			};
-		
-			var millis = 1000;
-		
-			function setIt () {
-				setTimeout(function() { 
-					draw(index); index = index + 1; 
-					if (index >= roots.length)
-						index = 0;
-					setIt(); 
-				}
-				, millis);
-			}
-			
-			//setIt();
-			draw(index);
-		
-		}
-		return;
-	}
-
 
 	function getInvocationSelector() {
 		var relationName = "invokingMethods";
@@ -259,8 +202,6 @@ div(class="Block")
 			success: function( data ) {
 				var nodes = data.nodes;
 				var edges = data.edges;
-				alert(nodes);
-				alert(edges);
 			}
 		});*/
 		
@@ -274,12 +215,15 @@ div(class="Block")
 		document.getElementById("analysisMenu").innerHTML = vizs;
 		
 		function getVersion(analysisName, projectName, revisionNumber){
+			//alert(getFile('http://127.0.0.1:1234/get_data/'+ projectName +'/' + revisionNumber));
 			$.ajax({
-				url: 'http://127.0.0.1:4321/get_data/'+ projectName +'/' + revisionNumber,
+				url: 'http://127.0.0.1:1234/get_data/'+ projectName +'/' + revisionNumber,
+				error: function (data ){
+					alert("error!");
+				},
 				success: function( data ) {
 					var nodes = data.nodes;
 					var edges = data.edges;
-					alert(JSON.stringify(nodes) + " " + edges);
 					
 					//DO SOMETHING TO VISUALIZE
 					var an = {};
@@ -288,16 +232,55 @@ div(class="Block")
 							an = analysis[i];
 						}
 					}
-					alert(an.name);
 					var possibleVizs = register.getVisualizations([an]);
 					var graph = genesis.Graph.create(nodes,edges);
 					
-					alert(JSON.stringify(possibleVizs));
-					var vis = possibleVizs[2];
-					vis.initializeFromGraph(graph)
-					alert(vis.candidates());
-					//vis.visualize(candidate, canvas);
+					
+					var vis = possibleVizs[0];
+					vis.options["filter"] = filterNodes(an.options.elementType, an.options.relation);
+					vis.initializeFromGraph(graph);
+					//fill the list & setup global variabl
+					currentDisplayedVis = vis;
+					addCandidatesToElement(vis);
+					
 				}
-			});
+			}); 
 		}
-		testRegister();
+		
+		function getFile(url) {
+			if (window.XMLHttpRequest) {              
+				AJAX=new XMLHttpRequest();              
+			} else {                                  
+				AJAX=new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			if (AJAX) {
+				AJAX.open("GET", url, false);                             
+				AJAX.send(null);
+				alert("inside with response text: " + AJAX.responseText);
+				return AJAX.responseText;                                         
+			} else {
+				return false;
+			}                                             
+		}
+		
+		//candidates is an array of candidates for a choosen visualization 
+		function addCandidatesToElement(vis){
+			document.getElementById('roots').innerHTML = "";
+			var can = "<ul>"
+			var candidates = vis.candidates();
+			for(var i = 0; i < candidates.length; i++){
+				can += "<li onclick='displayGraphFromList(" + i + ");'>" + candidates[i].name + "</li>"
+			}
+			can += "</ul>";
+			document.getElementById('roots').innerHTML = can;
+		}
+		
+		//displays the chosen candidate's view
+		function displayGraphFromList(candidate){
+			var cans = currentDisplayedVis.candidates();
+			currentDisplayedVis.visualize(cans[candidate], "#chart");
+		}
+		register.addVisualization(TreeVisualization);
+		register.addVisualization(GraphVisualization);
+		register.addVisualization(SunburstVisualization);
+		
