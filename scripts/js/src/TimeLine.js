@@ -6,10 +6,10 @@ var t = 1,
 var w = 2,
 	h = 80;
  
-function next() {
+function next(revisions) {
 	return {
- 		rev: ++t,
- 		value: v = ~~Math.max(10, Math.min(90, v + 10 * (Math.random() - .5)))
+ 		rev: ++t, //rev num revision.number
+ 		value: v = ~~Math.max(10, Math.min(90, v + 10 * (Math.random() - .5))) // rev data
  	};
 }
  
@@ -44,7 +44,7 @@ chart.selectAll("rect")
 	.attr("width", w)
 	.attr("height", function(d) { return y(d.value); })
 	.on("mouseover", function(d, i) { 
-		tooltip.show("revision: " + i /*+ " author: " + d.author +" "*/);
+		tooltip.show("Revision: " + i + "<br>Author: " /*+ d.author*/ +"<br>Date: "/* + d.date*/+"");
 	})
 	.on("mouseout", function(d, i){
 		tooltip.hide();
