@@ -15,8 +15,8 @@ script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/force.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/VisualizationRegister.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Visualization.js")
-script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Analysis.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/options/SizeFunction.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Analysis.js")
 
 script(type="text/javascript")
 	
@@ -105,11 +105,10 @@ script(type="text/javascript")
 		li(class="logout")
 			a(class="topnav", target="_top", href="/logout") Logout
 
-#analysisMenu
 
 #treename
 #monitor
-div(class="Block")
+div(class="Block", id="vizContainer")
 	#chart(class="Block Right", style="overflow:visible")
 	
 	
@@ -166,7 +165,7 @@ div(class="Block")
 		}
 		//getVersion(" + analysis[i].name + ", \\"!{vizJson.projectName}\\", \\"!{vizJson.revisions[vizJson.revisions.length - 1]}\\")
 		vizs += "</ul>"
-		document.getElementById("analysisMenu").innerHTML = vizs;
+		document.getElementById("roots").innerHTML = vizs;
 		
 		function getVersion(analysisName, projectName, revisionNumber){
 			$.ajax({
@@ -218,6 +217,9 @@ div(class="Block")
 			var cans = currentDisplayedVis.candidates();
 			currentDisplayedVis.visualize(cans[candidate], "#chart");
 		}
+		
+		//getOptions(analysis, vis)
+		
 		register.addVisualization(TreeVisualization);
 		register.addVisualization(GraphVisualization);
 		register.addVisualization(SunburstVisualization);
