@@ -13,7 +13,7 @@ mseFile=$4
 
 
 echo "[+] Genrating MSE for revision $rev"
-rm -rf $infamixPath/workspace > /dev/null #2>&1
+rm -rf $infamixPath/workspace > /dev/null 2>&1
 $infamixPath/inFamix -lang $lang -path $projectPath -mse $mseFile
 
 echo "[-] Cleaning up repository"
@@ -21,7 +21,7 @@ echo "[-] Cleaning up repository"
 projectStr="\"$projectPath\""
 awkStr="{if(\$2!=$projectStr){print\$2}}"
 toRemove=$(svn st $projectPath | awk $awkStr)
-rm -rf $toRemove > /dev/null #2>&1
+rm -rf $toRemove > /dev/null 2>&1
 
 binFolder="$projectPath/bin"
-rm -rf $binFolder > /dev/null #2>&1
+rm -rf $binFolder > /dev/null 2>&1

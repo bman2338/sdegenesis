@@ -5,6 +5,7 @@ import scala.io._
 import java.io.File
 import ch.usi.inf.genesis.model.navigation.NavigatorOption._
 import ch.usi.inf.genesis.model.core.{FAMIX, IntValue, StringValue, ModelObject}
+import ch.usi.inf.genesis.model.core.Metric
 
 
 /**
@@ -24,7 +25,9 @@ class ClassLocMutator(projectPath : String) extends ModelMutator {
                   fileAnchor.getProperty(FAMIX.SOURCE_END_LINE) match{
                     case Some(endLine : IntValue) =>
                       val loc = getLOC(fileName.value, startLine.value, endLine.value)
-                      obj.addProperty("loc", new IntValue(loc))
+
+                      val metric = obj.getPropertyOrAdd(FAMIX.METRICS_PROP, new Metric())
+                      metric.addProperty("loc", new IntValue(loc))
                       STOP
                     case _ => CONTINUE
                   }

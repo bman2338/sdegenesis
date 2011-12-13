@@ -6,7 +6,7 @@ import ch.usi.inf.genesis.model.core._
 import java.io.File
 import collection.mutable.{HashMap, ListBuffer}
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.{Locale, Date}
 
 
 /**
@@ -111,7 +111,8 @@ class MethodOwnershipMutator(revision: RevisionEntity) extends ModelMutator {
     })
 
 
-    val formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'CET' yyyy")
+    val formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+
     val day = 1000.0 * 60.0 * 60.0 * 24.0
     val ranking = new HashMap[String, Double]
 
@@ -139,7 +140,8 @@ class MethodOwnershipMutator(revision: RevisionEntity) extends ModelMutator {
         }
       })
 
-      ranking.put(author, R)
+      if(R > 0)
+        ranking.put(author, R)
     })
 
 
