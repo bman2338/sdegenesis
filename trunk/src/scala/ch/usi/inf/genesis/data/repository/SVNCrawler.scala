@@ -10,6 +10,7 @@ import java.util.Date
 import java.lang.String
 import ch.usi.inf.genesis.model.core.famix.RevisionEntityProperty
 import ch.usi.inf.genesis.model.core.{BooleanValue, IntValue, StringValue}
+import ch.usi.inf.genesis.model.core.Metric
 
 /**
  * @author Luca Ponzanelli
@@ -38,8 +39,8 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
 
   val lastRevisionNumber = repository.getLatestRevision
   val localPath = new File(projectPath)
-  val onSourceParsingCompleteDelegates = new ListBuffer[(RevisionEntity, String, File) => Unit]
-  val onCrawlingCompleteDelegates = new ListBuffer[(ListBuffer[RevisionEntity], String) => Unit]
+  val onSourceParsingCompleteDelegates = new ListBuffer[(RevisionEntity, String, String, File) => Unit]
+  val onCrawlingCompleteDelegates = new ListBuffer[(ListBuffer[RevisionEntity], String, String) => Unit]
 
   private val AllowedExtensions = ("(" + allowedExtensions.foldLeft("")((s1, s2) => {
     if (s1.length == 0) ".*" + s2 else s1 + "|.*" + s2
@@ -63,12 +64,12 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
     doCheckout(firstRev)
 
     //Create Revision Entity and Snapshot for first revision
-//    val rev = new RevisionEntity
-//    val (author, date) = getRevisionInfo(firstRev)
-//    rev.addProperty(RevisionEntityProperty.NUMBER, new IntValue(firstRev))
-//    rev.addProperty(RevisionEntityProperty.AUTHOR, new StringValue(author))
-//    rev.addProperty(RevisionEntityProperty.DATE, new StringValue(date))
-//    doSnapshot(rev, firstRev)
+    //    val rev = new RevisionEntity
+    //    val (author, date) = getRevisionInfo(firstRev)
+    //    rev.addProperty(RevisionEntityProperty.NUMBER, new IntValue(firstRev))
+    //    rev.addProperty(RevisionEntityProperty.AUTHOR, new StringValue(author))
+    //    rev.addProperty(RevisionEntityProperty.DATE, new StringValue(date))
+    //    doSnapshot(rev, firstRev)
 
     //Check Diffs
     var current = firstRev
@@ -79,21 +80,20 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
       //Get Diff Status Logs
       val (addedFiles, modifiedFiles, deletedFiles) = doDiffStatus(current, next)
 
-      if (!modifiedFiles.isEmpty || !addedFiles.isEmpty || !deletedFiles.isEmpty) {
+      if (!modifiedFiles.isEmpty || !addedFiles.isEmpty || !deletedFiles.isEmpty ||(next - firstRev) % step == 0) {
         val revisionEntity = new RevisionEntity
         val (author, date) = getRevisionInfo(next)
-        revisionEntity.addProperty(RevisionEntityProperty.NUMBER, new IntValue(firstRev))
+        revisionEntity.addProperty(RevisionEntityProperty.NUMBER, new IntValue(next))
         revisionEntity.addProperty(RevisionEntityProperty.AUTHOR, new StringValue(author))
         revisionEntity.addProperty(RevisionEntityProperty.DATE, new StringValue(date))
-        //Get revision's log information
-        //val logs = getLogInfo(next, addedFiles ++ modifiedFiles)
-
-        //Add Logs for revision and previous revisions (if any)
-        //        logs foreach ((l) => revisionEntity.addProperty(RevisionEntityProperty.LOGS, l))
 
         //Add deleted files in revision
-        deletedFiles foreach ((f) => revisionEntity.addProperty(RevisionEntityProperty.DELETED_FILES, new StringValue(f)))
-        revisionEntity.addProperty(RevisionEntityProperty.PROJECT,  new StringValue(projectName + "_rev" + next))
+        deletedFiles foreach ((f) => {
+          val entity = new FileEntity
+          entity.addProperty(FileEntityProperty.NAME, new StringValue(f))
+          revisionEntity.addProperty(RevisionEntityProperty.DELETED_FILES, new StringValue(f))
+        })
+        revisionEntity.addProperty(RevisionEntityProperty.PROJECT, new StringValue(projectName + "_rev" + next))
 
         if ((next - firstRev) % step == 0) {
           //Update Repository
@@ -107,26 +107,30 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
           revisionEntity.addProperty(RevisionEntityProperty.HAS_MSE, new BooleanValue(true))
 
           //Generate MSE File for that revision.
-          doSnapshot(revisionEntity, next)
+          //doSnapshot(revisionEntity, next)
 
         } else {
           revisionEntity.addProperty(RevisionEntityProperty.HAS_MSE, new BooleanValue(false))
 
           addedFiles foreach ((f) => {
-            var entity = new FileEntity
+            val entity = new FileEntity
             entity.addProperty(FileEntityProperty.NAME, new StringValue(f))
-            revisionEntity.addProperty(RevisionEntityProperty.ADDED_FILES, new StringValue(f))
+            revisionEntity.addProperty(RevisionEntityProperty.ADDED_FILES, entity)
           })
           modifiedFiles foreach ((f) => {
-            var entity = new FileEntity
+            val entity = new FileEntity
             entity.addProperty(FileEntityProperty.NAME, new StringValue(f))
-            revisionEntity.addProperty(RevisionEntityProperty.MODIFIED_FILES, new StringValue(f))
+            revisionEntity.addProperty(RevisionEntityProperty.MODIFIED_FILES, entity)
           })
+
         }
+
+        revisionEntity.addProperty(RevisionEntityProperty.ADDED_FILES_COUNT, new IntValue(addedFiles.length))
+        revisionEntity.addProperty(RevisionEntityProperty.MODIFIED_FILES_COUNT, new IntValue(modifiedFiles.length))
+        revisionEntity.addProperty(RevisionEntityProperty.DELETED_FILES_COUNT, new IntValue(deletedFiles.length))
 
         history += (revisionEntity)
       }
-
 
       current += 1
       next = current + 1
@@ -154,11 +158,11 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
   private def notifyOnParsingComplete(lastRevision: RevisionEntity,
                                       projectName: String,
                                       mseFile: File) {
-    onSourceParsingCompleteDelegates foreach ((delegate) => delegate(lastRevision, projectName, mseFile))
+    onSourceParsingCompleteDelegates foreach ((delegate) => delegate(lastRevision, projectName, projectPath, mseFile))
   }
 
   private def notifyOnCrawlingComplete(history: ListBuffer[RevisionEntity]) {
-    onCrawlingCompleteDelegates foreach ((delegate) => delegate(history, projectName))
+    onCrawlingCompleteDelegates foreach ((delegate) => delegate(history, projectName, projectPath))
   }
 
 
@@ -181,14 +185,8 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
     } while (retry)
   }
 
-  private def doCleanup(){
+  private def doCleanup() {
     try {
-//      if (localPath.exists()) {
-//        println("Cleaning up repository")
-//        val cmd: String = "svn cleanup " + localPath.getCanonicalPath;
-//        Runtime.getRuntime.exec(cmd)
-//        println("Cleaning Done.")
-//      }
       println("Cleaning up repository...")
       manager.getWCClient.doCleanup(localPath)
       println("Cleaning Done.")
@@ -259,39 +257,6 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
     new Tuple3(addedFiles, modifiedFiles, deletedFiles)
   }
 
-
-  private def getLogInfo(rev: Int, files: ListBuffer[String]): ListBuffer[LogEntity] = {
-
-    val logEntities = new ListBuffer[LogEntity]
-    var retry = false
-    var n_tries = numberOfTries
-    println("Getting logs for rev. " + rev)
-    do {
-      try {
-        manager.getLogClient.doLog(svnUrl, files.toArray, SVNRevision.create(rev), SVNRevision.create(rev), SVNRevision.create(rev), false, true, -1L, new ISVNLogEntryHandler {
-          def handleLogEntry(logEntry: SVNLogEntry) {
-
-            val logEntity = new LogEntity
-            logEntity.addProperty("number", new IntValue(logEntry.getRevision.toString.toInt))
-            logEntity.addProperty("comment", new StringValue(logEntry.getMessage))
-            logEntity.addProperty("date", new StringValue(logEntry.getDate.toString))
-            logEntity.addProperty("authorId", new StringValue(logEntry.getAuthor))
-            logEntities += logEntity
-          }
-        })
-      } catch {
-        case e: SVNException => {
-          println(e)
-          n_tries -= 1
-          retry = if (n_tries <= 0) false else true
-        }
-      }
-    } while (retry)
-
-    logEntities
-  }
-
-
   private def getBlameInfo(rev: Int, files: ListBuffer[String]): ListBuffer[FileEntity] = {
     val fileEntities = new ListBuffer[FileEntity]
     var retry = false
@@ -343,7 +308,8 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
 
   private def doSnapshot(revisionEntity: RevisionEntity, rev: Int) {
     println("Generatig MSE files...")
-    val mseFilePath = new File(mseOutputPath + File.separator + projectName + "_rev_" + (rev) + ".mse").getCanonicalPath
+    //val mseFilePath = new File(mseOutputPath + File.separator + projectName + "_rev_" + (rev) + ".mse").getCanonicalPath
+    val mseFilePath = new File(mseOutputPath + File.separator + projectName +"_"+ (rev) + ".mse").getCanonicalPath
     val mseFile = parser.execute(localPath.getCanonicalPath, mseFilePath, false)
     println("Generation Done.")
     notifyOnParsingComplete(revisionEntity, projectName, mseFile)

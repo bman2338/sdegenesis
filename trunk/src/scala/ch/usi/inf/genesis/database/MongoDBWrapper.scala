@@ -6,6 +6,9 @@ import ch.usi.inf.genesis.model.core._
 import com.mongodb.casbah.Imports._
 import com.mongodb.DBCollection
 import com.mongodb.casbah.commons.MongoDBObject
+import collection.mutable.ListBuffer
+import ch.usi.inf.genesis.model.core.Value
+import famix.{FileEntityProperty, FileEntity, RevisionEntityProperty, RevisionEntity}
 
 /**
  * @author Remo Lemma
@@ -156,4 +159,55 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     db += edgesDBObj
   }
 
+  def saveRepositoryHistory(repoHistory: ListBuffer[RevisionEntity], projectName: String) {
+
+    val identifier = projectName + "_history"
+    var revisionDb: MongoCollection = MongoConnection(host, port)(dbName)(identifier)
+    val history = MongoDBObject.newBuilder
+
+    println("Saving History...")
+    repoHistory foreach (
+
+      (rev) => {
+        val revNumber = rev.getRevisionNumber().toString
+        val revObj = MongoDBObject.newBuilder
+        rev.properties foreach (
+          (entry) => {
+            val (name, entities) = entry
+
+
+            if (!name.equals(RevisionEntityProperty.NUMBER) && entities.length > 0 && ModelType.isValue(entities.head)) {
+
+              entities foreach (
+                (e) => {
+                  e match {
+                    case (v: BooleanValue) => revObj += name -> v;
+                    case (v: StringValue) => revObj += name -> v;
+                    case (v: IntValue) => revObj += name -> v;
+                    case (v: DoubleValue) => revObj += name -> v;
+                  }
+                })
+            }
+
+            if (!name.equals(RevisionEntityProperty.NUMBER) && entities.length > 0 && !ModelType.isValue(entities.head)) {
+              val fileList = MongoDBList.newBuilder
+              entities foreach (
+                (e) => e match {
+                  case FileEntity() =>
+                    e.getProperty(FileEntityProperty.NAME) match {
+                      case Some(fileName: StringValue) => fileList += fileName
+                      case _ =>
+                    }
+                  case _ =>
+                })
+              revObj += name -> fileList.result;
+            }
+          })
+
+        history += revNumber -> revObj.result
+
+      })
+
+    revisionDb += history.result
+  }
 }

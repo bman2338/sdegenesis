@@ -6,4 +6,6 @@ object BugTrackerType extends Enumeration {
      val BUGZILLA = "bugzilla"
      val JIRA = "jira"
      val NONE = "none"
+     val USERNAME = "btUsername"
+     val PASSWORD = "btPass"
    }
