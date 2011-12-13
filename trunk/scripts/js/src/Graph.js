@@ -471,6 +471,24 @@ genesis.Graph.create = function(nodes, edges) {
 	getAdjLists: function () {
 		return edges;
 	},
+	
+	getRelationParent: function (relation,nodeId,matches) {
+		if (!matches)
+			matches = 1;
+		var results = [];
+		for (var i = 0; i < relation.length; ++i) {
+			var rel = relation[i];
+			for (var j = 0; j < rel.to.length; ++j) {
+				var entity = rel.to[j];
+				if (entity == nodeId) {
+					results.push(this.getNodeFromId(rel.from));
+					if (results.length >= matches)
+						return results;
+				}
+			}
+		}
+		return results;
+	},
 
 	getSubtreeByRelationName : function(relationName, nodeId) {
 		var relation = this.getRelation(relationName);
@@ -501,7 +519,8 @@ genesis.Graph.create = function(nodes, edges) {
 			}
 		}
 
-		var obj = { name: node.properties.name, properties: node.properties, metrics: node.metrics };
+		var obj = owl.deepCopy(node);
+		obj.name = node.properties.name;
 
 		if(childNodes.length != 0)  {
 			obj.children = childNodes

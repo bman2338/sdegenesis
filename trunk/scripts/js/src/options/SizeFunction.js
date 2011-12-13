@@ -10,9 +10,7 @@ function elementSize (graph) {
 		evalFun: function (node) {
 			var func = funcs[node.properties.ElementType];
 			if (func) {
-				if (func.preEvalFun)
-					return func.preEvalFun(node);
-				else if (func.evalFun)
+				if (func.evalFun)
 					return func.evalFun(node);
 				else
 					return func(node);

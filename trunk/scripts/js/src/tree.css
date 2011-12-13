@@ -61,7 +61,7 @@ ul.Menu li a {
 }
 
 .node circle {
-    fill: #fff;
+/*    fill: #fff;*/
     stroke: steelblue;
     stroke-width: 1.5px;
 }
@@ -81,7 +81,7 @@ ul.Menu li a {
 
 
 .Branch {
-    fill: #f60;
+/*    fill: #f60;*/
     stroke: steelblue;
     stroke-width: 2.5px;
     z-index:10;
@@ -89,7 +89,7 @@ ul.Menu li a {
 }
 
 .Root {
-    fill: #d5d;
+/*    fill: #d5d;*/
     stroke: steelblue;
     stroke-width: 2.5px;
     z-index:10;

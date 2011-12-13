@@ -57,7 +57,7 @@ function isBranch(d) {
     return (d.children && d.children.length > 1) 
 }
 
-function hTree(root, target) {
+function hTree(root, target,visModel,augmentationCallback) {
     d3.select(target).html("");
     var json = root;
     //	d3.json("data3.json", 
@@ -106,8 +106,7 @@ function hTree(root, target) {
         .on("mouseover", function(d, i) { 
                 d3.select("#monitor").html(createInfo(d)) 
                 var t = d3.select(d3.event.currentTarget.parentNode).selectAll("text");
-                t.attr("visibility", "visible");
-                
+                t.attr("visibility", "visible");   
             })
          .on("mouseout", function(d) {
           var t = d3.select(d3.event.currentTarget.parentNode).selectAll("text");
@@ -124,16 +123,15 @@ function hTree(root, target) {
                     }
                 }
             });
-    
-    
-    
+
+	   		if (augmentationCallback) {
+					node.call(visModel.augment("nodes",augmentationCallback));
+				}
+
     node.append("svg:text")
 		.attr("dx", function(d) { return d.x < 180 ? 20 : -20; })
 		.attr("dy", ".31em")
 		.attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
 		.attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
 		.text(function(d) { return d.name; }).attr("visibility", "hidden");
-    
-    
-    //	});
 }
