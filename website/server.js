@@ -275,14 +275,15 @@ app.get('/get_data/:projectname/:rev', function(req, res){
 	mongo.db('localhost:8888/genesis_db').collection(req.params.projectname + '_rev' + req.params.rev + '_edges').find().toArray(function(err, edges){
 		mongo.db('localhost:8888/genesis_db').collection(req.params.projectname + '_rev' + req.params.rev + '_nodes').find().toArray(function(err, nodes){
 			//SEND BACK VIA AJAX THE RESULTS nodes[0] and edges[0]
-			if (req.xhr) {
+			//if (req.xhr) {
 		    // respond with the each user in the collection
 		    // passed to the "user" view
-			 	res.send({
+			 	console.log(JSON.stringify(nodes[0].nodes));
+				res.send({
 					nodes: nodes[0].nodes,
 					edges: edges[0].edges,
 				});
-			}
+			//}
 		});
 	});
 });
@@ -390,19 +391,16 @@ function registerUser(request, f){
 		//No user with the same username was found!
 		if(users.length == 0){
 			console.log("no users with this name and chosen password " + request.body.user.pass);
-			var u = new UserSchema();
+			var u = {};
 			u.Username = request.body.user.name;
 			u.Password = request.body.user.pass;
 			u.Email = request.body.user.email;
 			u.Projects = [];
 		
-			u.save(function(err){
-		 		if (err){
-					throw err;
-				}
+			//save the user
+			mongo.db('localhost:8888/genesis_db').collection('users').save(u, function(err, users){
+				f(true);
 			});
-			
-			f(true);
 		}
 		else{
 			f(false);
