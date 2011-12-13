@@ -11,6 +11,7 @@ html
 }
 
 body {
+/* background:#e7e7e7 url(../img/leather-bh.png) repeat-x 0 0;*/
  background: #e7e7e7;
 }
 
@@ -19,14 +20,27 @@ body {
   color: #999;
 }
 
-#monitor {
+#monitor   {
   font: normal 120% 'century gothic', arial, sans-serif;
   color: #555;
 }
 
-body.front-page{
-	background:#fff url(../img/front/bg.png) repeat-x 0 0;
+#dispProperties, #dispMetrics   {
+  font: normal 80% 'century gothic', arial, sans-serif;
+  color: #555;
 }
+#dispProperties {
+  padding-top: 20px;
+}
+
+/*#setOptions {
+	display: static;
+	top: 50px;
+	left: 50px;
+	width: 100px;
+	height: 200px;
+	background: #eaeaea;
+}*/
 
 .front-page #doc{
 	min-width:1000px;
@@ -42,7 +56,7 @@ body.front-page{
     overflow: visible;
 }
 
-#projectstable{ 
+#projectstable { 
   padding-bottom: 30px;
   padding-top: 30px;
   text-align: left;
@@ -110,7 +124,7 @@ td img {
 }
 
 #addProject form{
-  width: 60%;
+  width: 800px;
 }
 
 #banner img {
@@ -123,12 +137,39 @@ td.select {
   width: 100px;
 }
 
+td.caption-inner {
+  text-align: right; 
+  width: 180px;
+}
+
+td.rev-caption-inner {
+  text-align: right; 
+  width: 85px;
+}
+
+input#fromRev, input#toRev { 
+  width: 120px;
+} 
+
+input#stepRev { 
+  width: 90px;
+}
+
 td.caption {
-  width: 150px;
+  width: 175px;
 }
 
 select {
   width: 100%;
+}
+
+div#legend {
+  width: 175px;
+}
+
+#legend p {
+  padding-bottom: 2px;
+  font-size: .5em;
 }
 
 #content-div{
@@ -281,11 +322,12 @@ input.submit {
 }
 
 input {
-	width: 96%;
+	width: 100%;
     background: #999;
     padding: 4px;
 	padding-right: 0px;
-    margin: 3px;
+    margin-top: 3px;
+    margin-bottom: 3px;
     border-top: 1px solid #AAA;
     border-left: 0px;
     border-right: 0px;
@@ -543,25 +585,65 @@ ul#menu-nav li.selected a:link, ul#navigation li.selected a:link, ul#menu-nav li
 
 /***********************************************************/
 
+#roots div {
+  display: block;
+  position: relative;
+}
+
 .Block {
-    display:block
-    
+    display: block;
+}
+
+#chart , #roots {
+  padding-top: 0px;
+}
+
+div#chart.Block.Right {
+/*  border: 1px solid red;*/
+  width: 900px;
+  height: 900px;
+  display: inline;
+/*  float: right;*/
+/*  top: 0px;
+  right: 0px;*/
+}
+
+#chart.Block.Right svg {
+  width: 900px;
+  height: 900px;
+}
+
+#projects p {
+  padding-top: 20px;
+}
+
+#vizContainer {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  min-height: 600px;
+  height: auto;
+  display: block;
 }
 
 .Left {
-    float:left;
+	width: 250px;
 }
 
-.Right {
+div#roots.Block.Left.List {
+  width: 250px;
+  display: inline;
+  float: left;
+}
+
+/*.Right {
     float:right;
     clear:both;
     left: 280px;
     position: absolute;
     overflow:visible;
-}
+}*/
 
 .List {
-    margin-top: 20px;
     margin-left: 0px;
     list-style-type:none;
     overflow-y: scroll;
@@ -571,13 +653,10 @@ ul#menu-nav li.selected a:link, ul#navigation li.selected a:link, ul#menu-nav li
 }
 
 .List li:hover {
-
     color: #fff;
-  /*  background: -webkit-gradient(linear, left top, right bottom, from(#d5d), to(#fff)); */
     background-color: #d5d;
     border: 4px solid steelblue;
-     border-radius: 5px;
-
+    border-radius: 5px;
 }
 
 .List li { 
@@ -589,7 +668,6 @@ ul#menu-nav li.selected a:link, ul#navigation li.selected a:link, ul#menu-nav li
     margin-bottom: 2px;
     border: 4px solid #eee;
     border-radius: 4px;
-    
 }
 
 .List li:visited {
