@@ -14,25 +14,25 @@
 			table(id="projectstable")
 				tr
 					th Project Name
-					th Sharing Options
+					// th Sharing Options
 					th Status
 					th(id="deleteid") Delete
 					each item in items
 						tr
 							td
 								a(href="show_project/" + item.name)= item.name + ""
-							- if(item.defaultShared)
-								td= Shared
-							- else
-								td
-									label(class="form-select")
-										select(name="project[shared]")
-											- if(item.open == 0)
-												option Private
-												option Shared
-											- else
-												option Shared
-												option Private
+							// - if(item.defaultShared)
+							// 	td= Shared
+							// - else
+							// 	td
+							// 		label(class="form-select")
+							// 			select(name="project[shared]")
+							// 				- if(item.open == 0)
+							// 					option Private
+							// 					option Shared
+							// 				- else
+							// 					option Shared
+							// 					option Private
 							td= item.status
 							td(id="deleteid") 
 								img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/delete.png")
