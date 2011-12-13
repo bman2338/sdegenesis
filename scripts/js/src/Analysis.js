@@ -5,20 +5,41 @@ function getOptions(analysis,visualization) {
 			continue;
 		var elVis = visualization.elements[elId];
 		var elAn = analysis.elements[elId];
-		for (var visOpt in elVis.options) {
-			var opts = elAn.options[visOpt];
-			if (opts) {
-				if (!options[elId])
-					options[elId] = {};
-				options[elId][visOpt] = [];
-				for (var i = 0; i < opts.length; ++i) {
-					var opt = opts[i];
-					options[elId][visOpt].push(opt(visualization.source));
-				}
+		for (var anOpt in elAn.options) {
+			var opts = elAn.options[anOpt];
+			var visOpts = elVis.options[anOpt];
+			if (!visOpts)
+				elVis.options[anOpt] = {};
+			if (!options[elId])
+				options[elId] = {};
+			options[elId][anOpt] = [];
+			for (var i = 0; i < opts.length; ++i) {
+				var opt = opts[i];
+				options[elId][anOpt].push(opt(visualization.source));
 			}
 		}
 	}
 	return options;
+}
+
+function setUnaryOptionsAndGet (visualization,optionsArr) {
+	var newOptions = {};
+	for (var elId in optionsArr) {
+		var element = optionsArr[elId];
+		for (var anOpt in element) {
+			var options = element[anOpt];
+			if (options.length == 0)
+				continue;
+			if (options.length == 1) {
+				visualization.elements[elId].options[anOpt].value = options[0];
+				continue;
+			}
+			if (!newOptions[elId])
+				newOptions[elId] = {};
+			newOptions[elId][anOpt] = options;
+		}
+	}
+	return newOptions;
 }
 
 
@@ -36,7 +57,9 @@ var inheritanceHierarchyAnalysis = {
 			},
 		},
 		edges: {
-			
+			options: {
+				asd: [typeColor],
+			},
 		}
 	}
 };

@@ -8,7 +8,18 @@ var BaseVisualization = function () {
 		if (base.options["name"])
 			visName = base.options["name"]();
 		return visName;	
-	}	
+	};
+	base.addElementOption = function (elementName,optionName,option) {
+		if (!base.elements[elementName])
+			return;
+		var element = base.elements[elementName];
+		if (!element.options) {
+			element.options = {};
+		};
+		if (!element.options[optionName])
+			element.options[optionName] = {};
+		element.options[optionName].value = option;
+	};
 	base.initializeFromGraph = function (graph) {
 		base.source = graph;
 	};
@@ -25,12 +36,13 @@ var BaseVisualization = function () {
 			var option = elOptions[optId];
 			if (!option.value)
 				continue;
-			if (option.value.preEvalFun) {
+				
+			/*if (option.value.preEvalFun) {
 				var result = option.value.preEvalFun(element);
 				if (result)
 					callback(element,type,optId,result);
-			}
-			else if (option.value.evalFun)
+			}*/
+			if (option.value.evalFun)
 				callback(element,type,optId,option.value.evalFun);
 		}
 		}
@@ -38,10 +50,11 @@ var BaseVisualization = function () {
 	base.visualize = function (element,canvas) {
 		if (base.source == undefined)
 			return;
+		var augmentationFun = base.options["augmentationFun"];
 		if (base.options["optFun"])
 			base.options["optFun"](element,source);
 		if (base.options["visFun"]) {
-			base.options["visFun"](element,canvas,base);
+			base.options["visFun"](element,canvas,base,augmentationFun);
 		}
 		else
 			throw new Exception("Vis Fun not defined for an instance of " + base.name());
@@ -66,7 +79,7 @@ var TreeVisualization = function() {
 			else 
 				return -1;
 		};
-	obj.options.visFun = function (root,canvas) { hTree(root,canvas,obj); };
+	obj.options.visFun = function (root,canvas,base,augmentationFun) { hTree(root,canvas,base,augmentationFun); };
 	obj.elements = {
 		nodes: {
 			options: {
@@ -77,18 +90,20 @@ var TreeVisualization = function() {
 				colorFunction: {
 					value: undefined,
 					type: "Metric",
-				}
+				},				
 			},
 		},
 		edges: {
-			sizeFunction: {
-				value: undefined,
-				type: "Metric",
+			options: {
+				sizeFunction: {
+					value: undefined,
+					type: "Metric",
+				},
+				colorFunction: {
+					value: undefined,
+					type: "Metric",
+				}
 			},
-			colorFunction: {
-				value: undefined,
-				type: "Metric",
-			}
 		},
 	};
 	obj.candidates = function () {
@@ -129,8 +144,8 @@ var SunburstVisualization = function () {
 
 var GraphVisualization = function() { 
 	var obj = BaseVisualization();
-	obj.options.visFun = function (element,canvas) {
-			forceDirectedGraph(element.nodes,element.edges,obj);
+	obj.options.visFun = function (element,canvas,base,augmentationFun) {
+			forceDirectedGraph(element.nodes,element.edges,base,augmentationFun);
 		};
 	obj.elements = {
 		nodes: {

@@ -97,39 +97,83 @@ overflow:hidden;
 	}
 
 
+	function visualizeOptions (analysis,visualization) {
+		var div = document.getElementById("optionsDiv");
+		
+		// Get all the options
+		var opts = getOptions(analysis,visualization);
+		
+		// Set Unary Ones and get remaining
+		opts = setUnaryOptionsAndGet(visualization,opts);
+		
+		var html = "<ul>";
+		for (var el in opts) {
+	   		html += "<li>" + el + "<ul>";
+			
+			for (var opt in opts[el]) {
+				html +=  "<li>" + opt + "</li><ul>";
+				for (var i = 0; i < opts[el][opt].length;++i) {
+					var innerOpt = opts[el][opt][i];
+					html += "<li>" + innerOpt.name + "</li>";
+				}
+				html += "</ul>";
+			}
+			html += "</ul></li>"
+		}			
+		html += "</ul>";
+		div.innerHTML = html;
+	}
+
 	function testRegister() {
 		register.addVisualization(TreeVisualization);
 		register.addVisualization(GraphVisualization);
 		register.addVisualization(SunburstVisualization);
 
+
+		var analysis = inheritanceHierarchyAnalysis
+
 		var viss = register.getVisualizations([subclasses]);
 
-		if (viss.length != 0) {
 
-			var vis = viss[2];
-			// Example on how to "iterate" through elements, same for options, but they are global options
-			// Specific options are in elements..
-			/*for (var el in treeVis.elements) {
-			if (treeVis.elements[el].options) {
-			for (var opt in treeVis.elements[el].options) {
-			}
-			}
-			}*/
-			// This should be done in someway in the UI -> binding the data to the model
+		if (viss.length == 0)
+			return;
 
+			var vis = viss[0];
 			var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
 
 			vis.initializeFromGraph(graph);
+			visualizeOptions(analysis,vis);
 
-			vis.elements["nodes"].options.sizeFunction = function (node) { return 1; }
+
+			var augmentationHandler = function (node,type,resultType,result) {
+				switch (resultType) {
+					case "colorFunction":
+						node.style("fill",result);
+						break;
+					case "sizeFunction":
+						node.attr("r",result);
+						break;
+				}
+			}
+
+//			vis.elements["nodes"].options.colorFunction.value = typeColor(graph);
+			vis.elements["nodes"].options.sizeFunction.value = elementSize(graph);
+			vis.options["augmentationFun"] = augmentationHandler;
 			vis.options["name"] = function() { return "RegisterTest"; }
 			vis.options["filter"] = 
 			//filterNodesAndEdges("invokingMethods","Method");
 			filterNodes(classType,subclasses);
 
 			var roots = vis.candidates();
-		
+
 			var index = 0;
+
+			for (var i = 0; i < roots.length; ++i) {
+				if (roots[i].name == "EdgeData") {
+					index = i;
+				}
+			}
+
 			var draw = function(index) { 
 				vis.visualize(roots[index],"#chart",function (root,graph) { d3.select("#monitor").html(root.name) });
 			};
@@ -149,7 +193,6 @@ overflow:hidden;
 			//		setIt();
 			draw(index);
 
-		}
 		return;
 	}
 		
@@ -184,7 +227,8 @@ overflow:hidden;
 //		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
 		//var opt = getInvocationSelector();
 		//var selection = graph.getSelection(opt);
-		var nodeName = "Action";
+//		var nodeName = "Action";
+		var nodeName = "JavaParser";
 		var relationName = "methods";
 		var otherRelationName = "attributes";
 		var thirdRelationName = "superclassOf";
@@ -201,8 +245,38 @@ overflow:hidden;
 		var vis = GraphVisualization();
 		vis.initializeFromGraph(graph);
 
+		var augmentationHandler = function (node,type,resultType,result) {
+			switch (resultType) {
+				case "colorFunction":
+					node.style("fill",result);
+					break;
+				case "sizeFunction":
+					node.attr("r",result);
+					break;
+				case "mouseover":
+					node.on("mouseover",result);
+					break;
+				case "stroke":
+				//	node.style(resultType,result);
+					break;
+			}
+		}
+
+		
+
 		vis.elements["nodes"].options.colorFunction.value = typeColor(graph);
 		vis.elements["nodes"].options.sizeFunction.value = elementSize(graph);
+		vis.addElementOption("nodes","stroke", {
+			evalFun: function(d,i) { return d3.rgb(0,0,0); }
+		});
+		vis.options["augmentationFun"] = augmentationHandler;
+		vis.addElementOption("nodes","mouseover",{
+			evalFun: function (d,i) {
+				d3.select("#monitor").html(createInfo(d)) 
+			},
+			name: "On Click Handler",
+		});
+
 		vis.options["filter"] = function (graph) {
 			var centers = graph.getNodeSelection(function(node) {
 				return node.properties.name == nodeName && node.properties.ElementType == nodeType;
@@ -259,6 +333,7 @@ overflow:hidden;
 				<div id="chart" class="Block Right" style="overflow:visible"> </div>
 				<div id="roots" class="Block Left List"></div>
 			</div>
+			<div id="optionsDiv"></div>
 
 <!--
 <div id="slider_controls"> 
