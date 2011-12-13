@@ -16,6 +16,7 @@ script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/VisualizationRegister.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Visualization.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/options/SizeFunction.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/options/ColorFunction.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Analysis.js")
 
 script(type="text/javascript")
@@ -28,6 +29,7 @@ script(type="text/javascript")
 	var register = new VisualizationsRegister();
 	var analysis = new Array();
 	var currentDisplayedViz;
+	var currentAnalysis;
 
 	analysis.push(inheritanceHierarchyAnalysis);
 	analysis.push(callGraph);
@@ -95,6 +97,57 @@ script(type="text/javascript")
 		return toD3Trees(graph, relationName, elementType);
 	}
 	
+	var projects = [];
+	projects.push({
+		"!{vizJson.projectName}" : {
+			totalRevisions : [!{vizJson.revisions}],
+			//heldRevisions stores an object of the form {revisionNumber: nmbr, graph: graph}
+			heldRevisions : [],
+			history : undefined,
+			getRevision : function(rev){
+					for(var i = 0; i < heldRevisions.length; i++){
+						if(heldRevisions[i].revisionNumber){
+							return heldRevisions[i];
+						}
+					}
+					$.ajax({
+							url: 'http://127.0.0.1:1234/get_data/'+ "!{vizJson.projectName}" +'/' + rev,
+							error: function (data ){
+								alert("Some problem happened: " + JSON.stringify(data));
+							},
+							success: function( data ) {
+								var nodes = data.nodes;
+								var edges = data.edges;
+								var graph = genesis.Graph.create(nodes,edges);
+								var r = {"revisionNumber" : rev,
+										"graph" : graph,
+									};
+								heldRevisions.push(r);
+								return r;
+							}
+					});
+				},
+			getHistory : function(){
+					if(this.history == undefined){
+						$.ajax({
+							url: 'http://127.0.0.1:1234/get_data/'+ "!{vizJson.projectName}" +'/history',
+							error: function (data ){
+								alert("Some problem happened: " + JSON.stringify(data));
+							},
+							success: function( data ) {
+								var h = data.history;
+								this.history = h;
+								return h;
+							}
+						});
+					}
+					else {
+						return this.history;
+					}
+				},
+		}
+	});
+
 	
 #topmenu
 	ul(id="menu-nav")
@@ -106,8 +159,16 @@ script(type="text/javascript")
 			a(class="topnav", target="_top", href="/logout") Logout
 
 
+#setOptions
+	span(style="float: right", onclick="document.getElementById('showOptions').style.display = 'block'; document.getElementById('setOptions').style.display = 'none';") X
+	#nodesOptions
+	#colorOptions
+
 #treename
 #monitor
+
+span(id="showOptions", onclick="document.getElementById('setOptions').style.display = 'block'; document.getElementById('showOptions').style.display = 'none';") Show Options
+
 div(class="Block", id="vizContainer")
 	#chart(class="Block Right", style="overflow:visible")
 	
@@ -169,9 +230,9 @@ div(class="Block", id="vizContainer")
 		
 		function getVersion(analysisName, projectName, revisionNumber){
 			$.ajax({
-				url: 'http://127.0.0.1:1234/get_data/'+ projectName +'/' + revisionNumber,
+				url: '/get_data/'+ projectName +'/' + revisionNumber,
 				error: function (data ){
-					alert("error!");
+					alert("error : " + JSON.stringify(data));
 				},
 				success: function( data ) {
 					var nodes = data.nodes;
@@ -187,6 +248,7 @@ div(class="Block", id="vizContainer")
 					}
 					var possibleVizs = register.getVisualizations([an]);
 					var graph = genesis.Graph.create(nodes,edges);
+					currentAnalysis = an;
 					
 					
 					var vis = possibleVizs[0];
@@ -202,7 +264,16 @@ div(class="Block", id="vizContainer")
 		
 		//candidates is an array of candidates for a choosen visualization 
 		function addCandidatesToElement(vis){
-			document.getElementById('roots').innerHTML = "";
+			//fill the options
+			var opts = "Nodes Options <br/> <ul>";
+			var opList = getOptions(currentAnalysis, currentDisplayedVis);
+			opList = opList.nodes.sizeFunction;
+			for(var i = 0; i < opList.length; i++){
+				opts += "<li onclick=''>" + opList[i].name + "</li>"
+			}
+			opts += "</ul>"
+			document.getElementById('nodesOptions').innerHTML = opts;
+			
 			var can = "<ul>"
 			var candidates = vis.candidates();
 			for(var i = 0; i < candidates.length; i++){
@@ -216,6 +287,7 @@ div(class="Block", id="vizContainer")
 		function displayGraphFromList(candidate){
 			var cans = currentDisplayedVis.candidates();
 			currentDisplayedVis.visualize(cans[candidate], "#chart");
+			//alert(JSON.stringify(getOptions(currentAnalysis, currentDisplayedVis)));
 		}
 		
 		//getOptions(analysis, vis)
@@ -223,4 +295,17 @@ div(class="Block", id="vizContainer")
 		register.addVisualization(TreeVisualization);
 		register.addVisualization(GraphVisualization);
 		register.addVisualization(SunburstVisualization);
+		document.getElementById('setOptions').style.display = 'none';
 		
+		function clickProjects(){
+			document.getElementById("projects").style.display = "block";
+			document.getElementById("addProject").style.display = "none";
+			document.getElementById('chart').style.display = 'none';
+			document.getElementById('roots').style.display = 'none';
+		}
+		function clickNew(){
+			document.getElementById("addProject").style.display = "block";
+			document.getElementById("projects").style.display = "none";
+			document.getElementById('chart').style.display = 'none';
+			document.getElementById('roots').style.display = 'none';
+		}
