@@ -3,8 +3,8 @@ package scala.ch.usi.inf.genesis.model.mutators
 import ch.usi.inf.genesis.model.mutators.ModelMutator
 import collection.mutable.ListBuffer
 import ch.usi.inf.genesis.model.navigation.{BreadthFirstNavigator, NavigatorOption}
-import ch.usi.inf.genesis.model.core.famix.{ClassEntity, MethodEntity, NamespaceEntity}
-import scala.ch.usi.inf.genesis.model.core.Metric
+import ch.usi.inf.genesis.model.core.famix.{ClassEntity, MethodEntity, NamespaceEntity, PackageEntity}
+import ch.usi.inf.genesis.model.core.Metric
 import ch.usi.inf.genesis.model.core.{IntValue, FAMIX, Value, ModelObject}
 
 /**
@@ -25,7 +25,7 @@ class BasicMetricsMutator extends ModelMutator {
       case _ => false
     })))
     navigator.walkModel(modelObject, this, Some(((element: ModelObject) => element match {
-      case NamespaceEntity() => true
+      case NamespaceEntity() | PackageEntity() => true
       case _ => false
     })))
   }
@@ -34,7 +34,7 @@ class BasicMetricsMutator extends ModelMutator {
     var metricName = ""
     var propName = ""
     obj match {
-      case NamespaceEntity() =>
+      case NamespaceEntity() | PackageEntity() =>
         metricName = "numberOfClasses"
         propName = FAMIX.CLASSES_PROP
       case ClassEntity() =>

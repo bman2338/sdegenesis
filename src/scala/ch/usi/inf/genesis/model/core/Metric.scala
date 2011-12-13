@@ -1,7 +1,4 @@
-package scala.ch.usi.inf.genesis.model.core
-
-import ch.usi.inf.genesis.model.core.Value
-
+package ch.usi.inf.genesis.model.core
 
 /**
  * @author Remo Lemma
