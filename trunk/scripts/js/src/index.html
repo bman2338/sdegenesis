@@ -76,7 +76,7 @@ overflow:hidden;
 
 			for(var n in nodes) {
 				var node = nodes[n];
-				var sTree graph.getSubtreeByRelationName(relationName, node.uniqueId);
+				var sTree = graph.getSubtreeByRelationName(relationName, node.uniqueId);
 				if (sTree != null)
 					c.push(sTree);
 			}
@@ -177,9 +177,10 @@ overflow:hidden;
 		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
 		//var opt = getInvocationSelector();
 		//var selection = graph.getSelection(opt);
-		var nodeName = "methodHeader";
-		var relationName = "invokingMethods";
-		var nodeType = "Method";
+		var nodeName = "JavaParser";
+		var relationName = "methods";
+		var otherRelationName = "attributes";
+		var nodeType = "Class";
 				
 		// var nodeName = "EventHandler";
 		// var relationName = "superclassOf";
@@ -194,11 +195,11 @@ overflow:hidden;
 		var opt = {
 			center : centers[0],
 			oneToOneEdges : true,
-			selectRelation : function(relName) { return relName == relationName }
+			collapse : true,
+			selectRelation : function(relName) { return relName == relationName || relName == otherRelationName }
 		};
 		
-		var multiSelection = graph.getSubgraph(opt);
-		var selection = { "nodes" : multiSelection.nodes[relationName], "edges" : multiSelection.edges[relationName] };
+		var selection = graph.getSubgraph(opt);
 		
 		var subGraph = toD3Graph(selection.nodes, selection.edges);
 		forceDirectedGraph(subGraph.nodes, subGraph.edges);
