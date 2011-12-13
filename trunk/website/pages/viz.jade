@@ -15,6 +15,8 @@ script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/force.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/VisualizationRegister.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Visualization.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Analysis.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/options/SizeFunction.js")
 
 script(type="text/javascript")
 	
@@ -26,55 +28,7 @@ script(type="text/javascript")
 	var register = new VisualizationsRegister();
 	var analysis = new Array();
 	var currentDisplayedViz;
-	
-	//pushing analysis
-	var inheritanceHierarchyAnalysis = {
-		name: "Inheritance Hierarchy",
-		options: { 
-			elementType: "Class",
-			relation: "superclassOf",
-		}
-	};
-	
-	var callGraph = {
-		name: "Call Graph",
-		options: {
-			elementType: "Method",
-			relation: "Call",
-		}
-	}
-	
-	var revisionRelatedChanges = {
-		name: "Revision Related Changes",
-		options: {
-			elementType: "Class",
-			relation: "Revision",
-		}
-	}
-	
-	var bugAuthorRelation = {
-		name: "Bug-Author Relationship",
-		options: {
-			elementType: "Bug",
-			relation: "Author",
-		}
-	}
-	
-	var entityAuthorRelation = {
-		name: "Entity-Author Relationship",
-		options: {
-			elementType: "Class",
-			relation: "Author",
-		}
-	}
-	
-	var genericGraph = {
-		name: "Generic Graph",
-		options: {
-			elementType: "",
-			relation: "",
-		}
-	}
+
 	analysis.push(inheritanceHierarchyAnalysis);
 	analysis.push(callGraph);
 	analysis.push(revisionRelatedChanges);
@@ -215,7 +169,6 @@ div(class="Block")
 		document.getElementById("analysisMenu").innerHTML = vizs;
 		
 		function getVersion(analysisName, projectName, revisionNumber){
-			//alert(getFile('http://127.0.0.1:1234/get_data/'+ projectName +'/' + revisionNumber));
 			$.ajax({
 				url: 'http://127.0.0.1:1234/get_data/'+ projectName +'/' + revisionNumber,
 				error: function (data ){
@@ -230,6 +183,7 @@ div(class="Block")
 					for(var i = 0; i < analysis.length; i++){
 						if(analysis[i].name == analysisName){
 							an = analysis[i];
+							break;
 						}
 					}
 					var possibleVizs = register.getVisualizations([an]);
@@ -245,22 +199,6 @@ div(class="Block")
 					
 				}
 			}); 
-		}
-		
-		function getFile(url) {
-			if (window.XMLHttpRequest) {              
-				AJAX=new XMLHttpRequest();              
-			} else {                                  
-				AJAX=new ActiveXObject("Microsoft.XMLHTTP");
-			}
-			if (AJAX) {
-				AJAX.open("GET", url, false);                             
-				AJAX.send(null);
-				alert("inside with response text: " + AJAX.responseText);
-				return AJAX.responseText;                                         
-			} else {
-				return false;
-			}                                             
 		}
 		
 		//candidates is an array of candidates for a choosen visualization 
