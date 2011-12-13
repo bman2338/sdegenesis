@@ -1,7 +1,5 @@
 
-function forceDirectedGraph(nodes, edges) {
-
-
+function forceDirectedGraph(nodes, edges,visModel) {
     var w = 900,
     h = 600,
     fill = d3.scale.category20();
@@ -30,6 +28,16 @@ var vis = d3.select("#chart").append("svg:svg")
       .attr("x2", function(d) { return d.target.x; })
       .attr("y2", function(d) { return d.target.y; });
 
+ var augmentationHandler = function (node,type,resultType,result) {
+	switch (resultType) {
+		case "colorFunction":
+			node.style("fill",result);
+			break;
+		case "sizeFunction":
+			node.attr("r",result);
+	}
+}
+
   var node = vis.selectAll("circle.node")
       .data(nodes)
     .enter().append("svg:circle")
@@ -38,7 +46,8 @@ var vis = d3.select("#chart").append("svg:svg")
       .attr("cy", function(d) { return d.y; })
       .attr("r", 10)
       .style("fill", function(d) { return fill(d.group); })
-      .call(force.drag);
+      .call(force.drag)
+	  .call(visModel.augment("nodes",augmentationHandler));
 
   node.append("svg:title")
       .text(function(d) { return d.name; });

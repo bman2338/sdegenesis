@@ -16,14 +16,33 @@ var BaseVisualization = function () {
 	base.elements = {};
 	base.candidates = function () { return []; }
 	base.allows = function (data) { return true; };
+	base.augment = function (type, callback) {
+		return function(element) {
+		if (!base.elements[type] || !base.elements[type].options)
+			return;
+		var elOptions = base.elements[type].options;
+		for (var optId in elOptions) {
+			var option = elOptions[optId];
+			if (!option.value)
+				continue;
+			if (option.value.preEvalFun) {
+				var result = option.value.preEvalFun(element);
+				if (result)
+					callback(element,type,optId,result);
+			}
+			else if (option.value.evalFun)
+				callback(element,type,optId,option.value.evalFun);
+		}
+		}
+	},
 	base.visualize = function (element,canvas) {
 		if (base.source == undefined)
 			return;
-	
 		if (base.options["optFun"])
 			base.options["optFun"](element,source);
-		if (base.options["visFun"])
-			base.options["visFun"](element,canvas);
+		if (base.options["visFun"]) {
+			base.options["visFun"](element,canvas,base);
+		}
 		else
 			throw new Exception("Vis Fun not defined for an instance of " + base.name());
 	};	
@@ -47,7 +66,7 @@ var TreeVisualization = function() {
 			else 
 				return -1;
 		};
-	obj.options.visFun = function (root,canvas) { hTree(root,canvas); };
+	obj.options.visFun = function (root,canvas) { hTree(root,canvas,obj); };
 	obj.elements = {
 		nodes: {
 			options: {
@@ -101,9 +120,9 @@ var SunburstVisualization = function () {
 	var obj = TreeVisualization();
 	obj.options["visFun"] = function(element,canvas) {
 		if (!element.children)
-			_sunburst([],canvas,obj.name());
+			_sunburst([],canvas,obj.name(),obj);
 		else
-			_sunburst(element.children,canvas,obj.name());
+			_sunburst(element.children,canvas,obj.name(),obj);
 	}
 	return obj;
 }
@@ -111,7 +130,7 @@ var SunburstVisualization = function () {
 var GraphVisualization = function() { 
 	var obj = BaseVisualization();
 	obj.options.visFun = function (element,canvas) {
-			forceDirectedGraph(element.nodes,element.edges);
+			forceDirectedGraph(element.nodes,element.edges,obj);
 		};
 	obj.elements = {
 		nodes: {

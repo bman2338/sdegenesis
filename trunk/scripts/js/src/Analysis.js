@@ -32,6 +32,7 @@ var inheritanceHierarchyAnalysis = {
 		nodes: {
 			options: {
 				sizeFunction: [classSize,childrenSize],
+				colorFunction: [typeColor],
 			},
 		},
 		edges: {

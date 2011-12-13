@@ -1,3 +1,29 @@
+function elementSize (graph) {
+	
+	var funcs = {
+		"Class": classSize(graph),
+		"Method": function(node) { return 5; },
+		"*": function(node) { return 3; },
+	}
+	
+	return {
+		evalFun: function (node) {
+			var func = funcs[node.properties.ElementType];
+			if (func) {
+				if (func.preEvalFun)
+					return func.preEvalFun(node);
+				else if (func.evalFun)
+					return func.evalFun(node);
+				else
+					return func(node);
+			}
+			else
+				return funcs["*"](node);
+		},
+		name: "Element Size"
+	}	
+}
+
 function classSize (graph) {
 	return {
 		evalFun: function (node) {
@@ -11,7 +37,9 @@ function classSize (graph) {
 			});
 			var res = methods + attributes;
 			if (res < 1)
-			res = 1;
+				res = 1;
+			if (res > 50)
+				res = 50;
 			return res;
 		},
 		name: "Class Size"
@@ -39,7 +67,9 @@ function childrenSize (graph) {
 				return total;
 			});
 			if (result < 1)
-			result = 1;
+				result = 1;
+			if (result > 50)
+				result = 50;
 			return result;
 		},
 		name: "Number Of Total Subclasses",
