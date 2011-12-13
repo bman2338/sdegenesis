@@ -6,22 +6,16 @@ package scala.ch.usi.inf.genesis.server
 
 import java.net.ServerSocket
 import ch.usi.inf.genesis.data.repository.FamixLanguage
-import ch.usi.inf.genesis.model.core.famix.RevisionEntity
 import java.io.{File, BufferedReader, InputStream, InputStreamReader}
-import ch.usi.inf.genesis.parser.mse.MSEParser
-import ch.usi.inf.genesis.model.mutators.MethodOwnershipMutator
 import org.tmatesoft.svn.core.SVNException
 import scala.ch.usi.inf.genesis.data.bugtracker.{BugzillaCrawler, BugTrackerCrawler}
-import ch.usi.genesis.data.repository.{RepositoryCrawler, SVNCrawler, InFamixWrapper}
-import ch.usi.inf.genesis.model.navigation.{ModelPrinter, BreadthFirstNavigator}
-import java.util.logging.SimpleFormatter
-import java.text.SimpleDateFormat
-import java.util.Date
+import ch.usi.genesis.data.repository.{SVNCrawler, InFamixWrapper}
 import ch.usi.inf.genesis.model.ModelGenerator
 import ch.usi.inf.genesis.model.extractors.GraphExtractor
 import scala.ch.usi.inf.genesis.database.MongoDBWrapper
-import ch.usi.inf.genesis.model.core.{StringValue, IntValue}
-import collection.mutable.{ListBuffer, HashMap}
+import ch.usi.inf.genesis.model.core.IntValue
+import collection.mutable.HashMap
+import ch.usi.inf.genesis.model.core.famix.{RevisionEntityProperty, RevisionEntity}
 
 
 object Main {
@@ -148,7 +142,7 @@ class Service(val port: Int) {
   }
 
   def onParsingCompleted(revision: RevisionEntity,
-                         currentRevisionNumber : Int, projectName : String,
+                         projectName : String,
                          mseFile : File) {
 	  import scala.io._
 
@@ -162,7 +156,12 @@ class Service(val port: Int) {
         var graph = new GraphExtractor().extractGraph(node)
         //println(graph);
         var mongo = new MongoDBWrapper(dbHost, dbPort, "genesis_db")
-        mongo.save(graph, projectName, currentRevisionNumber)
+        var revNumber = 0
+        revision.getProperty(RevisionEntityProperty.NUMBER) match {
+          case Some(n : IntValue) => revNumber = n.value
+          case _ =>
+        }
+        mongo.save(graph, projectName,revNumber)
 
         //new BreadthFirstNavigator().walkModel(node, new ModelPrinter());
       }

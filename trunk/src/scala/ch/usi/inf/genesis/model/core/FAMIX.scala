@@ -57,9 +57,10 @@ object FAMIX extends Enumeration {
 
   val SOURCE_ANCHOR = "sourceAnchor"
   val SOURCE_FILE_NAME = "fileName"
-  val SOURCE_START_LINE = "fileName"
+  val SOURCE_START_LINE = "startLine"
   val SOURCE_END_LINE = "endLine"
 
+  val OWNER_PROP = "owners" //TODO
 
   //missing stuff
   val PREVIOUS_ASSIGNEES_PROP = "TODO" //TODO
@@ -75,7 +76,7 @@ object FAMIX extends Enumeration {
   val REVISION_DEVELOPER_PROP = "TODO" //TODO
   val REVISION_DATE_PROP = "TODO" //TODO
   val REVISION_PROP = "TODO" //TODO
-  val OWNER_PROP = "TODO" //TODO
+
 
   val ELEMENTTYPE = "ElementType";
   val METRICS_PROP = "Metrics";

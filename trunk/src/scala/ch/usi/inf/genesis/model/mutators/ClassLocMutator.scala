@@ -61,8 +61,11 @@ class ClassLocMutator(projectPath : String) extends ModelMutator {
     //remove C/C++/JAVA comments
     content = content.replaceAll("(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)|(//.*)","")
     val lines : Array[String] = content.split("[\n|\r\n]")
+    var lineCount = 1;
     lines foreach( (l) => {
-      if (l.length() > 0) loc+=1
+      if(lineCount <= endLine && lineCount >= startLine && l.length() > 0) loc+=1
+
+      lineCount+=1
     })
 
     loc
