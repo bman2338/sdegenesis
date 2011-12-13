@@ -28,6 +28,7 @@
 	<script type="text/javascript" src="Visualization.js"></script>
 	<script type="text/javascript" src="TimeLine.js"> </script>
 	<script type="text/javascript" src="options/SizeFunction.js"></script>
+        <script type="text/javascript" src="options/ColorFunction.js"></script>
 	<script type="text/javascript" src="Analysis.js"> </script>
 	
 <style type="text/css">
@@ -177,12 +178,16 @@ overflow:hidden;
 
 
 	function plotGraph() {
-		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
+
+
+
+//		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
 		//var opt = getInvocationSelector();
 		//var selection = graph.getSelection(opt);
-		var nodeName = "JavaParser";
+		var nodeName = "Action";
 		var relationName = "methods";
 		var otherRelationName = "attributes";
+		var thirdRelationName = "superclassOf";
 		var nodeType = "Class";
 				
 		// var nodeName = "EventHandler";
@@ -190,22 +195,36 @@ overflow:hidden;
 		// var nodeType = "Class"
 		
 		
-		var centers = graph.getNodeSelection(function(node) {
-			return node.properties.name == nodeName && node.properties.ElementType == nodeType;
-		});
-		
-		
-		var opt = {
-			center : centers[0],
-			oneToOneEdges : true,
-			collapse : true,
-			selectRelation : function(relName) { return relName == relationName || relName == otherRelationName }
-		};
-		
-		var selection = graph.getSubgraph(opt);
-		
-		var subGraph = toD3Graph(selection.nodes, selection.edges);
-		forceDirectedGraph(subGraph.nodes, subGraph.edges);
+		//forceDirectedGraph(subGraph.nodes, subGraph.edges);
+
+		var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
+		var vis = GraphVisualization();
+		vis.initializeFromGraph(graph);
+
+		vis.elements["nodes"].options.colorFunction.value = typeColor(graph);
+		vis.elements["nodes"].options.sizeFunction.value = elementSize(graph);
+		vis.options["filter"] = function (graph) {
+			var centers = graph.getNodeSelection(function(node) {
+				return node.properties.name == nodeName && node.properties.ElementType == nodeType;
+			});
+
+
+			var opt = {
+				center : centers[0],
+				oneToOneEdges : true,
+				collapse : true,
+				selectRelation : function(relName) { return relName == relationName || relName == otherRelationName || relName == thirdRelationName; }
+			};
+
+			var selection = graph.getSubgraph(opt);
+
+			var subGraph = toD3Graph(selection.nodes, selection.edges);
+			return [subGraph];
+		}
+
+		var roots = vis.candidates();
+
+		vis.visualize(roots[0],"#chart");
 	}
 
 
