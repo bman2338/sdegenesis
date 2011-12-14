@@ -36,13 +36,16 @@
     }
     
     function cleanFileOp(fileOp) {
-        for(var le in fileOp) {
-					fileOp[le] = fileOp[le][0];
-				}
+        for (var le in fileOp) {
+			fileOp[le] = fileOp[le][0];
+		}
+		return fileOp;
     }
 
 	function historyToD3Format(hist) {
 		var data = {};
+		var maxYear = 0;
+		var minYear = -1;
 		var dates = [];
 		var format = d3.time.format(getHistoryDateFormatString())
 		for(var e in hist) {
@@ -50,9 +53,13 @@
 			entry.number = e;
 			var dateStr = getDateStrNoZone(entry.date);
 			
-			
 			var fd = format.parse(dateStr);
-            
+			var year = fd.getFullYear();
+            maxYear = Math.max(year,maxYear);
+			if (minYear == -1)
+				minYear = year;
+			else
+				minYear = Math.min(year,minYear);
             fd.setMinutes(0);
             fd.setHours(0);
             fd.setSeconds(0);
@@ -66,7 +73,7 @@
 			data[date].push(entry);
 			
 		}
-		return { "dates": dates, "data" : data };
+		return { "dates": dates, "data" : data, "minYear": minYear, "maxYear": maxYear };
 	}
 	
 	function getDateStrNoZone(dateStr) {

@@ -71,21 +71,36 @@ function AnalysisRegister () {
 }
 
 
-var createAnalysis = function (name,filterFun) {
+var createAnalysis = function (name) {
 	var obj = {};
 	obj.name = name;
 	obj.elements = {};
-	obj.options = {
-		filter: {
-			name: "Filter Function",
-			values: [filterFun],
-		}
+	obj.options = {};
+	obj.visualizations = [];
+	obj.instantiateVisualization = function (index) {
+		if (index >= obj.visualizations.length || index < 0)
+			return null;
+		return obj.visualizations[index].visFactory();
 	};
+	obj.getVisualization = function (index) {
+		if (index >= obj.visualizations.length || index < 0)
+			return null;
+		return obj.visualizations[index];
+	}
 	return obj;
 }
 
 var classInheritance = function () {
-	var obj = createAnalysis("Class Inheritance",filterNodes("Class","superclassOf"));
+	var obj = createAnalysis("Class Inheritance");
+	obj.options = {
+		filter: {
+			name: "Filter Function",
+			values: [filterNodes("Class","superclassOf")],
+		},
+		allowsMultipleRoots: {
+			values: [true]
+		}
+	};
 	obj.elements = {
 		nodes: {
 			options: {
@@ -102,70 +117,91 @@ var classInheritance = function () {
 		edges: {
 			
 		}
-	}
+	};
+	obj.visualizations = [
+		{ name: "Inheritance Tree", visFactory: TreeVisualization },
+		{ name: "Inheritance Sunburst", visFactory: SunburstVisualization },
+		//{ name: "Force-Directed Inheritance Graph", visFactory: GraphVisualization }, 
+	];
 	return obj;
+}
+
+function colorFun (source) {
+	return {
+		evalFun: function(node) {
+			if (node) {
+				return d3.rgb(255,0,0);
+			}
+			return d3.rgb(255,255,255);
+		}
+	}
+}
+
+function textFun (source) {
+	return { 
+		evalFun: function(node) {
+			if (node) {
+				return node[0].author;
+			}
+			return "";
+		}
+	}
+}
+
+
+var calendarAugmentationFun = {
+	value: function (node,type,resultType,result,source) {
+
+	var wrapper = function (node) {
+		var format = d3.time.format(getHistoryDateFormatString());
+		var fd = format(node);
+		var array = source.data[fd];
+		return result(array);
+	}
+	
+	switch (resultType) {
+		case "colorFunction":
+			node.style("fill",wrapper);
+			break;
+		case "textFunction":
+			node.selectAll("text").text(wrapper);
+			break;
+	}
+	}
+}
+
+var revisionHistoryAnalysis = function () {
+	var obj = createAnalysis("Revision History Analysis");
+	obj.options = {
+		augmentationFun: {
+			name: "Augmentation Function for Calendar",
+			values: [calendarAugmentationFun],
+		}
+	};
+	obj.elements = {
+		entries: {
+			options: {
+				colorFunction: {
+					name: "Entities Color Function",
+					values: [colorFun],
+				},
+				textFunction: {
+					name: "Entities Tooltip Text Function",
+					values: [textFun],
+				},
+			},
+		},
+	};
+	return obj;
+}
+
+var methodCallGraph = function () {
+	
 }
 
 var analysisRegister = AnalysisRegister()
 analysisRegister.addEntry(["Class"],classInheritance());
-
-var inheritanceHierarchyAnalysis = {
-	name: "Inheritance Hierarchy",
-	options: { 
-		elementType: "Class",
-		relation: "superclassOf",
-	},
-	elements: {
-		nodes: {
-			options: {
-				sizeFunction: [classSize,childrenSize],
-				colorFunction: [typeColor],
-			},
-		},
-		edges: {
-			options: {
-				asd: [typeColor],
-			},
-		}
-	}
-};
-
-var callGraph = {
-	name: "Call Graph",
-	options: {
-		elementType: "Method",
-		relation: "Call",
-	}
-}
-
-var revisionRelatedChanges = {
-	name: "Revision Related Changes",
-	options: {
-		elementType: "Class",
-		relation: "Revision",
-	}
-}
-
-var bugAuthorRelation = {
-	name: "Bug-Author Relationship",
-	options: {
-		elementType: "Bug",
-		relation: "Author",
-	}
-}
-
-var entityAuthorRelation = {
-	name: "Entity-Author Relationship",
-	options: {
-		elementType: "Class",
-		relation: "Author",
-	}
-}
-
-var genericGraph = {
-	name: "Generic Graph",
-	options: {
-		elementType: "",
-		relation: "",
-	}
-}
+analysisRegister.addEntry(["Revision"],revisionHistoryAnalysis());
+analysisRegister.addEntry(["Class"],classCallGraph());
+//analysisRegister.addEntry(["Method"],methodCallGraph());
+//analysisRegister.addEntry(["Class","Method"],mixedCallGraph());

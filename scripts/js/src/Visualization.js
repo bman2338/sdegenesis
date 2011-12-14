@@ -25,8 +25,8 @@ var BaseVisualization = function () {
 			element.options[optionName] = {};
 		element.options[optionName].value = option;
 	};
-	base.initializeFromGraph = function (graph) {
-		base.source = graph;
+	base.initialize = function (source) {
+		base.source = source;
 	};
 	base.options = {};
 	base.elements = {};
@@ -48,18 +48,26 @@ var BaseVisualization = function () {
 					callback(element,type,optId,result);
 			}*/
 			if (option.value.evalFun)
-				callback(element,type,optId,option.value.evalFun);
+				callback.value(element,type,optId,option.value.evalFun,base.source);
 		}
 		}
 	},
-	base.visualize = function (element,canvas) {
-		if (base.source == undefined)
+	base.visualize = function (elements,canvas,rootFunc) {
+		if (base.source == undefined || elements.length == 0)
 			return;
-		var augmentationFun = base.options["augmentationFun"].value;
+		var augmentationFun = base.options["augmentationFun"];
 		if (base.options["optFun"])
 			base.options["optFun"].value(element,source);
+			
 		if (base.options["visFun"]) {
-			base.options["visFun"].value(element,canvas,base,augmentationFun);
+			if (elements.length == 1)
+				base.options["visFun"].value(elements[0],canvas,base,augmentationFun);
+			else {
+				if (!rootFunc)
+					return;
+				var newRoot = rootFunc(elements,base);
+				base.options["visFun"].value(newRoot,canvas,base,augmentationFun);
+			}
 		}
 		else
 			throw new Exception("Vis Fun not defined for an instance of " + base.name());
@@ -201,6 +209,34 @@ var GraphVisualization = function() {
 	return obj;
 }
 
+var CalendarVisualization = function () {
+	var obj = BaseVisualization();
+	obj.addOption("visFun", function (element,canvas,base,augmentationFun) {
+			plotHistoryCalendar(element,base,augmentationFun);
+	});
+	obj.elements = {
+		entries: {
+			options: {
+				colorFunction: {
+					value: undefined,
+				},
+				textFunction: {
+					value: undefined,
+				}
+			},
+		}
+	};
+	obj.initialize = function (source) {
+		obj.source = historyToD3Format(source);
+	}
+	obj.candidates = function () {
+		if (obj.source == undefined)
+			return [];
+		return [source];
+	};
+	return obj;
+}
+
 
 function filterNodes (element, relation, graph) {
 	var elementType = element;
@@ -216,4 +252,3 @@ function filterNodes (element, relation, graph) {
 		return c;
 	}
 }
-

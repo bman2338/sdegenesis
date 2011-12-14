@@ -1,6 +1,10 @@
 //Date,Open,High,Low,Close,Volume,Adj Close
 
-function plotHistoryCalendar(historyDates, historyData, visModel, augmentationCallback) {
+function plotHistoryCalendar(history, visModel, augmentationCallback) {
+	
+	var historyDates = history.dates;
+	var historyData = history.data;
+	
 	var m = [19, 20, 20, 19], // top right bottom left margin
 	w = 960 - m[1] - m[3], // width
 	h = 136 - m[0] - m[2], // height
@@ -16,7 +20,7 @@ function plotHistoryCalendar(historyDates, historyData, visModel, augmentationCa
 	.range(d3.range(9));
 
 	var svg = d3.select("#chart").selectAll("svg")
-	.data(d3.range(1998, 2011))
+	.data(d3.range(history.minYear, history.maxYear+1))
 	.enter().append("svg:svg")
 	.attr("width", w + m[1] + m[3])
 	.attr("height", h + m[0] + m[2])
@@ -66,8 +70,7 @@ function plotHistoryCalendar(historyDates, historyData, visModel, augmentationCa
 			})//(d[0].Close - d[0].Open) / d[0].Open; })
 			.map(historyDates);
 
-			rect
-			.attr("class", function(d) { 
+		rect.attr("class", function(d) { 
 				return "day q" + color(data[format(d)]) + "-9"; 
 			})
 			.style("fill", function(d) { 
@@ -84,8 +87,10 @@ function plotHistoryCalendar(historyDates, historyData, visModel, augmentationCa
 				return (d = format(d)) + (d in data ? ": " + percent(data[d]) : ""); 
 
 			});
+			if (augmentationCallback) {
+				rect.call(visModel.augment("entries",augmentationCallback));
+			}
 		};
-
 
 		plotHistory(historyDates, historyData); 
 

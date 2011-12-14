@@ -60,9 +60,6 @@ function isBranch(d) {
 function hTree(root, target,visModel,augmentationCallback) {
     d3.select(target).html("");
     var json = root;
-    //	d3.json("data3.json", 
-	
-    //	function(json) {
     
     var offset = -10;
     var r = 900/2;
@@ -93,40 +90,38 @@ function hTree(root, target,visModel,augmentationCallback) {
 		.data(nodes)
 		.enter().append("svg:g")
 		.attr("class", function(d) { var clazz = "node"; if(d === root) { return " Root"; } if(isBranch(d)) { return " Branch"; } return clazz;})
-		.attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")" })
+		.attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")" });
 		// .attr("transform", function(d) { return "scale(" + 1 + ")translate(" + 1 + ")" });
+       
         
-        
-        
-		node.append("svg:circle")
+	node.append("svg:circle")
 		.attr("r", function(d) {
-            if(d.children)
-                return d.children.length/5 + 4; 
-            return  4; })
-        .on("mouseover", function(d, i) { 
-                d3.select("#monitor").html(createInfo(d)) 
-                var t = d3.select(d3.event.currentTarget.parentNode).selectAll("text");
-                t.attr("visibility", "visible");   
-            })
-         .on("mouseout", function(d) {
-          var t = d3.select(d3.event.currentTarget.parentNode).selectAll("text");
-                t.attr("visibility", "hidden")
-            })   
-         .on("click", function(d, i) {
-                if(isBranch(d)) {
-                    if(d.hParent) {
-                        hTree(d.hParent, target);
-                        d.hParent = null;
-                    } else {
-                        d.hParent = root;
-                        hTree(d, target) 
-                    }
-                }
-            });
-
-	   		if (augmentationCallback) {
-					node.call(visModel.augment("nodes",augmentationCallback));
+			if(d.children)
+			return d.children.length/5 + 4; 
+			return  4; })
+			.on("mouseover", function(d, i) { 
+				d3.select("#monitor").html(createInfo(d)) 
+				var t = d3.select(d3.event.currentTarget.parentNode).selectAll("text");
+				t.attr("visibility", "visible");   
+			})
+			.on("mouseout", function(d) {
+				var t = d3.select(d3.event.currentTarget.parentNode).selectAll("text");
+				t.attr("visibility", "hidden")
+			})   
+			.on("click", function(d, i) {
+				if(isBranch(d)) {
+					if(d.hParent) {
+						hTree(d.hParent, target);
+						d.hParent = null;
+					} else {
+						d.hParent = root;
+						hTree(d, target) 
+					}
 				}
+			});
+
+		if (augmentationCallback)
+			node.select("circle").call(visModel.augment("nodes",augmentationCallback));
 
     node.append("svg:text")
 		.attr("dx", function(d) { return d.x < 180 ? 20 : -20; })
