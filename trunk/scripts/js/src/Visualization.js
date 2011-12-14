@@ -52,20 +52,21 @@ var BaseVisualization = function () {
 		}
 		}
 	},
-	base.visualize = function (elements,canvas,rootFunc) {
-		if (base.source == undefined || elements.length == 0)
+	base.visualize = function (node,canvas,rootFunc) {
+		if (base.source == undefined || node.nodes.length == 0)
 			return;
 		var augmentationFun = base.options["augmentationFun"];
-		if (base.options["optFun"])
-			base.options["optFun"].value(element,source);
+		var elements = node.nodes;
+		if (base.options["parametrizationFun"])
+			node = base.options["parametrizationFun"].value(node,base);
 			
 		if (base.options["visFun"]) {
-			if (elements.length == 1)
-				base.options["visFun"].value(elements[0],canvas,base,augmentationFun);
+			if (node.nodes.length == 1)
+				base.options["visFun"].value(node.nodes[0],canvas,base,augmentationFun);
 			else {
 				if (!rootFunc)
 					return;
-				var newRoot = rootFunc(elements,base);
+				var newRoot = rootFunc(node.nodes,base);
 				base.options["visFun"].value(newRoot,canvas,base,augmentationFun);
 			}
 		}

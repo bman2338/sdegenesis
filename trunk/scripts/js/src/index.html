@@ -286,10 +286,10 @@ overflow:hidden;
 
 			var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
 
-			var listOfAnalysis = analysisRegister.getEntries(["Class"]);
+			var listOfAnalysis = analysisRegister.getEntries(["Method"]);
 			var analysis = listOfAnalysis[0];
 
-			var vis = analysis.instantiateVisualization(2);
+			var vis = analysis.instantiateVisualization(0);
 
 			vis.initialize(graph);
 
@@ -306,7 +306,7 @@ overflow:hidden;
 			name: "On Click Handler",
 		});
 
-		vis.options["filter"] = { value: function (graph) {
+		/*vis.options["filter"] = { value: function (graph) {
 			var centers = graph.getNodeSelection(function(node) {
 				return (node.properties.name == nodeName || node.properties.name == "EventHandler") && node.properties.ElementType == nodeType;
 			});
@@ -323,12 +323,21 @@ overflow:hidden;
 
 			var subGraph = toD3Graph(selection.nodes, selection.edges);
 			return [subGraph];
+		}*/
+	
+		var opts = getOptions(analysis,vis);
+		opts = setUnaryOptionsAndGet(vis,opts);
+	
+		var centers = graph.getNodeSelection(function(node) {
+			return node.properties.ElementType == "Method" && node.properties.name == "mTokens";
+		});
+		var element = {
+			types: ["Method"],
+			nodes: [centers[0]],
 		}
-	}
+		
 
-		var roots = vis.candidates();
-
-		vis.visualize(roots,"#chart");
+		vis.visualize(element,"#chart");
 	}
 
 

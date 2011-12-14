@@ -196,12 +196,33 @@ var revisionHistoryAnalysis = function () {
 }
 
 var methodCallGraph = function () {
-	
+	var obj = createAnalysis("Call Graph");
+	obj.options = {
+		parametrizationFun: {
+			values: [ filterGraph("invokingMethods") ],
+		}
+	}
+	obj.elements = {
+		nodes: {
+			options: {
+			}
+		},
+		edges: {
+			options: {
+				
+			}
+		}
+	};
+	obj.visualizations = [{
+		name: "Call Graph",
+		visFactory: GraphVisualization,
+	}];
+	return obj;
 }
 
 var analysisRegister = AnalysisRegister()
 analysisRegister.addEntry(["Class"],classInheritance());
 analysisRegister.addEntry(["Revision"],revisionHistoryAnalysis());
-analysisRegister.addEntry(["Class"],classCallGraph());
-//analysisRegister.addEntry(["Method"],methodCallGraph());
+//analysisRegister.addEntry(["Class"],classCallGraph());
+analysisRegister.addEntry(["Method"],methodCallGraph());
 //analysisRegister.addEntry(["Class","Method"],mixedCallGraph());
