@@ -267,6 +267,29 @@ overflow:hidden;
 	}
 
 
+	function testMixedGraph() {
+			var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
+			var opt = {
+				centers :  graph.getNodeSelection(function(node) {  return node.properties.name == "JavaParser"; }), //graph.getNodesByType("Class"),
+				
+				expand : function(node, relName) { 
+					return   this.selectNode(node) && (relName == "methods"  || relName == "invokingMethods");
+				},
+				
+				selectNode : function(node) {
+						return node.properties.ElementType == "Class" ||
+							   node.properties.ElementType == "Method";
+				},
+				
+				selectEdge : function(node1, node2) {
+					return true;
+				}
+			};
+			
+			var mixedGraph = graph.getMixedGraph(opt);
+			var d3MixedGraph = toD3Graph(mixedGraph.nodes, mixedGraph.edges);
+	}
+
 	function getTreeFromRelation(relationName, elementType) {
 		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
 		return toD3Trees(graph, relationName, elementType);
@@ -277,7 +300,7 @@ overflow:hidden;
 	<link type="text/css" rel="stylesheet" href="scrollbar.css"/>
 	<link type="text/css" rel="stylesheet" href="tree.css"/>
 </head>
-<body onload="drawTimeline('cippo')">
+<body onload="testMixedGraph();"> <!--  if(drawTimeline) drawTimeline('cippo') -->
 	<ul class="Menu">
 		<!--
 		<li><a href="javascript:tree()"> Tree </li>
