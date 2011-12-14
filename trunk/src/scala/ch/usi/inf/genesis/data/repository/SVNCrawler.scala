@@ -95,7 +95,8 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
         })
         revisionEntity.addProperty(RevisionEntityProperty.PROJECT, new StringValue(projectName + "_rev" + next))
 
-        if ((next - firstRev) % step == 0) {
+        //if ((next - firstRev) % step == 0) {
+        if (next % step == 0) {
           //Update Repository
           doUpdate(next)
 

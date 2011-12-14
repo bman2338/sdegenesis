@@ -118,7 +118,8 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     updateRevisionRegistry(projectName, revision);
 
     var identifier = projectName + "_rev" + revision
-    var db: MongoCollection = MongoConnection(host, port)(dbName)(identifier + "_nodes")
+    val conn = MongoConnection(host,port)
+    var db: MongoCollection = conn(dbName)(identifier + "_nodes")
 
     if(!db.isEmpty)  {
       db.dropCollection();
@@ -157,12 +158,14 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     db = MongoConnection(host, port)(dbName)(identifier + "_edges")
     val edgesDBObj = MongoDBObject(PROJECT -> projectName, REVISION -> revision, EDGES -> edgesList.result)
     db += edgesDBObj
+    conn.close()
   }
 
   def saveRepositoryHistory(repoHistory: ListBuffer[RevisionEntity], projectName: String) {
 
     val identifier = projectName + "_history_" + repoHistory.last.getRevisionNumber()
-    var revisionDb: MongoCollection = MongoConnection(host, port)(dbName)(identifier)
+    val conn = MongoConnection(host,port)
+    var revisionDb: MongoCollection = conn(dbName)(identifier)
     val history = MongoDBObject.newBuilder
 
     println("Saving History...")
@@ -209,5 +212,6 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
       })
 
     revisionDb += history.result
+    conn.close
   }
 }
