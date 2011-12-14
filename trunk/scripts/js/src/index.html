@@ -29,6 +29,7 @@
 	<script type="text/javascript" src="TimeLine.js"> </script>
 	<script type="text/javascript" src="options/SizeFunction.js"></script>
         <script type="text/javascript" src="options/ColorFunction.js"></script>
+		<script type="text/javascript" src="AnalysisUtils.js"> </script>
 	<script type="text/javascript" src="Analysis.js"> </script>
 	
 <style type="text/css">
@@ -70,33 +71,6 @@ overflow:hidden;
 
 	var register = new VisualizationsRegister();
 
-
-	function filterNodes (element, relation, graph) {
-		var elementType = element;
-		var relationName = relation;
-		return function (graph) {                                                 
-			var c = [];
-			var nodes = graph.getNodesByType(elementType);
-
-			for(var n in nodes) {
-				var node = nodes[n];
-				var sTree = graph.getSubtreeByRelationName(relationName, node.uniqueId);
-				if (sTree != null)
-					c.push(sTree);
-			}
-			return c;
-		}
-	}
-
-	function filterNodesAndEdges(relationName, nodeType) {
-		return function (graph) {
-			var edges = owl.deepCopy(graph.getOneToOneEdges(relationName));
-			var nodes = owl.deepCopy(graph.getNodesByType(nodeType));
-			return [toD3Graph(nodes, edges)];
-		}
-	}
-
-
 	function visualizeOptions (analysis,visualization) {
 		var div = document.getElementById("optionsDiv");
 		
@@ -125,12 +99,45 @@ overflow:hidden;
 	}
 
 	function testRegister() {
+		var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
+		
 		register.addVisualization(TreeVisualization);
 		register.addVisualization(GraphVisualization);
 		register.addVisualization(SunburstVisualization);
 
+		var listOfAnalysis = analysisRegister.getEntries(["Class"]);
+		var analysis = listOfAnalysis[0];
+		
+		var viss = register.getVisualizations([analysis]);
+		
+		var vis = viss[0];
+		
+		vis.initializeFromGraph(graph);
+		
+		visualizeOptions(analysis,vis);
+		
+		var roots = vis.candidates();
+		
+		var root = roots[0];
 
-		var analysis = inheritanceHierarchyAnalysis
+		var augmentationHandler = function (node,type,resultType,result) {
+			switch (resultType) {
+				case "colorFunction":
+				node.style("fill",result);
+				break;
+				case "sizeFunction":
+				node.attr("r",result);
+				break;
+			}
+		}
+
+		vis.elements["nodes"].options.sizeFunction.value = elementSize(graph);
+		vis.addOption("augmentationFun",augmentationHandler);
+
+		vis.visualize(roots[0],"#chart",function (root,graph) { d3.select("#monitor").html(root.name) });
+		
+
+		/*var analysis = inheritanceHierarchyAnalysis
 
 		var viss = register.getVisualizations([subclasses]);
 
@@ -191,9 +198,7 @@ overflow:hidden;
 			}
 
 			//		setIt();
-			draw(index);
-
-		return;
+			draw(index);*/
 	}
 		
 	

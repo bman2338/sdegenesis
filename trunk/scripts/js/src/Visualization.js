@@ -6,9 +6,14 @@ var BaseVisualization = function () {
 	base.name = function () {
 		var visName = base.visualizationName();
 		if (base.options["name"])
-			visName = base.options["name"]();
+			visName = base.options["name"].value();
 		return visName;	
 	};
+	base.addOption = function (optionName,option) {
+		if (!base.options[optionName])
+			base.options[optionName] = {};
+		base.options[optionName].value = option;
+	}
 	base.addElementOption = function (elementName,optionName,option) {
 		if (!base.elements[elementName])
 			return;
@@ -50,11 +55,11 @@ var BaseVisualization = function () {
 	base.visualize = function (element,canvas) {
 		if (base.source == undefined)
 			return;
-		var augmentationFun = base.options["augmentationFun"];
+		var augmentationFun = base.options["augmentationFun"].value;
 		if (base.options["optFun"])
-			base.options["optFun"](element,source);
+			base.options["optFun"].value(element,source);
 		if (base.options["visFun"]) {
-			base.options["visFun"](element,canvas,base,augmentationFun);
+			base.options["visFun"].value(element,canvas,base,augmentationFun);
 		}
 		else
 			throw new Exception("Vis Fun not defined for an instance of " + base.name());
@@ -64,7 +69,7 @@ var BaseVisualization = function () {
 
 var TreeVisualization = function() { 
 	var obj = BaseVisualization();
-	obj.options.elementsComparator = function (a,b) {
+	obj.addOption("elementsComparator", function (a,b) {
 			if(b.children) {
 				if(a.children) {
 					var res = b.children.length - a.children.length;
@@ -78,8 +83,8 @@ var TreeVisualization = function() {
 			}
 			else 
 				return -1;
-		};
-	obj.options.visFun = function (root,canvas,base,augmentationFun) { hTree(root,canvas,base,augmentationFun); };
+	});
+	obj.addOption("visFun", function (root,canvas,base,augmentationFun) { hTree(root,canvas,base,augmentationFun); });
 	obj.elements = {
 		nodes: {
 			options: {
@@ -112,18 +117,18 @@ var TreeVisualization = function() {
 
 		var roots = [];
 		if (obj.options["filter"])
-			roots = obj.options["filter"](obj.source);
+			roots = obj.options["filter"].value(obj.source);
 		if (roots.length == 0)
 			return [];	
 		
 		if (obj.options["elementsComparator"])
-			roots = roots.sort(obj.options["elementsComparator"])
+			roots = roots.sort(obj.options["elementsComparator"].value)
 
 		jQuery.each(roots, function() {
 			var that = this;
 			if(that.children) {
 				if (obj.options["elementsComparator"])
-					that.children = that.children.sort(obj.options["elementsComparator"])
+					that.children = that.children.sort(obj.options["elementsComparator"].value)
 			}
 		});
 		return roots;
@@ -133,7 +138,7 @@ var TreeVisualization = function() {
 
 var SunburstVisualization = function () {
 	var obj = TreeVisualization();
-	obj.options["visFun"] = function(element,canvas) {
+	obj.options["visFun"].value = function(element,canvas) {
 		if (!element.children)
 			_sunburst([],canvas,obj.name(),obj);
 		else
@@ -144,9 +149,9 @@ var SunburstVisualization = function () {
 
 var GraphVisualization = function() { 
 	var obj = BaseVisualization();
-	obj.options.visFun = function (element,canvas,base,augmentationFun) {
+	obj.addOption("visFun", function (element,canvas,base,augmentationFun) {
 			forceDirectedGraph(element.nodes,element.edges,base,augmentationFun);
-		};
+	});
 	obj.elements = {
 		nodes: {
 			options: {
@@ -177,18 +182,18 @@ var GraphVisualization = function() {
 
 		var roots = [];
 		if (obj.options["filter"])
-			roots = obj.options["filter"](obj.source);
+			roots = obj.options["filter"].value(obj.source);
 		if (roots.length == 0)
 			return [];	
 		
 		if (obj.options["elementsComparator"])
-			roots = roots.sort(obj.options["elementsComparator"])
+			roots = roots.sort(obj.options["elementsComparator"].value)
 
 		jQuery.each(roots, function() {
 			var that = this;
 			if(that.children) {
 				if (obj.options["rootsComparator"])
-					that.children = that.children.sort(obj.options["elementsComparator"])
+					that.children = that.children.sort(obj.options["elementsComparator"].value)
 			}
 		});
 		return roots;
