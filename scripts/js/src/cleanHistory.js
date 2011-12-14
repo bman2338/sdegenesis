@@ -1,5 +1,9 @@
-	function cleanHistory(hist) {
+	function cleanHistory(hist, target) {
+		
 		var newHist = {};
+		if(target) {
+			newHist = target;
+		}
 	
 		for(var e in hist) {
 			if("_id" == e)  {
