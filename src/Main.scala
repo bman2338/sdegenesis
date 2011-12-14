@@ -12,6 +12,7 @@ import collection.mutable.ListBuffer
 import io.Source
 import java.io.File
 import scala.ch.usi.inf.genesis.database.MongoDBWrapper
+import scala.Int
 
 class ClassLocChecker extends ModelVisitor{
   def visit(obj: ModelObject): NavigatorOption ={
@@ -24,9 +25,11 @@ class ClassLocChecker extends ModelVisitor{
 }
 
 
-object Main {
+object  Main {
 
-
+   var host = "127.0.0.1";
+  var port = 8888;
+  var db = "genesis_db";
 private def onParsingCompleted(revision: RevisionEntity,
                                  projectName: String,
                                  projectPath: String,
@@ -48,7 +51,7 @@ private def onParsingCompleted(revision: RevisionEntity,
         locMutator.mutate(node)
         ownerMutator.mutate(node)
         val graph = new GraphExtractor().extractGraph(node)
-        val mongo = new MongoDBWrapper("127.0.0.1", 4321, "genesis_db")
+        val mongo = new MongoDBWrapper(host, port, db);
         val revNumber = revision.getProperty(RevisionEntityProperty.NUMBER) match {
           case Some(n: IntValue) => n.value
           case _ => 0
@@ -62,7 +65,7 @@ private def onParsingCompleted(revision: RevisionEntity,
 
   private def onRepositoryCrawlingComplete(revisions: ListBuffer[RevisionEntity], prjName: String, prjPath: String) {
     revisions foreach((r) => println(r.properties))
-    val mongo = new MongoDBWrapper("127.0.0.1", 4321, "genesis_db")
+    val mongo = new MongoDBWrapper(host, port, db);
     mongo.saveRepositoryHistory(revisions, prjName)
   }
 
@@ -72,26 +75,87 @@ private def onParsingCompleted(revision: RevisionEntity,
     import scala.io._
     import org.tmatesoft.svn.core.SVNException
 
+    if (args.length < 8) {
+      println("Wrong number of arguments.");
+      sys.exit(-1);
+    }
+
+    var projectName = args(0);
+    var projectPath = args(1);
+    var repository = args(2);
+    var mses = args(3);
+    var inFamixPath = args(4);
+
+    object Int {
+      def unapply (s:String) : Option[Int] = try {
+        Some(s.toInt)
+      }  catch {
+        case _ => None
+      }
+    }
+
+    var from = 0
+    var to = 0
+    var step = 0
+
+    args(5) match {
+      case Int(p) => from = p;
+      case _ =>
+    }
+
+    args(6) match {
+      case Int(p) => to = p;
+      case _ =>
+    }
+
+    args(7) match {
+      case Int(p) => step = p;
+      case _ =>
+    }
+
+    var username: String = null;
+    var password: String = null;
+
+    if (args.length > 9) {
+      username = args(8);
+      password = args(9);
+    }
+
+    if (args.length > 10)
+      host = args(10);
+
+    if (args.length > 11) {
+      args(11) match {
+        case Int(p) => port = p;
+        case _ =>
+      }
+    }
+    if (args.length > 12)
+      db = args(12)
+
+
     try{
 
-      val inFamix = new InFamixWrapper("./inFamix/MacOS", FamixLanguage.JAVA.getId)
+      val inFamix = new InFamixWrapper(inFamixPath, FamixLanguage.JAVA.getId)
 
-      //val auth = new RepositoryUserAuth("luca.ponzanelli@gmail.com","CB7NW5gd2Bs7")
+      var auth : RepositoryUserAuth = null
+      if (username != null && password != null)
+        auth = new RepositoryUserAuth(username,password)
       val crawler = new SVNCrawler(
       //"http://crypto-box.googlecode.com/svn/trunk/",
       //"https://sdegenesis.googlecode.com/svn/trunk/",
-      "http://argouml.tigris.org/svn/argouml/trunk/",
+      repository,
       //"argouml",
-      "argouml",
-      "/Users/Ponzanelli/Documents/workspace/Genesis-Scala/argouml",
-      "/Users/Ponzanelli/Documents/workspace/Genesis-Scala/mse",
+      projectName,
+      projectPath,
+      mses,
       inFamix,
-      null,
+      auth,
       ".java")
 
       crawler.onSourceParsingCompleteDelegates+=onParsingCompleted
       crawler.onCrawlingCompleteDelegates += onRepositoryCrawlingComplete
-      crawler.crawl(16400,17000, 100)
+      crawler.crawl(from,to, step)
 
 
 
