@@ -49,7 +49,7 @@ private def onParsingCompleted(revision: RevisionEntity,
     res match {
       case Some(node) => {
         locMutator.mutate(node)
-        ownerMutator.mutate(node)
+       // ownerMutator.mutate(node)
         val graph = new GraphExtractor().extractGraph(node)
         val mongo = new MongoDBWrapper(host, port, db);
         val revNumber = revision.getProperty(RevisionEntityProperty.NUMBER) match {
@@ -151,7 +151,7 @@ private def onParsingCompleted(revision: RevisionEntity,
       mses,
       inFamix,
       auth,
-      ".java")
+      "\\.java")
 
       crawler.onSourceParsingCompleteDelegates+=onParsingCompleted
       crawler.onCrawlingCompleteDelegates += onRepositoryCrawlingComplete

@@ -21,9 +21,9 @@ import net.htmlparser.jericho.MicrosoftConditionalCommentTagTypes
 import net.htmlparser.jericho.PHPTagTypes
 import net.htmlparser.jericho.Source
 import collection.mutable.ListBuffer
-import scala.ch.usi.inf.genesis.model.core.famix.BugHistoryTransitionEntity
-import ch.usi.inf.genesis.model.core.famix.{Entity, BTDeveloperEntity, BugEntity}
 import ch.usi.inf.genesis.model.core.StringValue
+import ch.usi.inf.genesis.model.core.famix._
+import scala.ch.usi.inf.genesis.model.core.famix.{BugHistoryTransitionEntityProperty, BugHistoryTransitionEntity}
 
 object BugzillaParser {
 
@@ -55,11 +55,11 @@ object BugzillaParser {
             if (rowSpanValue <= 0) {
               lastWho = children.get(0).getContent.toString.replaceAll("[\\s]*", "")
               lastWhen = children.get(1).getContent.toString.replaceAll("[\\s]*", "")
-              transition.addProperty("who",new StringValue(lastWho))
-              transition.addProperty("when",new StringValue(lastWhen))
-              transition.addProperty("what",new StringValue(children.get(2).getContent.toString.replaceAll("[\\s]*", "")))
-              transition.addProperty("added",new StringValue(children.get(4).getContent.toString.replaceAll("[\\s]*", "")))
-              transition.addProperty("removed",new StringValue(children.get(3).getContent.toString.replaceAll("[\\s]*", "")))
+              transition.addProperty(BugHistoryTransitionEntityProperty.WHO,new StringValue(lastWho))
+              transition.addProperty(BugHistoryTransitionEntityProperty.WHEN,new StringValue(lastWhen))
+              transition.addProperty(BugHistoryTransitionEntityProperty.WHAT,new StringValue(children.get(2).getContent.toString.replaceAll("[\\s]*", "")))
+              transition.addProperty(BugHistoryTransitionEntityProperty.ADDED,new StringValue(children.get(4).getContent.toString.replaceAll("[\\s]*", "")))
+              transition.addProperty(BugHistoryTransitionEntityProperty.REMOVED,new StringValue(children.get(3).getContent.toString.replaceAll("[\\s]*", "")))
 
               history += transition
 
@@ -67,11 +67,11 @@ object BugzillaParser {
                 rowSpanValue = localRowSpanValue - 1
             }
             else if(children.get(0).getName != "th"){
-              transition.addProperty("who",new StringValue(lastWho))
-              transition.addProperty("when",new StringValue(lastWhen))
-              transition.addProperty("what",new StringValue(children.get(0).getContent.toString.replaceAll("[\\s]*", "")))
-              transition.addProperty("added",new StringValue(children.get(2).getContent.toString.replaceAll("[\\s]*", "")))
-              transition.addProperty("removed",new StringValue(children.get(1).getContent.toString.replaceAll("[\\s]*", "")))
+              transition.addProperty(BugHistoryTransitionEntityProperty.WHO,new StringValue(lastWho))
+              transition.addProperty(BugHistoryTransitionEntityProperty.WHEN,new StringValue(lastWhen))
+              transition.addProperty(BugHistoryTransitionEntityProperty.WHAT,new StringValue(children.get(0).getContent.toString.replaceAll("[\\s]*", "")))
+              transition.addProperty(BugHistoryTransitionEntityProperty.ADDED,new StringValue(children.get(2).getContent.toString.replaceAll("[\\s]*", "")))
+              transition.addProperty(BugHistoryTransitionEntityProperty.REMOVED,new StringValue(children.get(1).getContent.toString.replaceAll("[\\s]*", "")))
 
               history += transition
               rowSpanValue -= 1
@@ -126,79 +126,79 @@ object BugzillaParser {
           }
           else if ((element.getName == new QName("bug_id")) && bugFound) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("id", new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.ID, new StringValue(el.asCharacters.getData))
           }
           else if (element.getName == new QName("creation_ts")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("creationDate", new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.CREATION_DATE, new StringValue(el.asCharacters.getData))
           }
 //          levelDepth = 3 ==> <bugzilla><bug>...<delta_ts>
 //                                lv.1   lv.2     lv.3
           else if ((element.getName == new QName("delta_ts")) && depthLevel == 3) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("updateDate", new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.UPDATE_DATE, new StringValue(el.asCharacters.getData))
           }
           else if (element.getName == new QName("short_desc")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("summary", new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.SUMMARY, new StringValue(el.asCharacters.getData))
           }          
           else if (element.getName == new QName("bug_status")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("status", new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.STATUS, new StringValue(el.asCharacters.getData))
           }
           else if (element.getName == new QName("resolution")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("resolution", new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.RESOLUTION, new StringValue(el.asCharacters.getData))
           }
           else if (element.getName == new QName("priority")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("priority", new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.PRIORITY, new StringValue(el.asCharacters.getData))
           }
           else if (element.getName == new QName("bug_severity")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("severity", new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.SEVERITY, new StringValue(el.asCharacters.getData))
           }
           else if (element.getName == new QName("reporter")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
             val reporter = new BTDeveloperEntity
             val displayName: Attribute = element.getAttributeByName(new QName("name"))
-            reporter.addProperty("displayName", new StringValue(if (displayName == null) "" else displayName.getValue))
-            reporter.addProperty("name", new StringValue(el.asCharacters.getData))
-            bug.addProperty("reporter", reporter)
+            reporter.addProperty(BTDeveloperEntityProperty.DISPLAY_NAME, new StringValue(if (displayName == null) "" else displayName.getValue))
+            reporter.addProperty(BTDeveloperEntityProperty.NAME, new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.REPORTER, reporter)
           }
           else if (element.getName == new QName("assigned_to")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
             val assignee = new BTDeveloperEntity
             val displayName: Attribute = element.getAttributeByName(new QName("name"))
-            assignee.addProperty("displayName", new StringValue(if (displayName == null) "" else displayName.getValue))
-            assignee.addProperty("name", new StringValue(el.asCharacters.getData))
-            bug.addProperty("assignee", assignee)
+            assignee.addProperty(BTDeveloperEntityProperty.DISPLAY_NAME, new StringValue(if (displayName == null) "" else displayName.getValue))
+            assignee.addProperty(BTDeveloperEntityProperty.NAME, new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.ASSIGNEE, assignee)
           }
           else if (element.getName == new QName("cc")) {
             val el: XMLEvent = filteredEventReader.next.asInstanceOf[XMLEvent]
             val cc = new BTDeveloperEntity
-            cc.addProperty("name", new StringValue(el.asCharacters.getData))
-            bug.addProperty("cc",cc)
+            cc.addProperty(BTDeveloperEntityProperty.NAME, new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.CC,cc)
           }
           else if (element.getName == new QName("product")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("project",new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.PROJECT,new StringValue(el.asCharacters.getData))
           }
           else if (element.getName == new QName("component")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("components",new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.COMPONENTS,new StringValue(el.asCharacters.getData))
           }
           else if (element.getName == new QName("version")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("versions",new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.VERSIONS,new StringValue(el.asCharacters.getData))
           }
           else if (element.getName == new QName("rep_platform")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("platform",new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.PLATFORM,new StringValue(el.asCharacters.getData))
           }
           else if (element.getName == new QName("op_sys")) {
             val el = filteredEventReader.next.asInstanceOf[XMLEvent]
-            bug.addProperty("os",new StringValue(el.asCharacters.getData))
+            bug.addProperty(BugEntityProperty.OS,new StringValue(el.asCharacters.getData))
           }
         }
 

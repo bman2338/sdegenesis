@@ -10,7 +10,7 @@ class InFamixWrapper(infamixPath : String, lang : String) extends ExternalParser
   def execute(sourceFilePath: String, outputFile: String, synchronous: Boolean): File = {
                   //script usage: <infamix_path> <infamix_lang> <project_path> <mse_path>"
     val cmd = "./" +bashScriptPath+" "+infamixPath+" "+lang + " " + sourceFilePath + " " + outputFile
-    val p: Process = Runtime.getRuntime.exec(cmd)
+    //val p: Process = Runtime.getRuntime.exec(cmd)
 
 //    var stderr: InputStream = p.getInputStream
 //    var isr: InputStreamReader = new InputStreamReader(stderr)
@@ -24,7 +24,7 @@ class InFamixWrapper(infamixPath : String, lang : String) extends ExternalParser
 //    }
 
     try {
-      p.waitFor()
+     // p.waitFor()
     }
     catch {
       case e: InterruptedException => {
