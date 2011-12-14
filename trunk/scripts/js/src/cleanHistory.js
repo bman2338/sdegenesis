@@ -29,7 +29,8 @@
          var iter = [ "deletedFiles", "addedFiles", "modifiedFiles" ];
 			for(var it in iter) {
 				var fileOp = entry[iter[it]];
-				cleanFileOp(fileOp);
+                if(fileOp)
+                    cleanFileOp(fileOp);
 			}    
         return entry;
     }
