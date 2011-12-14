@@ -161,7 +161,7 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
 
   def saveRepositoryHistory(repoHistory: ListBuffer[RevisionEntity], projectName: String) {
 
-    val identifier = projectName + "_history"
+    val identifier = projectName + "_history_" + repoHistory.last.getRevisionNumber()
     var revisionDb: MongoCollection = MongoConnection(host, port)(dbName)(identifier)
     val history = MongoDBObject.newBuilder
 

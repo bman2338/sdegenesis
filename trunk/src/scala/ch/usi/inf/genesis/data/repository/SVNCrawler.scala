@@ -100,11 +100,11 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
           doUpdate(next)
 
           //Add addedFiles for revision with lines ownership
-          getBlameInfo(next, addedFiles) foreach ((f) => revisionEntity.addProperty(RevisionEntityProperty.ADDED_FILES, f))
+          //getBlameInfo(next, addedFiles) foreach ((f) => revisionEntity.addProperty(RevisionEntityProperty.ADDED_FILES, f))
           //Add addedFiles for revision with lines ownership
-          getBlameInfo(next, modifiedFiles) foreach ((f) => revisionEntity.addProperty(RevisionEntityProperty.MODIFIED_FILES, f))
+          //getBlameInfo(next, modifiedFiles) foreach ((f) => revisionEntity.addProperty(RevisionEntityProperty.MODIFIED_FILES, f))
 
-          revisionEntity.addProperty(RevisionEntityProperty.HAS_MSE, new BooleanValue(true))
+            revisionEntity.addProperty(RevisionEntityProperty.HAS_MSE, new BooleanValue(true))
 
           //Generate MSE File for that revision.
           //doSnapshot(revisionEntity, next)
@@ -134,9 +134,14 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
 
       current += 1
       next = current + 1
+      if (history.length >= 100) {
+        notifyOnCrawlingComplete(history)
+        history.clear()
+      }
     }
 
-    notifyOnCrawlingComplete(history)
+    if (history.length > 0)
+      notifyOnCrawlingComplete(history)
 
   }
 
