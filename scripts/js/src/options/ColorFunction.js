@@ -1,7 +1,8 @@
+var convert = function (color) {
+	return d3.rgb(255*color[0],255*color[1],255*color[2]);
+}
+
 function typeColor (graph) {
-	var convert = function (color) {
-		return d3.rgb(255*color[0],255*color[1],255*color[2]);
-	}
 	var colors = {
 		"Method": function(node) { return convert([0.2,0.8,0.2]); },
 		"Class": packageColor(graph),
@@ -54,4 +55,28 @@ function packageColor (graph) {
 				return d3.rgb(255*color[0],255*color[1],255*color[2]);
 		},
 	};
+}
+
+function visibilityColor (graph) {
+	var colors = {
+		"private": convert([0.8,0.2,0.2]),
+		"public": convert([0.2,0.8,0.2]),
+		"protected": convert([0.8,0.8,0.1]),
+		"package": convert([0.8,0.1,0.8]),
+		"*": convert([0.6,0.6,0.6]),
+	}
+	return {
+		name: "Color with respect to Visibility",
+		evalFun: function (node) {
+			if (node.properties.isPublic)
+				return colors["public"];
+			if (node.properties.isPrivate)
+				return colors["private"];
+			if (node.properties.isProtected)
+				return colors["protected"];
+			if (node.properties.isPackage)
+				return colors["package"];
+			return colors["*"];
+		}
+	}
 }

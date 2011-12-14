@@ -29,8 +29,9 @@
 	<script type="text/javascript" src="Visualization.js"></script>
 	<script type="text/javascript" src="TimeLine.js"> </script>
 	<script type="text/javascript" src="options/SizeFunction.js"></script>
-        <script type="text/javascript" src="options/ColorFunction.js"></script>
-		<script type="text/javascript" src="AnalysisUtils.js"> </script>
+    <script type="text/javascript" src="options/ColorFunction.js"></script>
+	<script type="text/javascript" src="options/StrokeFunction.js"></script>
+	<script type="text/javascript" src="AnalysisUtils.js"> </script>
 	<script type="text/javascript" src="Analysis.js"> </script>
 	<script type="text/javascript" src="cleanHistory.js"></script>
 	<script type="text/javascript" src="calendar/history.js"></script>
@@ -116,13 +117,19 @@ overflow:hidden;
 		var listOfAnalysis = analysisRegister.getEntries(["Revision"]);
 		var analysis = listOfAnalysis[0];
 		
-		var viss = register.getVisualizations([analysis]);
 		
-		var vis = viss[3];
+		var vis = analysis.instantiateVisualization(0);
+		
 		vis.initialize(cleanHistory(history));
 		var opts = getOptions(analysis,vis);
 		opts = setUnaryOptionsAndGet(vis,opts);
-		vis.visualize(vis.source,"#chart");
+		
+		var obj = {
+			types: ["Revision"],
+			nodes: [vis.source],
+		};
+		
+		vis.visualize(obj,"#chart");
 	}
 
 	function testRegister() {
@@ -153,71 +160,12 @@ overflow:hidden;
 		vis.addElementOption("nodes","sizeFunction",childrenSize(graph));
 		vis.addOption("augmentationFun",augmentationHandler);
 
-		vis.visualize(roots.slice(0,4),"#chart",toSingleRootGraph);
-		
+		var obj = {
+			types: ["Class"],
+			nodes:roots.slice(0,4),
+		}
 
-		/*var analysis = inheritanceHierarchyAnalysis
-
-		var viss = register.getVisualizations([subclasses]);
-
-
-		if (viss.length == 0)
-			return;
-
-			var vis = viss[0];
-			var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
-
-			vis.initializeFromGraph(graph);
-			visualizeOptions(analysis,vis);
-
-
-			var augmentationHandler = function (node,type,resultType,result) {
-				switch (resultType) {
-					case "colorFunction":
-						node.style("fill",result);
-						break;
-					case "sizeFunction":
-						node.attr("r",result);
-						break;
-				}
-			}
-
-//			vis.elements["nodes"].options.colorFunction.value = typeColor(graph);
-			vis.elements["nodes"].options.sizeFunction.value = elementSize(graph);
-			vis.options["augmentationFun"] = augmentationHandler;
-			vis.options["name"] = function() { return "RegisterTest"; }
-			vis.options["filter"] = 
-			//filterNodesAndEdges("invokingMethods","Method");
-			filterNodes(classType,subclasses);
-
-			var roots = vis.candidates();
-
-			var index = 0;
-
-			for (var i = 0; i < roots.length; ++i) {
-				if (roots[i].name == "EdgeData") {
-					index = i;
-				}
-			}
-
-			var draw = function(index) { 
-				vis.visualize(roots[index],"#chart",function (root,graph) { d3.select("#monitor").html(root.name) });
-			};
-
-			var millis = 1000;
-
-			function setIt () {
-				setTimeout(function() { 
-					draw(index); index = index + 1; 
-					if (index >= roots.length)
-					index = 0;
-					setIt(); 
-				}
-				, millis);
-			}
-
-			//		setIt();
-			draw(index);*/
+		vis.visualize(obj,"#chart",toSingleRootGraph);
 	}
 		
 	
@@ -265,24 +213,6 @@ overflow:hidden;
 		
 		//forceDirectedGraph(subGraph.nodes, subGraph.edges);
 
-		var augmentationHandler = {
-			value: function (node,type,resultType,result) {
-			switch (resultType) {
-				case "colorFunction":
-					node.style("fill",result);
-					break;
-				case "sizeFunction":
-					node.attr("r",result);
-					break;
-				case "mouseover":
-					node.on("mouseover",result);
-					break;
-				case "stroke":
-				//	node.style(resultType,result);
-					break;
-			}
-		}
-		}
 
 			var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
 
@@ -295,10 +225,6 @@ overflow:hidden;
 
 		vis.elements["nodes"].options.colorFunction.value = typeColor(graph);
 		vis.elements["nodes"].options.sizeFunction.value = elementSize(graph);
-		vis.addElementOption("nodes","stroke", {
-			evalFun: function(d,i) { return d3.rgb(0,0,0); }
-		});
-		vis.options["augmentationFun"] = augmentationHandler;
 		vis.addElementOption("nodes","mouseover",{
 			evalFun: function (d,i) {
 				d3.select("#monitor").html(createInfo(d)) 

@@ -73,3 +73,17 @@ function childrenSize (graph) {
 		name: "Number Of Total Subclasses",
 	}
 }
+
+// Methods
+
+function invocationsSize (graph) {
+	return {
+		evalFun: function (node) {
+			var result = graph.getAdjList(graph.getRelation("invokingMethods"),node.uniqueId);
+			if (result)
+				return Math.min(30,Math.max(result.to.length,3));
+			return 2;
+		},
+		name: "Number of Performed Invocations"
+	}
+}

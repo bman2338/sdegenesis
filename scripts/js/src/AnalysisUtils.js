@@ -40,7 +40,8 @@ function filterGraph (relations) {
 				oneToOneEdges : true,
 				collapse : true,
 				selectRelation: function (relName) { return relations.indexOf(relName) != -1; },
-				};	var selection = obj.source.getSubgraph(opt);
+				};	
+				var selection = obj.source.getSubgraph(opt);
 				var subGraph = toD3Graph(selection.nodes,selection.edges);
 				return {
 					types: element.types,
