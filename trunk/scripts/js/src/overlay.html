@@ -1,0 +1,100 @@
+<html>
+<head>
+	<link rel="stylesheet" href="jquery-ui-1.8.16.custom.css" type="text/css" media="all">
+	<link rel="stylesheet" href="toolbar.css" type="text/css" media="all">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="http://jquery-ui.googlecode.com/svn/tags/latest/external/jquery.bgiframe-2.1.2.js" type="text/javascript"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/i18n/jquery-ui-i18n.min.js" type="text/javascript"></script>
+	
+<style>
+	.demo { width: 500px; }
+	#show, #hide { padding: .5em 1em; text-decoration: none; }
+	#overlay { width: 500px; /*height: 300px; */ padding: 0.4em; position: absolute; left:200px; top:100px }
+	#overlay h3 { margin: 0; padding: 0.4em; text-align: center; }
+</style>
+	<script>
+	$(function() {
+		
+		function showDiv() {
+			var options = {};
+			$( "#overlay" ).show( 'blind', options, 500);
+		};
+		
+		function hideDiv() {
+			var options = {};
+			$( "#overlay" ).hide( 'blind', options, 500);
+		};
+
+		function callback() {
+			setTimeout(function() {
+				$( "#effect:visible" ).removeAttr( "style" ).fadeOut();
+			}, 1000 );
+		};
+
+		$( "#show" ).click(function() {
+			showDiv();
+			return false;
+		});
+		
+		$( "#hide" ).click(function() {
+			hideDiv();
+			return false;
+		});
+
+		$( "#overlay" ).hide();
+	});
+	</script>
+
+</head>
+<body>
+
+	<!-- // Una cosa che si overlaya e puoi selezionare la roba
+	// 
+	// Dovrebbe essere divisa cosi
+	//   * Top/left: tipi di nodi che abbiamo
+	//   * Top/right: relations (che comprendono anche cose tipo le Size)
+	//     - Cose "hardcodate da qualche parte" con callback allegata
+	//   * Un field di input per fare una query
+	//   * Bottom/left: i risultati sui nodi che matchano quello che hai cercato
+	//   * Bottom/right: le analisi -->
+
+
+<div class="demo">
+	
+	<div class="toggler">
+		
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		Etiam libero neque, luctus a, eleifend nec, semper at, lorem. Sed pede. Nulla lorem metus, adipiscing ut, luctus sed, hendrerit vitae, mi.
+		
+	</div>
+		
+	<div id="overlay" class="ui-widget-content ui-corner-all">
+		<h3 class="ui-widget-header ui-corner-all">Nodes</h3>
+		<p> Tipi di nodi che abbiamo </p>
+		<h3 class="ui-widget-header ui-corner-all">Relations</h3>
+		<p> Relations (che comprendono anche cose tipo le Size) </p>
+		<h3 class="ui-widget-header ui-corner-all">Query</h3>
+		<input type="text"style="width: 100%" />
+		<h3 class="ui-widget-header ui-corner-all">Results</h3>
+		<p> I risultati sui nodi che matchano quello che hai cercato </p>
+		<h3 class="ui-widget-header ui-corner-all">Analysis</h3>
+		<p> Le analysis </p>
+	</div>
+
+<a href="#" id="show" class="ui-state-default ui-corner-all">Show</a>
+<a href="#" id="hide" class="ui-state-default ui-corner-all">Hide</a>
+
+</div><!-- End demo -->
+</body>
+</html>
