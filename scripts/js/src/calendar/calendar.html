@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> Calendar view example </title>
+	<script type="text/javascript" src="../../lib/mbostock/d3.js"></script>
+	<script type="text/javascript" src="../../lib/mbostock/d3.time.js"></script>
+	<script type="text/javascript" src="../../lib/mbostock/lib/jquery/jquery.js"></script>
+	<script type="text/javascript" src="../../lib/mbostock/lib/jquery/jquery.min.js"></script>
+
+	<script type="text/javascript" src="calendar.js"></script>
+	<script type="text/javascript" src="history.js"></script>
+	<script type="text/javascript" src="../cleanHistory.js"></script>
+
+	<link type="text/css" rel="stylesheet" href="../../lib/mbostock/lib/colorbrewer/colorbrewer.css"/>
+	<link type="text/css" rel="stylesheet" href="calendar.css"/>
+</head>
+
+
+
+<body onload="javascript:plot();">
+
+
+	<div id="chart"></div>
+
+	<script type="text/javascript">
+ 	function plot() {
+	//	var target = {};
+		var hist =  cleanHistory(history);//, target);
+		var d3Hist = historyToD3Format(hist);
+		plotHistoryCalendar(d3Hist.dates, d3Hist.data);
+	}
+	
+	</script>
+
+
+
+
+	</body>
+	</html>
