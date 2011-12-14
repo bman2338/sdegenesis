@@ -1,0 +1,21 @@
+div#toolbar {
+	width: 300px;
+}
+
+div.ui-accordion-content.ui-helper-reset.ui-widget-content.ui-corner-bottom {
+	padding: 0px;
+}
+
+div.ui-accordion-content-active, div.ui-accordion {
+/*	height: 15px;*/
+}
+
+div.ui-accordion-content.ui-helper-reset.ui-widget-content.ui-corner-bottom li {
+	list-style: none;
+	font-size: 0.9em;
+}
+
+div.ui-accordion-content.ui-helper-reset.ui-widget-content.ui-corner-bottom ul {
+	padding-left: 15px;
+	padding-right: 15px;
+}
