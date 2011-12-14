@@ -21,15 +21,13 @@
 	<script type="text/javascript" src="edge_data.js"></script>
 	<script type="text/javascript" src="node_data.js"></script>
 	<script type="text/javascript" src="displayInfo.js"></script>
-	<script type="text/javascript" src="force.js"></script>
 	<script type="text/javascript" src="VisualizationRegister.js"></script>
 	<script type="text/javascript" src="Visualization.js"></script>
 	<script type="text/javascript" src="options/SizeFunction.js"></script>
     <script type="text/javascript" src="options/ColorFunction.js"></script>
 	<script type="text/javascript" src="Analysis.js"> </script>
-
-</head>
-<meta charset="utf-8">
+	<script type="text/javascript" src="Toolbar.js"> </script>
+	
 	<script type="text/javascript">
 	
 	$(function() {
@@ -57,57 +55,16 @@
 	register.addVisualization(TreeVisualization);
 	register.addVisualization(GraphVisualization);
 	register.addVisualization(SunburstVisualization);
-
-	function showVizFor(analysis) {
-		var visualizations = getVizFor(analysis);
-		if($(visualizations).length > 0) {
-			var newAccordion = '<h3><a href="#">Visualizations</a></h3><div><ul>';
-			$.each(visualizations,
-				function(index, viz) { 
-					newAccordion += '<li><a href="#" onClick="javascript:showOptsFor(\'' + viz + '\');">' + viz.name() + '</a></li>';
-				});	
-			updateAccordion(newAccordion + '</ul></li>');
-		} else {
-			alert('No visualizations for this analysis');
-		}
-	}
 	
-	function showOptsFor(viz) {
-		var options = getOptsFor(viz);
-		if($(options).length > 0) {
-			var newAccordion = '<h3><a href="#">Options</a></h3><div><ul>';
-			$.each(options,
-				function(index, option) { 
-					newAccordion += '<li>' + option + '</li>';
-				});	
-			updateAccordion(newAccordion + '</ul></li>');
-		} else {
-			alert('No options to visualize!');
-		}
-	}
-	
-	function updateAccordion(additionalToolbar) {
-		$('#toolbar').append(additionalToolbar).accordion('destroy').accordion();
-		$("#toolbar").accordion( "activate" , ++size)
-	}
-	
-	function getVizFor(analysis) {
-		currentAnalysis = analysis;
-		return register.getVisualizations([analysis]);
-	}
-	
-	function getOptsFor(viz) {
-		// if(currentAnalysis) {
-			var opts = getOptions(currentAnalysis, viz);
-			// alert(opts);
-		// } else {
-			// return []
-		// }
-	}	
 	</script>
 
-
 </head>
+
+<body>
+<!-- <script type="text/javascript">
+	new Toolbar('sticazzi', 'alcuno', ['cazzo']);
+</script> -->
+
 	<div id="toolbar">
 		<h3><a href="#">Analysis</a></h3>
 		<div>
@@ -120,13 +77,6 @@
 					list += '</ul>';
 					document.getElementById('analysis-list').innerHTML += list;
 				</script>
-				<!-- <li><a href="#" onClick="javascript:showVizFor('Inheritance Hierarchy');")>Inheritance Hierarchy</a></li>
-				<li><a href="#" onClick="javascript:showVizFor('Call Graph');")>Call Graph</a></li>
-				<li><a href="#" onClick="javascript:showVizFor('Revision Related Changes');")>Revision Related Changes</a></li>
-				<li><a href="#" onClick="javascript:showVizFor('Bug-Author Relationship');")>Bug-Author Relationship</a></li>
-				<li><a href="#" onClick="javascript:showVizFor('Entity-Author Relationship);")>Entity-Author Relationship</a></li>
-				<li><a href="#" onClick="javascript:showVizFor('Generic Graph');")>Generic Graph</a></li>	 -->
-				<!-- <li><a href="#" id="delete">Delete</a></li>				 -->
 			</ul>
 		</div>
 	</div>
@@ -141,4 +91,5 @@
 		});
 	</script>
 	
+</body>
 </html>
