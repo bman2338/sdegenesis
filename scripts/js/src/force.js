@@ -38,7 +38,7 @@ function forceDirectedGraph(nodes, edges,visModel,augmentationCallback) {
 	.style("fill", function(d) { return fill(d.group); })
 	.call(force.drag);
 
-`	if (augmentationCallback) {
+	if (augmentationCallback) {
 		node.call(visModel.augment("nodes",augmentationCallback));
 	}
 

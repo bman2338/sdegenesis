@@ -6,18 +6,20 @@ function getOptions(analysis,visualization) {
 		var elVis = visualization.elements[elId];
 		var elAn = analysis.elements[elId];
 		for (var anOpt in elAn.options) {
-			var opts = elAn.options[anOpt];
+			var opt = elAn.options[anOpt];
 			var visOpts = elVis.options[anOpt];
 			if (!visOpts)
 				elVis.options[anOpt] = {};
 			if (!options[elId])
 				options[elId] = {};
-			options[elId][anOpt] = [];
-			for (var i = 0; i < opts.length; ++i) {
-				var opt = opts[i];
-				options[elId][anOpt].push(opt(visualization.source));
-			}
+			options[elId][anOpt] = opt;
 		}
+	}
+	for (var optId in analysis.options) {
+		var opt = analysis.options[optId];
+		if (!options["#general"])
+			options["#general"] = {};
+		options["#general"][optId] = opt;
 	}
 	return options;
 }
@@ -28,10 +30,13 @@ function setUnaryOptionsAndGet (visualization,optionsArr) {
 		var element = optionsArr[elId];
 		for (var anOpt in element) {
 			var options = element[anOpt];
-			if (options.length == 0)
+			if (options.values.length == 0)
 				continue;
-			if (options.length == 1) {
-				visualization.elements[elId].options[anOpt].value = options[0];
+			if (options.values.length == 1) {
+				if (elId == "#general") 
+					visualization.addOption(anOpt,options.values[0].value);
+				else
+					visualization.elements[elId].options[anOpt].value = options.values[0](visualization.source);
 				continue;
 			}
 			if (!newOptions[elId])
@@ -42,6 +47,67 @@ function setUnaryOptionsAndGet (visualization,optionsArr) {
 	return newOptions;
 }
 
+
+function AnalysisRegister () {
+	var registry = {};
+	var obj = {};
+	
+	obj.addEntry = function (elementTypes,analysis) {
+		var types = elementTypes.slice().sort();
+		if (registry[types]) {
+			registry[types].push(analysis);
+		}
+		else {
+			registry[types] = [analysis];
+		}
+	}
+	obj.getEntries = function (elementTypes) {
+		var types = elementTypes.slice().sort();
+		if (registry[types])
+			return registry[types];
+		return [];
+	}
+	return obj;
+}
+
+
+var createAnalysis = function (name,filterFun) {
+	var obj = {};
+	obj.name = name;
+	obj.elements = {};
+	obj.options = {
+		filter: {
+			name: "Filter Function",
+			values: [filterFun],
+		}
+	};
+	return obj;
+}
+
+var classInheritance = function () {
+	var obj = createAnalysis("Class Inheritance",filterNodes("Class","superclassOf"));
+	obj.elements = {
+		nodes: {
+			options: {
+				sizeFunction: {
+					name: "Node Size Meaning",
+					values: [classSize,childrenSize],
+				},
+				colorFunction: {
+					name: "Node Color Meaning",
+					values: [typeColor],
+				}
+			}
+		},
+		edges: {
+			
+		}
+	}
+	return obj;
+}
+
+var analysisRegister = AnalysisRegister()
+analysisRegister.addEntry(["Class"],classInheritance());
 
 var inheritanceHierarchyAnalysis = {
 	name: "Inheritance Hierarchy",
