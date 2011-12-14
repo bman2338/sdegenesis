@@ -97,9 +97,6 @@ var classInheritance = function () {
 			name: "Filter Function",
 			values: [filterNodes("Class","superclassOf")],
 		},
-		allowsMultipleRoots: {
-			values: [true]
-		}
 	};
 	obj.elements = {
 		nodes: {
@@ -121,7 +118,7 @@ var classInheritance = function () {
 	obj.visualizations = [
 		{ name: "Inheritance Tree", visFactory: TreeVisualization },
 		{ name: "Inheritance Sunburst", visFactory: SunburstVisualization },
-		//{ name: "Force-Directed Inheritance Graph", visFactory: GraphVisualization }, 
+		{ name: "Force-Directed Inheritance Graph", visFactory: GraphVisualization, allowsMultipleRoots: false }, 
 	];
 	return obj;
 }
@@ -172,6 +169,7 @@ var calendarAugmentationFun = {
 
 var revisionHistoryAnalysis = function () {
 	var obj = createAnalysis("Revision History Analysis");
+	obj.allowsMultipleRoots = false;
 	obj.options = {
 		augmentationFun: {
 			name: "Augmentation Function for Calendar",
@@ -192,7 +190,29 @@ var revisionHistoryAnalysis = function () {
 			},
 		},
 	};
+	obj.visualizations = [
+	{name:"Calendar View", visFactory:CalendarVisualization}
+	]
 	return obj;
+}
+
+var callGraphAugmentation = {
+	value: function (node,type,resultType,result) {
+		switch (resultType) {
+			case "colorFunction":
+			node.style("fill",result);
+			break;
+		case "sizeFunction":
+			node.attr("r",result);
+			break;
+		case "mouseover":
+			node.on("mouseover",result);
+			break;
+		case "strokeFunction":
+			node.style("stroke",result);
+			break;
+		}
+	}
 }
 
 var methodCallGraph = function () {
@@ -200,11 +220,26 @@ var methodCallGraph = function () {
 	obj.options = {
 		parametrizationFun: {
 			values: [ filterGraph("invokingMethods") ],
+		},
+		augmentationFun: {
+			values: [callGraphAugmentation]
 		}
 	}
 	obj.elements = {
 		nodes: {
 			options: {
+				sizeFunction: {
+					name: "Size of the nodes",
+					values: [invocationsSize],
+				},
+				colorFunction: {
+					name: "Color of the nodes",
+					values: [visibilityColor],
+				},
+				strokeFunction: {
+					name: "Stroke of the nodes",
+					values: [finalStroke],
+				}
 			}
 		},
 		edges: {

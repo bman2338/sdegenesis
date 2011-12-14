@@ -237,19 +237,3 @@ var CalendarVisualization = function () {
 	};
 	return obj;
 }
-
-
-function filterNodes (element, relation, graph) {
-	var elementType = element;
-	var relationName = relation;
-	return function (graph) {                                                 
-		var c = [];
-		var nodes = graph.getNodesByType(elementType);
-
-		for(var n in nodes) {
-			var node = nodes[n];
-			c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
-		}
-		return c;
-	}
-}
