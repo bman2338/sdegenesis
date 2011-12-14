@@ -4,7 +4,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title> Genesis: Software Analytics Visualization Tool </title>
 
-	<script type="text/javascript" src="../lib/mbostock/d3.js"></script>
+    <script type="text/javascript" src="../lib/mbostock/d3.js"></script>
+    <script type="text/javascript" src="../lib/mbostock/d3.time.js"></script>
 	<script type="text/javascript" src="../lib/mbostock/d3.layout.js"></script>
 	<script type="text/javascript" src="../lib/mbostock/lib/jquery/jquery.js"></script>
 	<script type="text/javascript" src="../lib/mbostock/lib/jquery/jquery.min.js"></script>
@@ -31,7 +32,11 @@
         <script type="text/javascript" src="options/ColorFunction.js"></script>
 		<script type="text/javascript" src="AnalysisUtils.js"> </script>
 	<script type="text/javascript" src="Analysis.js"> </script>
+	<script type="text/javascript" src="cleanHistory.js"></script>
+	<script type="text/javascript" src="calendar/history.js"></script>
+	<script type="text/javascript" src="calendar/calendar.js"></script>
 	
+	<link type="text/css" rel="stylesheet" href="calendar/calendar.css"/>
 <style type="text/css">
 #tt {
  position:absolute;
@@ -70,6 +75,11 @@ overflow:hidden;
 	var namespaces = "namespaces"; packageType = "Namespace";
 
 	var register = new VisualizationsRegister();
+	register.addVisualization(TreeVisualization);
+	register.addVisualization(GraphVisualization);
+	register.addVisualization(SunburstVisualization);
+	register.addVisualization(CalendarVisualization);
+
 
 	function visualizeOptions (analysis,visualization) {
 		var div = document.getElementById("optionsDiv");
@@ -97,44 +107,53 @@ overflow:hidden;
 		html += "</ul>";
 		div.innerHTML = html;
 	}
-
-	function testRegister() {
-		var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
-		
-		register.addVisualization(TreeVisualization);
-		register.addVisualization(GraphVisualization);
-		register.addVisualization(SunburstVisualization);
-
-		var listOfAnalysis = analysisRegister.getEntries(["Class"]);
+	
+	function toSingleRootGraph (elements,vis) {
+		return { name: vis.name(), properties: { name: vis.name(), ElementType:elements[0].properties.ElementType }, children: elements };
+	}
+	
+	function testCalendar () {
+		var listOfAnalysis = analysisRegister.getEntries(["Revision"]);
 		var analysis = listOfAnalysis[0];
 		
 		var viss = register.getVisualizations([analysis]);
 		
-		var vis = viss[0];
+		var vis = viss[3];
+		vis.initialize(cleanHistory(history));
+		var opts = getOptions(analysis,vis);
+		opts = setUnaryOptionsAndGet(vis,opts);
+		vis.visualize(vis.source,"#chart");
+	}
+
+	function testRegister() {
+		var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
+
+		var listOfAnalysis = analysisRegister.getEntries(["Class"]);
+		var analysis = listOfAnalysis[0];
+						
+		var vis = analysis.instantiateVisualization(1);
 		
-		vis.initializeFromGraph(graph);
+		vis.initialize(graph);
 		
 		visualizeOptions(analysis,vis);
 		
 		var roots = vis.candidates();
 		
-		var root = roots[0];
-
 		var augmentationHandler = function (node,type,resultType,result) {
 			switch (resultType) {
 				case "colorFunction":
-				node.style("fill",result);
-				break;
+					node.style("fill",result);
+					break;
 				case "sizeFunction":
-				node.attr("r",result);
-				break;
+					node.attr("r",result);
+					break;
 			}
 		}
 
-		vis.elements["nodes"].options.sizeFunction.value = elementSize(graph);
+		vis.addElementOption("nodes","sizeFunction",childrenSize(graph));
 		vis.addOption("augmentationFun",augmentationHandler);
 
-		vis.visualize(roots[0],"#chart",function (root,graph) { d3.select("#monitor").html(root.name) });
+		vis.visualize(roots.slice(0,4),"#chart",toSingleRootGraph);
 		
 
 		/*var analysis = inheritanceHierarchyAnalysis
@@ -246,11 +265,8 @@ overflow:hidden;
 		
 		//forceDirectedGraph(subGraph.nodes, subGraph.edges);
 
-		var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
-		var vis = GraphVisualization();
-		vis.initializeFromGraph(graph);
-
-		var augmentationHandler = function (node,type,resultType,result) {
+		var augmentationHandler = {
+			value: function (node,type,resultType,result) {
 			switch (resultType) {
 				case "colorFunction":
 					node.style("fill",result);
@@ -266,8 +282,16 @@ overflow:hidden;
 					break;
 			}
 		}
+		}
 
-		
+			var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
+
+			var listOfAnalysis = analysisRegister.getEntries(["Class"]);
+			var analysis = listOfAnalysis[0];
+
+			var vis = analysis.instantiateVisualization(2);
+
+			vis.initialize(graph);
 
 		vis.elements["nodes"].options.colorFunction.value = typeColor(graph);
 		vis.elements["nodes"].options.sizeFunction.value = elementSize(graph);
@@ -282,9 +306,9 @@ overflow:hidden;
 			name: "On Click Handler",
 		});
 
-		vis.options["filter"] = function (graph) {
+		vis.options["filter"] = { value: function (graph) {
 			var centers = graph.getNodeSelection(function(node) {
-				return node.properties.name == nodeName && node.properties.ElementType == nodeType;
+				return (node.properties.name == nodeName || node.properties.name == "EventHandler") && node.properties.ElementType == nodeType;
 			});
 
 
@@ -300,10 +324,11 @@ overflow:hidden;
 			var subGraph = toD3Graph(selection.nodes, selection.edges);
 			return [subGraph];
 		}
+	}
 
 		var roots = vis.candidates();
 
-		vis.visualize(roots[0],"#chart");
+		vis.visualize(roots,"#chart");
 	}
 
 
@@ -323,7 +348,7 @@ overflow:hidden;
 		<li><a href="javascript:tree()"> Tree </li>
 		<li><a href="javascript:graph()"> Graph </a> </li>
 		<li><a href="javascript:hist()"> Histogram </a> </li> -->
-		<li><a href="javascript:javascript:sunburst(getTreeFromRelation(subclasses, classType));"> Inheritance Sunburst <a> </li>
+		<li><a href="javascript:javascript:testCalendar()"> Calendar <a> </li>
 			<li><a href="javascript:javascript:sunburst(getTreeFromRelation(methods, classType));"> Invocations Sunburst <a> </li>
 				<li> <a href="javascript:roots(getTreeFromRelation(subclasses, classType));"> Inheritance Tree</a> </li>
 				<li> <a href="javascript:testRegister();"> Inheritance Tree With Register</a> </li>
