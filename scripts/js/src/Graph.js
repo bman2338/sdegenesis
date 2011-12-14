@@ -337,6 +337,104 @@ genesis.Graph.create = function(nodes, edges) {
 			}
 			return nodes;
 		},
+        
+        
+        nodeArrayToNodeSet : function(nodeArray) {
+            var nodeSet = {};
+            
+            for(var n in nodeArray) {
+                var node = nodeArray[n]; 
+                nodeSet[node.uniqueId] = node;
+            }
+            
+            return nodeSet;
+            
+        },
+        
+        
+        getAdjListsSelection : function(node, opt) {
+            var adjLists = [];
+            for(var r in this.edges) {
+                if(opt.expand(node, r)) {
+                    var adjList = this.getAdjList(this.edges[r], node.uniqueId);
+                    if(adjList) {
+                        adjLists.push(adjList);
+                    }
+                }
+            }
+            
+            return adjLists;
+        },
+        
+        
+        
+        getAdjacentNodesSelection : function(adjLists, opt) {
+            var selection = {};
+            for(var adj in adjLists) {
+                var adjList = adjLists[adj];
+                var nodeList = this.getNodeList(adjList.to);
+                for(var n in nodeList) {
+                    var node = nodeList[n];
+                    if(opt.selectNode(node)) {
+                        selection[node.uniqueId] = node;
+                    }
+                }
+            }
+            return selection;
+        },
+        
+        
+        getNeighborhoodSelection : function(node, opt) {
+            return this.getAdjacentNodesSelection(this.getAdjListsSelection(node, opt), opt);
+        },
+        
+        getMixedGraph : function(opt) {
+            if(!opt.expand) {
+                throw new Exception("opt.expand(node, relationName) -> boolean not set");
+            }
+            
+            if(!opt.selectNode) {
+                opt.selectNode = function(node) { return true; };
+                
+            }
+            
+            if(!opt.selectEdge) {
+                opt.selectEdge = function(edge) { return true; };
+            }
+            
+            
+            var nodeQueue = null;
+            if(opt.centers) {
+                nodeQueue = opt.centers;
+            } else {
+                nodeQueue  = this.getNodeSelection(opt.selectNode);
+            }
+            
+            return this.getMixedGraphAux(nodeQueue, opt);
+        },  
+        
+        
+        getMixedGraphAux : function(nodeQueue, opt) {
+            var nodeSet = {};
+            var edges = [];
+            while(nodeQueue.length) {
+                var node = nodeQueue.pop();
+                if(nodeSet[node.uniqueId])
+                    continue;
+                
+                nodeSet[node.uniqueId] = node;
+                var neighbors = this.getNeighborhoodSelection(node, opt);
+                for(var n in neighbors) {
+                    var neigh = neighbors[n];
+                    if(opt.selectEdge(node, neigh)) {
+                        edges.push({ "from" : node.uniqueId, "to" : neigh.uniqueId });
+                        nodeQueue.push(neigh);
+                    }
+                }
+            }
+            
+            return { "nodes" : objToArray(nodeSet), "edges" : edges };
+        },
 
 
 		/**
