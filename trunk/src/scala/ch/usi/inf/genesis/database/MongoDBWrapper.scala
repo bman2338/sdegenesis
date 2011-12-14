@@ -8,7 +8,9 @@ import com.mongodb.DBCollection
 import com.mongodb.casbah.commons.MongoDBObject
 import collection.mutable.ListBuffer
 import ch.usi.inf.genesis.model.core.Value
-import famix.{FileEntityProperty, FileEntity, RevisionEntityProperty, RevisionEntity}
+import ch.usi.inf.genesis.model.navigation.BugTrackerInfoMutator
+import famix._
+import scala.ch.usi.inf.genesis.model.core.famix.BugHistoryTransitionEntity
 
 /**
  * @author Remo Lemma
@@ -118,10 +120,10 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     updateRevisionRegistry(projectName, revision);
 
     var identifier = projectName + "_rev" + revision
-    val conn = MongoConnection(host,port)
+    val conn = MongoConnection(host, port)
     var db: MongoCollection = conn(dbName)(identifier + "_nodes")
 
-    if(!db.isEmpty)  {
+    if (!db.isEmpty) {
       db.dropCollection();
     }
 
@@ -164,7 +166,7 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
   def saveRepositoryHistory(repoHistory: ListBuffer[RevisionEntity], projectName: String) {
 
     val identifier = projectName + "_history_" + repoHistory.last.getRevisionNumber()
-    val conn = MongoConnection(host,port)
+    val conn = MongoConnection(host, port)
     var revisionDb: MongoCollection = conn(dbName)(identifier)
     val history = MongoDBObject.newBuilder
 
@@ -214,4 +216,78 @@ class MongoDBWrapper(val host: String, val port: Int, val dbName: String) extend
     revisionDb += history.result
     conn.close
   }
+
+
+  def saveBugTrackerInfo(bugList: ListBuffer[BugEntity], projectName: String) {
+    val identifier = projectName + "_bugtracker"
+    val conn = MongoConnection(host, port)
+    var bugsDb: MongoCollection = conn(dbName)(identifier)
+    val btCollection = MongoDBObject.newBuilder
+
+    println("Saving Bugtracker Information...")
+
+    bugList foreach (
+      (b) => {
+        val id = b.getBugId()
+
+        val bugObj = MongoDBObject.newBuilder
+        b.properties foreach ((p) => {
+          val (name, entities) = p
+
+          if (!name.equals(BugEntityProperty.ID)) {
+            if (entities.length == 1 && ModelType.isValue(entities.head))
+                bugObj += name -> getValue(entities.head)
+
+            else if(entities.length > 1 && ModelType.isValue(entities.head)){  //Multiple values (e.g. Components)
+              val elements = MongoDBList.newBuilder
+              entities foreach((e) => {
+                elements += e
+              })
+              bugObj += name -> elements.result()
+            }
+
+
+            else if (entities.length > 1 && !ModelType.isValue(entities.head)) {
+              val transitions = MongoDBList.newBuilder
+              entities foreach ((e) => {
+
+                e match {
+                  case BugHistoryTransitionEntity() =>
+                    val t = MongoDBObject.newBuilder
+                    //History
+                    e.properties foreach ((p) => {
+                      val (hName, hEntities) = p
+                      if (hEntities.length == 1 && ModelType.isValue(hEntities.head)) {
+                        t += hName -> getValue(hEntities.head)
+                      }
+                    })
+                    transitions += t.result()
+                  case _ =>
+                }
+              })
+
+              bugObj += name -> transitions.result()
+            }
+          }
+
+        })
+
+        btCollection += id -> bugObj.result()
+      })
+
+    bugsDb += btCollection.result()
+    conn.close()
+  }
+
+
+  private def getValue(obj: ModelObject): Any = {
+    obj match {
+      case (v: BooleanValue) => v.value;
+      case (v: StringValue) => v.value;
+      case (v: IntValue) => v.value;
+      case (v: DoubleValue) => v.value;
+    }
+  }
+
+
 }

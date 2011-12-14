@@ -2,9 +2,9 @@ package scala.ch.usi.inf.genesis.data.bugtracker
 
 import java.net.{URLEncoder, URL}
 import collection.mutable.ListBuffer
-import ch.usi.inf.genesis.model.core.famix.BugEntity
 import java.io.{IOException, InputStreamReader, BufferedReader}
 import ch.usi.inf.genesis.model.core.StringValue
+import ch.usi.inf.genesis.model.core.famix.{BugEntityProperty, BugEntity}
 
 
 /**
@@ -87,11 +87,11 @@ class BugzillaCrawler(url : String) extends BugTrackerCrawler{
 
 //        Retrieve Bugs' History
         bugs foreach{ (bug : BugEntity) =>
-            bug.getProperty("id") match{
+            bug.getProperty(BugEntityProperty.ID) match{
             case Some(sv : StringValue) =>
               val history = BugzillaParser.parseHistory(new URL(bugzillaURL.toString+"show_activity.cgi?id="+sv.value))
               history foreach(
-                (transition) => bug.addProperty("history", transition)
+                (transition) => bug.addProperty(BugEntityProperty.HISTORY, transition)
               )
             case _ => println("NONE")
           }

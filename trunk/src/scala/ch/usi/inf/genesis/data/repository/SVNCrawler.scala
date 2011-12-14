@@ -73,14 +73,15 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
 
     //Check Diffs
     var current = firstRev
-    var next = current + 1
+    var next = current + step
 
     while (next <= lastRev) {
 
       //Get Diff Status Logs
       val (addedFiles, modifiedFiles, deletedFiles) = doDiffStatus(current, next)
 
-      if (!modifiedFiles.isEmpty || !addedFiles.isEmpty || !deletedFiles.isEmpty ||(next - firstRev) % step == 0) {
+      if (!modifiedFiles.isEmpty || !addedFiles.isEmpty || !deletedFiles.isEmpty || next % step == 0) {
+        //(next - firstRev) % step == 0) {
         val revisionEntity = new RevisionEntity
         val (author, date) = getRevisionInfo(next)
         revisionEntity.addProperty(RevisionEntityProperty.NUMBER, new IntValue(next))
@@ -105,10 +106,10 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
           //Add addedFiles for revision with lines ownership
           //getBlameInfo(next, modifiedFiles) foreach ((f) => revisionEntity.addProperty(RevisionEntityProperty.MODIFIED_FILES, f))
 
-            revisionEntity.addProperty(RevisionEntityProperty.HAS_MSE, new BooleanValue(true))
+          revisionEntity.addProperty(RevisionEntityProperty.HAS_MSE, new BooleanValue(true))
 
           //Generate MSE File for that revision.
-          //doSnapshot(revisionEntity, next)
+          doSnapshot(revisionEntity, next)
 
         } else {
           revisionEntity.addProperty(RevisionEntityProperty.HAS_MSE, new BooleanValue(false))
@@ -133,16 +134,16 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
         history += (revisionEntity)
       }
 
-      current += 1
-      next = current + 1
+      current += step
+      next = next + step //current + 1
       if (history.length >= 100) {
-        notifyOnCrawlingComplete(history)
+        //notifyOnCrawlingComplete(history)
         history.clear()
       }
     }
 
-    if (history.length > 0)
-      notifyOnCrawlingComplete(history)
+    //if (history.length > 0)
+    //notifyOnCrawlingComplete(history)
 
   }
 
@@ -209,6 +210,7 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
       try {
         println("Updating to Revision " + (rev))
         manager.getUpdateClient.doUpdate(localPath, SVNRevision.create(rev), SVNDepth.INFINITY, false, false)
+        retry = false;
       }
       catch {
         case (e: SVNException) => {
@@ -250,8 +252,29 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
               }
               case _ => return
             }
+            //            val index = diffFilePath.lastIndexOf(".")
+            //            val extension = diffFilePath(index)
+
+            //            val file = new File(localPath + File.separator + diffFilePath)
+            //            if(file.isDirectory)
+            //              return;
+            //
+            //            allowedExtensions foreach (
+            //              (e) => (
+            //                if (e.equals(extension)) {
+            //                  if (diffStatus.getModificationType.equals(SVNStatusType.STATUS_MODIFIED) ||
+            //                    diffStatus.getModificationType.equals(SVNStatusType.STATUS_REPLACED) ||
+            //                    diffStatus.getModificationType.equals(SVNStatusType.MERGED))
+            //                    modifiedFiles += diffFilePath
+            //                  else if (diffStatus.getModificationType.equals(SVNStatusType.STATUS_ADDED))
+            //                    addedFiles += diffFilePath
+            //                  else if (diffStatus.getModificationType.equals(SVNStatusType.STATUS_DELETED))
+            //                    deletedFiles += diffFilePath
+            //                })
+            //              )
           }
         })
+        retry = false;
       } catch {
         case (e: SVNException) =>
           println(e)
@@ -299,6 +322,7 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
                 fileEntity.addProperty(FileEntityProperty.LINES, line)
               }
             })
+            retry = false;
           } catch {
             case e: SVNException => {
               println(e)
@@ -315,7 +339,7 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
   private def doSnapshot(revisionEntity: RevisionEntity, rev: Int) {
     println("Generatig MSE files...")
     //val mseFilePath = new File(mseOutputPath + File.separator + projectName + "_rev_" + (rev) + ".mse").getCanonicalPath
-    val mseFilePath = new File(mseOutputPath + File.separator + projectName +"_"+ (rev) + ".mse").getCanonicalPath
+    val mseFilePath = new File(mseOutputPath + File.separator + projectName + "_" + (rev) + ".mse").getCanonicalPath
     val mseFile = parser.execute(localPath.getCanonicalPath, mseFilePath, false)
     println("Generation Done.")
     notifyOnParsingComplete(revisionEntity, projectName, mseFile)
@@ -326,11 +350,11 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
       println("Retrieving Information for Rev." + rev)
       val info = manager.getWCClient.doInfo(svnUrl, SVNRevision.create(rev), SVNRevision.create(rev))
       println(info.getAuthor + "\t" + info.getCommittedDate)
-      return (info.getAuthor, info.getCommittedDate.toString)
+      (info.getAuthor, info.getCommittedDate.toString)
     } catch {
       case (e: SVNException) =>
         println(e)
-        return ("", "")
+        ("", "")
     }
 
   }
