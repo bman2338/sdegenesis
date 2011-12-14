@@ -1,5 +1,6 @@
 	function cleanHistory(hist) {
-		var newHist = [];
+		var newHist = {};
+	
 		for(var e in hist) {
 			if("_id" == e)  {
 				continue;
@@ -21,7 +22,7 @@
 					list[le] = list[le][0];
 				}
 			}
-			newHist.push(entry);
+			newHist[e] = entry;
 		}
 		return newHist;
 	};
