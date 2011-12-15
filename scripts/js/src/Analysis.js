@@ -326,7 +326,7 @@ var revisionHistoryAnalysis = function () {
 var methodCallGraph = function () {
 	var obj = createAnalysis("Call Graph");
 	obj.options["parametrizationFun"] = {
-		values: [ filterGraph(["invokingMethods"]) ],
+		values: [ filterInheritance() ],
 	};
 	obj.elements = {
 		nodes: {
