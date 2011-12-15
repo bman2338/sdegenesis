@@ -64,8 +64,8 @@ function childrenSize (graph) {
 				}
 				return total;
 			});
-			if (result < 1)
-				result = 1;
+			if (result < 2)
+				result = 2;
 			if (result > 50)
 				result = 50;
 			return result;
@@ -90,5 +90,27 @@ function invocationsSize (graph) {
 
 
 
+// Mixed
+
+function mixedMethodInvocAndClassMethods(graph) {
+    var inv = invocationsSize(graph);
+    var clazz = classSize(graph);
+    
+    var sizeFun = { 
+        "Method" : inv.evalFun,
+        "Class" :   clazz.evalFun
+    };
+    
+    return {
+        evalFun: function(node) {
+            var sf =  sizeFun[node.properties.ElementType];
+            if(!sf) return 2; //Not going to happen but you never know
+            return sf(node);
+        }, 
+        
+        name: inv.name + " " + clazz.name
+    };
+    
+}
 
 
