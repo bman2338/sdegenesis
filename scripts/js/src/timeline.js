@@ -171,7 +171,25 @@ function stackedBarChart (data,sizeX,sizeY,scale,version,step) {
 
 }
 
+function forward(){
+	repaint(200, 300);
+}
 
+function back(){
+	repaint(-200, 300);
+}
+
+var playInterval = 0;
+// missing parameters at the moment
+function play(step){
+	playInterval = setInterval(function() {
+  		redraw(step, 300);
+ 	}, 1500);
+ }
+ 
+ function pause(){
+ 	clearInterval(playInterval);
+ }
 
 //d3.select(window).on("keydown", 
 eventHandler.add(window,"keydown",
