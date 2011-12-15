@@ -99,14 +99,11 @@ function hTree(root, target,visModel,augmentationCallback) {
 			if(d.children)
 			return d.children.length/5 + 4; 
 			return  4; })
-			.on("mouseover", function(d, i) { 
-				d3.select("#monitor").html(createInfo(d)) 
-				var t = d3.select(d3.event.currentTarget.parentNode).selectAll("text");
-				t.attr("visibility", "visible");   
+			.on("mouseover", function(d, i) {  
+				 tooltip.show(createInfo(d));
 			})
 			.on("mouseout", function(d) {
-				var t = d3.select(d3.event.currentTarget.parentNode).selectAll("text");
-				t.attr("visibility", "hidden")
+				tooltip.hide();
 			})   
 			.on("click", function(d, i) {
 				if(isBranch(d)) {
@@ -123,10 +120,4 @@ function hTree(root, target,visModel,augmentationCallback) {
 		if (augmentationCallback)
 			node.select("circle").call(visModel.augment("nodes",augmentationCallback));
 
-    node.append("svg:text")
-		.attr("dx", function(d) { return d.x < 180 ? 20 : -20; })
-		.attr("dy", ".31em")
-		.attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-		.attr("transform", function(d) { return d.x < 180 ? null : "rotate(180)"; })
-		.text(function(d) { return d.name; }).attr("visibility", "hidden");
 }
