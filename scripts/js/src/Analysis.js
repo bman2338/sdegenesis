@@ -219,7 +219,7 @@ var methodCallGraph = function () {
 	var obj = createAnalysis("Call Graph");
 	obj.options = {
 		parametrizationFun: {
-			values: [ filterGraph("invokingMethods") ],
+			values: [ filterGraph(["invokingMethods"]) ],
 		},
 		augmentationFun: {
 			values: [callGraphAugmentation]
@@ -255,9 +255,19 @@ var methodCallGraph = function () {
 	return obj;
 }
 
+
+var mixedCallGraph = function() {
+
+    var obj = methodCallGraph();
+    obj.name = "Mixed Call Graph";
+    obj.options.parametrizationFun.values = [ filterMixedGraph(["methods", "invokingMethods"]) ];
+    return obj;
+}
+
 var analysisRegister = AnalysisRegister()
 analysisRegister.addEntry(["Class"],classInheritance());
 analysisRegister.addEntry(["Revision"],revisionHistoryAnalysis());
 //analysisRegister.addEntry(["Class"],classCallGraph());
 analysisRegister.addEntry(["Method"],methodCallGraph());
+analysisRegister.addEntry(["Method", "Class" ],mixedCallGraph());
 //analysisRegister.addEntry(["Class","Method"],mixedCallGraph());

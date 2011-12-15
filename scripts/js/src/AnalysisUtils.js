@@ -26,6 +26,15 @@ function filterNodesAndEdges(relationName, nodeType) {
 	} };
 }
 
+
+function nodeTypeIncluded(node, elements) {
+	var indexType = elements.types.indexOf(node.properties.ElementType)
+    if (indexType == -1)
+        return false;
+    return elements.nodes.indexOf(node) != -1;
+} 
+
+
 function filterGraph (relations) {
 	return {
 		value: function(element,obj) {
@@ -50,3 +59,33 @@ function filterGraph (relations) {
 			}
 		}
 	}
+    
+function filterMixedGraph(relations) {
+ 
+    return { 
+        value : function(elements, obj) {
+            var centers = obj.source.getNodeSelection(function(node) {
+                return nodeTypeIncluded(node, elements ); 
+            });
+            
+            var opt = {
+                centers : centers,
+                selectNode : function(node) { return elements.types.indexOf(node.properties.ElementType) != -1;  }, 
+                selectEdge : function(node1, node2) { return true; },
+                expand : function(node, relName) {
+                    return this.selectNode(node) && relations.indexOf(relName) != -1;
+                }
+            };
+            
+            var selection = obj.source.getMixedGraph(opt);
+            var mixedGraph = toD3Graph(selection.nodes, selection.edges);
+          
+              return {
+                types: elements.types,
+                nodes: [mixedGraph]
+            };
+        }
+    };
+
+
+}    
