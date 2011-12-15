@@ -173,7 +173,9 @@ function stackedBarChart (data,sizeX,sizeY,scale,version,step) {
 
 
 
-d3.select(window).on("keydown", function() {   
+//d3.select(window).on("keydown", 
+eventHandler.add(window,"keydown",
+function() {   
 	var displacement = 0;  
 	switch (d3.event.keyCode) {
 		case 37: displacement = -200; break;
