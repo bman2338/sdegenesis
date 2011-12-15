@@ -123,7 +123,7 @@ var TreeVisualization = function() {
 			},
 		},
 	};
-	obj.candidates = function () {
+	/*obj.candidates = function () {
 		if (obj.source == undefined)
 			return [];
 
@@ -144,7 +144,7 @@ var TreeVisualization = function() {
 			}
 		});
 		return roots;
-	};
+	};*/
 	return obj;
 }
 

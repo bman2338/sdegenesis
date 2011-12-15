@@ -81,8 +81,8 @@ function invocationsSize (graph) {
 		evalFun: function (node) {
 			var result = graph.getAdjList(graph.getRelation("invokingMethods"),node.uniqueId);
 			if (result)
-				return Math.min(30,Math.max(result.to.length,3));
-			return 2;
+				return Math.min(50,Math.max(result.to.length*5,5));
+			return 5;
 		},
 		name: "Number of Performed Invocations"
 	}

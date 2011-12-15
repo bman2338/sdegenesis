@@ -23,7 +23,8 @@ function toD3Graph(nodes, edges, removeUnconnectedNodes) {
 
 		jQuery.each(edges, function(edgeIndex, edgeValue) {
 
-			edgeValue.value = 1;
+			if (!edgeValue.value)
+				edgeValue.value = 1;
 
 			if(edgeValue.from == that.uniqueId) {
 				edgeValue.source = index;	
