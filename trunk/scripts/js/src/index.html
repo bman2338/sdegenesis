@@ -37,6 +37,7 @@
 	<script type="text/javascript" src="cleanHistory.js"></script>
 	<script type="text/javascript" src="calendar/history.js"></script>
 	<script type="text/javascript" src="calendar/calendar.js"></script>
+	<script type="text/javascript" src="QueryLanguage.js"></script>
 	
 	<link type="text/css" rel="stylesheet" href="calendar/calendar.css"/>
 <style type="text/css">
@@ -149,6 +150,9 @@ overflow:hidden;
 		}
 
 		vis.visualize(obj,"#chart");
+		
+		var results = getQueryResults("Method:L*",["Method"],graph);
+		alert(results);
 	}
 		
 	
