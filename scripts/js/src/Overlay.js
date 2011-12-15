@@ -4,13 +4,13 @@ var hidden = true;
 
 function showHide() {
 	if(hidden) {
-		$( "#overlay" ).show( 'blind', {}, 500);
+		$( "#overlay-transparent" ).show( 'blind', {}, 500);
 		// $('#nodes input').click(updateResults);
 		$('#node-selection').click(updateResults);
 		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Hide</a>');
 		hidden = false;
 	} else {
-		$( "#overlay" ).hide( 'blind', {}, 500);
+		$( "#overlay-transparent" ).hide( 'blind', {}, 500);
 		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Show</a>');
 		hidden = true;
 	}
@@ -93,7 +93,7 @@ function displayAnalysis (divId,elements) {
 		$.each(elements,function(index,element) {
 			var list = null;
 			if (index == elements.length-1)
-				list = tree.append("<li class=\"last\">"+element.name+"</li>").find('li');
+				list = tree.append("<li class=\"last top-analysis\">"+element.name+"</li>").find('li');
 			else
 				list = tree.append("<li>"+element.name+"</li>").find('li');
 			var innerTree = list.append("<ul></ul>").find('ul');
@@ -104,7 +104,7 @@ function displayAnalysis (divId,elements) {
 				if (index == visz.length-1)
 					innerTree.append("<li class=\"last\" onclick=\"" + clickFun + "\">"+element.name+"</li>");
 				else
-					innerTree.append("<li onclick=\"" + clickFun + "\">"+element.name+"</li>");
+					innerTree.append("<li class=\"inner-viz\" onclick=\"" + clickFun + "\">"+element.name+"</li>");
 			});				
 		});
 }
@@ -184,7 +184,7 @@ function showResults(elements) {
 		$.each(elementsSelected,
 			function(index, header) {
 				if (results[header]) {
-					table += '<td><select id="' + header  + '-select" multiple="multiple" size="20">';			
+					table += '<td><select class=\"candidates\" id="' + header  + '-select" multiple="multiple" size="20">';			
 				$.each(results[header],
 					function(indexx, element) {
 						if (shouldSkip.indexOf(indexx) == -1) {
