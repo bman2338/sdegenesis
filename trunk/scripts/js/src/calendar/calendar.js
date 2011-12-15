@@ -80,15 +80,15 @@ function plotHistoryCalendar(history, visModel, augmentationCallback) {
 				if(auth)
 					return "steelblue";
 				return "white";
-			})
-			.append("svg:title")
+			});
+			/*.append("svg:title")
 			.text(function(d)  { 
 				var auth = getAuthor(d);
 				if(auth)
 				return auth;
 				return (d = format(d)) + (d in data ? ": " + percent(data[d]) : ""); 
 
-			});
+			});*/
 			if (augmentationCallback) {
 				rect.call(visModel.augment("entries",augmentationCallback));
 			}
