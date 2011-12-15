@@ -74,8 +74,10 @@ var tooltip=function(){
   }
  },
  hide:function(){
-  clearInterval(tt.timer);
-   tt.timer = setInterval(function(){tooltip.fade(-1)},timer);
+	if(tt) { 
+  		clearInterval(tt.timer);
+   		tt.timer = setInterval(function(){tooltip.fade(-1)},timer);
+	}
   }
  };
 }();

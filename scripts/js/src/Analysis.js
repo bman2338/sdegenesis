@@ -188,6 +188,16 @@ function textFun (source) {
 }
 
 
+var mouseOut = function(revEntries) {
+	return {
+		evalFun: function(entries) {
+			tooltip.hide()
+		}
+	};
+}
+
+
+
 var calendarAugmentationFun = {
 	value: function (node,type,resultType,result,source) {
 
@@ -205,7 +215,13 @@ var calendarAugmentationFun = {
 		case "textFunction":
 			node.selectAll("text").text(wrapper);
 			break;
-	}
+		case "mouseover":
+			node.on("mouseover", wrapper);	
+			break;
+		case "mouseout":
+			node.on("mouseout", wrapper);
+			break;	
+ 		}
 	}
 }
 
@@ -213,15 +229,9 @@ var authorColorGlobal = {};
 authorColorGlobal["*"] = d3.rgb(200, 200, 200);
 
 
-var authorColorFunction = function(revEntries) {
-return {
-		evalFun: function(entries) {
-        if(!entries) {
-            return d3.rgb(255, 255, 255);
-        }
-
-            var best = null;
-            var bestRank = 0;
+var getBestAuthor = function(entries) {
+	    var best = null;
+         var bestRank = 0;
     
         for(var e in entries) {
             var entry = entries[e];
@@ -231,6 +241,18 @@ return {
                 bestRank = currentRank;
             }
         }
+
+		return best;
+}
+
+var authorColorFunction = function(revEntries) {
+return {
+		evalFun: function(entries) {
+        if(!entries) {
+            return d3.rgb(255, 255, 255);
+        }
+
+     	var best = getBestAuthor(entries);
         
         
     
@@ -251,6 +273,41 @@ return {
 };
 
 
+var authorMouseOverFunction = function(revEntries) {
+	return {
+		evalFun: function(entries) {
+			if(!entries)
+				return;
+			tooltip.show(getAuthorListStr(entries))	
+				
+		}
+	};
+}
+
+
+var getAuthorListStr = function(entries) {
+	var str = "";
+	var authors = {};
+	for(var e in entries) {
+		var entry = entries[e];
+		authors[entry.author] = "";//entry.date;
+	}
+	
+	for(var a in authors) {
+		str += a + " " + authors[a] + " <br/>";
+	}
+	
+	return str;
+
+
+var getAuthorListStrFunction = function(revEntries) {
+	return {
+		evalFun : getAuthorListStr
+		
+		}
+	};
+}
+
 
 var revisionHistoryAnalysis = function () {
 	var obj = createAnalysis("Revision History Analysis");
@@ -268,10 +325,19 @@ var revisionHistoryAnalysis = function () {
 					name: "Entities Color Function",
 					values: [authorColorFunction],
 				},
-				textFunction: {
-					name: "Entities Tooltip Text Function",
-					values: [textFun],
+				// textFunction: {
+				// 		name: "Entities Tooltip Text Function",
+				// 		values: [textFun],
+				// 	},
+				mouseover: {
+					name: "Show the developers which committed that day",
+					values: [ authorMouseOverFunction ]
 				},
+				
+				mouseout: {
+					values: [ mouseOut ]
+				},
+				
 			},
 		},
 	};

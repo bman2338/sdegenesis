@@ -96,7 +96,7 @@ var TreeVisualization = function() {
 	obj.addOption("rootFun",function toSingleRootGraph (elements,vis) {
 		return { name: vis.name(), properties: { name: vis.name(), ElementType:elements[0].properties.ElementType }, children: elements };
 	});
-	obj.addOption("visFun", function (root,canvas,base,augmentationFun) { hTree(root,canvas,base,augmentationFun); });
+	obj.addOption("visFun", function (root, canvas, base, augmentationFun) { hTree(root, canvas, base, augmentationFun); });
 	obj.elements = {
 		nodes: {
 			options: {
@@ -163,10 +163,10 @@ var SunburstVisualization = function () {
 var GraphVisualization = function() { 
 	var obj = BaseVisualization();
 	obj.id = "Graph";
-	obj.addOption("visFun", function (element,canvas,base,augmentationFun) {
+	obj.addOption("visFun", function (element, canvas, base, augmentationFun) {
 			forceDirectedGraph(element.nodes,element.edges,base,augmentationFun);
 	});
-	obj.addOption("rootFun",function (element,vis) { return element; });
+	obj.addOption("rootFun",function (element, vis) { return element; });
 	obj.elements = {
 		nodes: {
 			options: {
@@ -218,8 +218,8 @@ var GraphVisualization = function() {
 
 var CalendarVisualization = function () {
 	var obj = BaseVisualization();
-	obj.addOption("visFun", function (element,canvas,base,augmentationFun) {
-			plotHistoryCalendar(element,base,augmentationFun);
+	obj.addOption("visFun", function (element, canvas, base, augmentationFun ) {
+			plotHistoryCalendar(element, base, augmentationFun);
 	});
 	obj.elements = {
 		entries: {
@@ -233,13 +233,16 @@ var CalendarVisualization = function () {
 			},
 		}
 	};
+	
 	obj.initialize = function (source) {
 		obj.source = historyToD3Format(source);
 	}
+	
 	obj.candidates = function () {
 		if (obj.source == undefined)
 			return [];
 		return [source];
 	};
+	
 	return obj;
 }
