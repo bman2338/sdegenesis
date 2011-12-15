@@ -11,14 +11,13 @@ function EventHandler(){
 			defaults: {
 				keydown: undefined;
 			}
-			values: { 
+			values: {
 			}
 	};
 	return{
 		pause: function(){
-			for(handler in handlers){
-				handler.running = false;
-				handler.object.select(handler.typ).remove();
+			for(hndlr in handlers){
+				d3.select(hndlr).on(hndlr.values, hndlr.values.handler).remove();
 			}
 		};
 		
