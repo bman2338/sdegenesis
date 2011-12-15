@@ -75,13 +75,6 @@ overflow:hidden;
 	var attributes = "attributes";
 	var namespaces = "namespaces"; packageType = "Namespace";
 
-	var register = new VisualizationsRegister();
-	register.addVisualization(TreeVisualization);
-	register.addVisualization(GraphVisualization);
-	register.addVisualization(SunburstVisualization);
-	register.addVisualization(CalendarVisualization);
-
-
 	function visualizeOptions (analysis,visualization) {
 		var div = document.getElementById("optionsDiv");
 		
@@ -109,10 +102,6 @@ overflow:hidden;
 		div.innerHTML = html;
 	}
 	
-	function toSingleRootGraph (elements,vis) {
-		return { name: vis.name(), properties: { name: vis.name(), ElementType:elements[0].properties.ElementType }, children: elements };
-	}
-	
 	function testCalendar () {
 		var listOfAnalysis = analysisRegister.getEntries(["Revision"]);
 		var analysis = listOfAnalysis[0];
@@ -138,34 +127,27 @@ overflow:hidden;
 		var listOfAnalysis = analysisRegister.getEntries(["Class"]);
 		var analysis = listOfAnalysis[0];
 						
-		var vis = analysis.instantiateVisualization(1);
+		var vis = analysis.instantiateVisualization(2);
 		
 		vis.initialize(graph);
 		
 		visualizeOptions(analysis,vis);
 		
 		var roots = vis.candidates();
-		
-		var augmentationHandler = function (node,type,resultType,result) {
-			switch (resultType) {
-				case "colorFunction":
-					node.style("fill",result);
-					break;
-				case "sizeFunction":
-					node.attr("r",result);
-					break;
-			}
-		}
 
 		vis.addElementOption("nodes","sizeFunction",childrenSize(graph));
-		vis.addOption("augmentationFun",augmentationHandler);
-
+		vis.addElementOption("nodes","mouseover",{
+			evalFun: function (d,i) {
+				d3.select("#monitor").html(createInfo(d)) 
+			},
+			name: "On Click Handler",
+		});
 		var obj = {
 			types: ["Class"],
-			nodes:roots.slice(0,4),
+			nodes:roots,
 		}
 
-		vis.visualize(obj,"#chart",toSingleRootGraph);
+		vis.visualize(obj,"#chart");
 	}
 		
 	

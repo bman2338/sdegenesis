@@ -31,11 +31,15 @@ function nodeTypeIncluded(node, elements) {
 	var indexType = elements.types.indexOf(node.properties.ElementType)
     if (indexType == -1)
         return false;
-    return elements.nodes.indexOf(node) != -1;
+	for (var n in elements.nodes) {
+		if (elements.nodes[n].uniqueId == node.uniqueId)
+			return true;
+	}
+	return false;
 } 
 
 
-function filterGraph (relations) {
+function filterGraph (relations,vis) {
 	return {
 		value: function(element,obj) {
 			var centers = obj.source.getNodeSelection(function (node) {
@@ -60,8 +64,9 @@ function filterGraph (relations) {
 		}
 	}
     
-function filterMixedGraph(relations) {
- 
+function filterMixedGraph(relations,vis) {
+ 	if (vis && vis.id != "Graph")
+		return;
     return { 
         value : function(elements, obj) {
             var centers = obj.source.getNodeSelection(function(node) {

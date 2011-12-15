@@ -80,12 +80,36 @@ function AnalysisRegister () {
 }
 
 
+var defaultAugmentation = {
+	value: function (node,type,resultType,result) {
+		switch (resultType) {
+			case "colorFunction":
+			node.style("fill",result);
+			break;
+		case "sizeFunction":
+			node.attr("r",result);
+			break;
+		case "mouseover":
+			node.on("mouseover",result);
+			break;
+		case "strokeFunction":
+			node.style("stroke",result);
+			break;
+		}
+	}
+}
+
 var createAnalysis = function (name) {
 	var obj = {};
 
 	obj.name = name;
 	obj.elements = {};
-	obj.options = {};
+	obj.options = {
+		augmentationFun: {
+			name: "Default Augmentation",
+			values: [defaultAugmentation],
+		}
+	};
 	obj.visualizations = [];
 	obj.instantiateVisualization = function (index) {
 		if (index >= obj.visualizations.length || index < 0)
@@ -105,11 +129,12 @@ var createAnalysis = function (name) {
 
 var classInheritance = function () {
 	var obj = createAnalysis("Class Inheritance");
-	obj.options = {
-		filter: {
+	obj.options["filter"] = {
 			name: "Filter Function",
 			values: [filterNodes("Class","superclassOf")],
-		},
+	};
+	obj.options["parametrizationFun"] = {
+		values: [ filterMixedGraph(["superclassOf"]) ],
 	};
 	obj.elements = {
 		nodes: {
@@ -131,7 +156,7 @@ var classInheritance = function () {
 	obj.visualizations = [
 		{ name: "Inheritance Tree", visFactory: TreeVisualization },
 		{ name: "Inheritance Sunburst", visFactory: SunburstVisualization },
-		{ name: "Force-Directed Inheritance Graph", visFactory: GraphVisualization, allowsMultipleRoots: false }, 
+		{ name: "Force-Directed Inheritance Graph", visFactory: GraphVisualization }, 
 	];
 	return obj;
 }
@@ -209,35 +234,11 @@ var revisionHistoryAnalysis = function () {
 	return obj;
 }
 
-var callGraphAugmentation = {
-	value: function (node,type,resultType,result) {
-		switch (resultType) {
-			case "colorFunction":
-			node.style("fill",result);
-			break;
-		case "sizeFunction":
-			node.attr("r",result);
-			break;
-		case "mouseover":
-			node.on("mouseover",result);
-			break;
-		case "strokeFunction":
-			node.style("stroke",result);
-			break;
-		}
-	}
-}
-
 var methodCallGraph = function () {
 	var obj = createAnalysis("Call Graph");
-	obj.options = {
-		parametrizationFun: {
-			values: [ filterGraph(["invokingMethods"]) ],
-		},
-		augmentationFun: {
-			values: [callGraphAugmentation]
-		}
-	}
+	obj.options["parametrizationFun"] = {
+		values: [ filterGraph(["invokingMethods"]) ],
+	};
 	obj.elements = {
 		nodes: {
 			options: {

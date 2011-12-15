@@ -41,12 +41,7 @@ var BaseVisualization = function () {
 			var option = elOptions[optId];
 			if (!option.value)
 				continue;
-				
-			/*if (option.value.preEvalFun) {
-				var result = option.value.preEvalFun(element);
-				if (result)
-					callback(element,type,optId,result);
-			}*/
+
 			if (option.value.evalFun)
 				callback.value(element,type,optId,option.value.evalFun,base.source);
 		}
@@ -64,8 +59,12 @@ var BaseVisualization = function () {
 			if (node.nodes.length == 1)
 				base.options["visFun"].value(node.nodes[0],canvas,base,augmentationFun);
 			else {
-				if (!rootFunc)
-					return;
+				if (!rootFunc) {
+					if (base.options["rootFun"])
+						rootFunc = base.options["rootFun"].value;
+					else
+						return;
+				}
 				var newRoot = rootFunc(node.nodes,base);
 				base.options["visFun"].value(newRoot,canvas,base,augmentationFun);
 			}
@@ -92,6 +91,9 @@ var TreeVisualization = function() {
 			}
 			else 
 				return -1;
+	});
+	obj.addOption("rootFun",function toSingleRootGraph (elements,vis) {
+		return { name: vis.name(), properties: { name: vis.name(), ElementType:elements[0].properties.ElementType }, children: elements };
 	});
 	obj.addOption("visFun", function (root,canvas,base,augmentationFun) { hTree(root,canvas,base,augmentationFun); });
 	obj.elements = {
@@ -147,6 +149,7 @@ var TreeVisualization = function() {
 
 var SunburstVisualization = function () {
 	var obj = TreeVisualization();
+	obj.id = "Sunburst";
 	obj.options["visFun"].value = function(element,canvas) {
 		if (!element.children)
 			_sunburst([],canvas,obj.name(),obj);
@@ -158,9 +161,11 @@ var SunburstVisualization = function () {
 
 var GraphVisualization = function() { 
 	var obj = BaseVisualization();
+	obj.id = "Graph";
 	obj.addOption("visFun", function (element,canvas,base,augmentationFun) {
 			forceDirectedGraph(element.nodes,element.edges,base,augmentationFun);
 	});
+	obj.addOption("rootFun",function (element,vis) { return element; });
 	obj.elements = {
 		nodes: {
 			options: {
