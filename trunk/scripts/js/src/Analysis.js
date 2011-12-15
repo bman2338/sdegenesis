@@ -351,23 +351,46 @@ var methodCallGraph = function () {
 			}
 		}
 	};
-	obj.visualizations = [{
+	obj.visualizations = [
+	{
+		name: "Call Tree",
+		visFactory: TreeVisualization,
+	},
+	{
+		name: "Call Sunburst",
+		visFactory: SunburstVisualization,
+	},
+	{
 		name: "Call Graph",
 		visFactory: GraphVisualization,
-	}];
+	},
+	];
 	return obj;
 }
 
 
 var mixedCallGraph = function() {
-
     var obj = methodCallGraph();
     obj.name = "Mixed Call Graph";
     obj.options.parametrizationFun.values = [ filterMixedGraph([ "methods", "invokingMethods", "parentType" ]) ];
     obj.elements.nodes.options.colorFunction.values = [ typeColor ];
     obj.elements.nodes.options.sizeFunction.values = [  mixedMethodInvocAndClassMethods ];
+	obj.visualizations = [
+	{
+		name: "Call Tree",
+		visFactory: TreeVisualization,
+	},
+	{
+		name: "Call Graph",
+		visFactory: GraphVisualization,
+	}];
     return obj;
-}
+};
+
+var authorsCollaborationGraph = function () {
+	var obj = createAnalysis("Authors Collboration");
+	return obj;
+};
 
 var analysisRegister = AnalysisRegister()
 analysisRegister.addEntry(["Class"],classInheritance());
