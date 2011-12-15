@@ -22,7 +22,11 @@ function EventHandler(){
 			}
 		},
 		
-		resume: function(){},
+		resume: function(){
+			for(hndlr in handlers){
+				d3.select(hndlr).on(hndlr.values, hndler.values.handler);
+			}
+		},
 		
 		add: function(object, type, handler){
 			if (!handlers[object])
