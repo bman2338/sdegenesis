@@ -75,7 +75,7 @@ script(type="text/javascript")
 						proj.heldRevisions[rev] = false;
 						hideAll();
 						$.ajax({
-							url: 'http://127.0.0.1:1234/get_data/'+ "!{vizJson.projectName}" +'/' + rev,
+							url: '/get_data/'+ "!{vizJson.projectName}" +'/' + rev,
 							error: function (data ){
 								alert("Some problem happened: " + JSON.stringify(data));
 							},
@@ -97,7 +97,7 @@ script(type="text/javascript")
 					if(proj.history == undefined){
 						hideAll();
 						$.ajax({
-							url: 'http://127.0.0.1:1234/get_history/'+ "!{vizJson.projectName}",
+							url: '/get_history/'+ "!{vizJson.projectName}",
 							error: function (data ){
 								alert("Some problem happened: " + JSON.stringify(data));
 							},
