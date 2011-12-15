@@ -87,3 +87,8 @@ function invocationsSize (graph) {
 		name: "Number of Performed Invocations"
 	}
 }
+
+
+
+
+
