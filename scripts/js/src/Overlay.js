@@ -7,12 +7,12 @@ function showHide() {
 		$( "#overlay-transparent" ).show( 'blind', {}, 500);
 		$('#node-selection').click(updateResults);
 		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Hide</a>');
-		eventHandler.pause();
+		// eventHandler.pause();
 		hidden = false;
 	} else {
 		$( "#overlay-transparent" ).hide( 'blind', {}, 500);
 		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Show</a>');
-		eventHandler.restart();
+		// eventHandler.restart();
 		hidden = true;
 	}
 };

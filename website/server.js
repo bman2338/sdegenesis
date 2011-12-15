@@ -31,6 +31,7 @@ app.configure(function(){
 	app.use(express.logger());
 	app.use(express.cookieParser());
 	app.use(express.session({ secret: 'keyboard cat' }));
+	app.use(express.errorHandler({showStack: true, dumpExceptions: true}));
 });
 
 //Database connections
