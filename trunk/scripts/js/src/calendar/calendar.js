@@ -1,4 +1,6 @@
-//Date,Open,High,Low,Close,Volume,Adj Close
+
+
+
 
 function plotHistoryCalendar(history, visModel, augmentationCallback) {
 	
