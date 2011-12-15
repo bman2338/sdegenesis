@@ -68,10 +68,11 @@ function filterGraph (relations,vis) {
 	}
     
 function filterMixedGraph(relations,vis) {
- 	if (vis && vis.id != "Graph")
-		return;
     return { 
         value : function(elements, obj) {
+			if (vis && vis.id != "Graph")
+				return elements;
+	
             var centers = obj.source.getNodeSelection(function(node) {
                 return nodeTypeIncluded(node, elements ); 
             });
