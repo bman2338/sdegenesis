@@ -216,7 +216,7 @@ overflow:hidden;
 
 			var graph = genesis.Graph.create(node_data.nodes,edge_data.edges);
 
-			var listOfAnalysis = analysisRegister.getEntries(["Method"]);
+			var listOfAnalysis = analysisRegister.getEntries(["Method", "Class"]);
 			var analysis = listOfAnalysis[0];
 
 			var vis = analysis.instantiateVisualization(0);
@@ -255,10 +255,11 @@ overflow:hidden;
 		opts = setUnaryOptionsAndGet(vis,opts);
 	
 		var centers = graph.getNodeSelection(function(node) {
-			return node.properties.ElementType == "Method" && node.properties.name == "mTokens";
-		});
+					return node.properties.ElementType == "Class" && node.properties.name == "JavaParser";
+				});
+		
 		var element = {
-			types: ["Method"],
+			types: ["Method", "Class" ],
 			nodes: [centers[0]],
 		}
 		
