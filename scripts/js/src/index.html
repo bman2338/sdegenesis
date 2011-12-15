@@ -255,12 +255,12 @@ overflow:hidden;
 		opts = setUnaryOptionsAndGet(vis,opts);
 	
 		var centers = graph.getNodeSelection(function(node) {
-					return node.properties.ElementType == "Class" && node.properties.name == "JavaParser";
+					return node.properties.ElementType == "Class" && ( node.properties.name == "ActionPrint" )// || node.properties.name == "JavaParser" || node.properties.name == "LanguageParser"  );
 				});
 		
 		var element = {
 			types: ["Method", "Class" ],
-			nodes: [centers[0]],
+			nodes: centers,
 		}
 		
 
@@ -301,7 +301,7 @@ overflow:hidden;
 	<link type="text/css" rel="stylesheet" href="scrollbar.css"/>
 	<link type="text/css" rel="stylesheet" href="tree.css"/>
 </head>
-<body onload="testMixedGraph();"> <!--  if(drawTimeline) drawTimeline('cippo') -->
+<body onload="">
 	<ul class="Menu">
 		<!--
 		<li><a href="javascript:tree()"> Tree </li>

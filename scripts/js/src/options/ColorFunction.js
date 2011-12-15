@@ -7,6 +7,7 @@ function typeColor (graph) {
 		"Method": function(node) { return convert([0.2,0.8,0.2]); },
 		"Class": packageColor(graph),
 		"Attribute": function(node) { return convert([0.2,0.2,0.8]); },
+        "*": convert([0.6,0.6,0.6]),
 	};
 	return {
 		name: "Color for node type",
