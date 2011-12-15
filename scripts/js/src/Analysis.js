@@ -260,7 +260,8 @@ var mixedCallGraph = function() {
 
     var obj = methodCallGraph();
     obj.name = "Mixed Call Graph";
-    obj.options.parametrizationFun.values = [ filterMixedGraph(["methods", "invokingMethods"]) ];
+    obj.options.parametrizationFun.values = [ filterMixedGraph([ "methods", "invokingMethods", "parentType" ]) ];
+    obj.elements.nodes.options.colorFunction.values = [ typeColor ];
     return obj;
 }
 
