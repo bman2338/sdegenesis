@@ -407,6 +407,9 @@ div(class="Block", id="vizContainer")
 			}); 
 		}
 		
+		
+		
+		
 		//candidates is an array of candidates for a choosen visualization 
 		function addCandidatesToElement(vis){
 			//fill the options
@@ -414,7 +417,7 @@ div(class="Block", id="vizContainer")
 			var opList = getOptions(currentAnalysis, currentDisplayedVis);
 			opList = opList.nodes.sizeFunction;
 			for(var i = 0; i < opList.length; i++){
-				opts += "<li onclick=''>" + opList[i].name + "</li>"
+				opts += "< class ='Candidates' li onclick=''>" + opList[i].name + "</li>"
 			}
 			opts += "</ul>"
 			document.getElementById('nodesOptions').innerHTML = opts;
