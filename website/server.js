@@ -21,11 +21,11 @@ var express = require('express')
 var url = require('url')
   , fs = require ('fs');
 
-var cleaner = require('./js/cleanHistoryServerSide');
+var cleaner = require('./cleanHistoryServerSide');
 
 var mongoskin = mongo.db("localhost:8888/genesis_db");
 
-app.listen(8079);
+app.listen(8078);
 app.configure(function(){
 	app.use(express.bodyParser());
 	app.use(express.logger());
@@ -79,7 +79,7 @@ app.post('/login', function (req, res) {
 				name: result[0].Username,
 				projects: result[0].Projects,
 			};
-			
+			console.log(JSON.stringify(usr));
 			mongo.db("localhost:8888/genesis_db").collection("projects").find({open: 1}).toArray(function(err, openProjs){
 				
 				for(var i = 0; i < openProjs.length; i++){
@@ -90,7 +90,7 @@ app.post('/login', function (req, res) {
 						usr.projects.push(openProjs[i]);
 					}
 				}
-				
+				console.log(JSON.stringify(usr));
 				//render the management with user connected
 				res.render(__dirname + '/pages/management.jade', {
 					userInfo: usr,
