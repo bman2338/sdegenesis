@@ -42,9 +42,6 @@ function forceDirectedGraph(nodes, edges,visModel,augmentationCallback) {
 		node.call(visModel.augment("nodes",augmentationCallback));
 	}
 
-	node.append("svg:title")
-	.text(function(d) { return d.name; });
-
 	force.on("tick", function() {
 		link.attr("x1", function(d) { return d.source.x; })
 		.attr("y1", function(d) { return d.source.y; })

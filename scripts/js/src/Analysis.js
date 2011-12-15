@@ -90,10 +90,10 @@ var defaultAugmentation = {
 			node.attr("r",result);
 			break;
 		case "mouseover":
-			node.on("mouseover", wrapper);	
+			node.on("mouseover", result);	
 			break;
 		case "mouseout":
-			node.on("mouseout", wrapper);
+			node.on("mouseout", result);
 			break;
 		case "strokeFunction":
 			node.style("stroke",result);
@@ -132,6 +132,21 @@ var createAnalysis = function (name) {
 	return obj;
 }
 
+var mouseOut = function(revEntries) {
+	return {
+		evalFun: function(entries) {
+			tooltip.hide()
+		}
+	};
+}
+
+function mouseOverNode () {
+	return {
+		evalFun: function (node) {
+			tooltip.show(createInfo(node));
+		}
+	}
+}
 
 
 var classInheritance = function () {
@@ -149,7 +164,14 @@ var classInheritance = function () {
 				colorFunction: {
 					name: "Node Color Meaning",
 					values: [typeColor],
-				}
+				},
+				mouseover: {
+					values: [ mouseOverNode ]
+				},
+				
+				mouseout: {
+					values: [ mouseOut ]
+				},
 			}
 		},
 		edges: {
@@ -162,14 +184,6 @@ var classInheritance = function () {
 		{ name: "Force-Directed Inheritance Graph", visFactory: GraphVisualization }, 
 	];
 	return obj;
-}
-
-var mouseOut = function(revEntries) {
-	return {
-		evalFun: function(entries) {
-			tooltip.hide()
-		}
-	};
 }
 
 var calendarAugmentationFun = {
@@ -210,17 +224,40 @@ var authorMouseOverFunction = function(revEntries) {
 	};
 }
 
+function getAuthorContributionValue (entry) {
+	return entry.addedFilesCount + entry.modifiedFilesCount + entry.deletedFilesCount/2.0;
+}
+
 
 var getAuthorListStr = function(entries) {
 	var str = "";
 	var authors = {};
 	for(var e in entries) {
 		var entry = entries[e];
-		authors[entry.author] = "";//entry.date;
+		if (!authors[entry.author])
+			authors[entry.author] = getAuthorContributionValue(entry);
+		else
+			authors[entry.author] += getAuthorContributionValue(entry);//entry.date;
 	}
 	
-	for(var a in authors) {
-		str += a + " " + authors[a] + " <br/>";
+	var authorsList = [];
+	for (var a in authors) {
+		authorsList.push({
+			name: a,
+			rank: authors[a],
+		});
+	}
+	
+	authorList = authorsList.sort(function (a,b) { 
+		var ret = b.rank - a.rank;
+		if (ret == 0) {
+			return a.name > b.name ? -1 : 1;
+		}
+		return ret;
+	})
+	
+	for(var a in authorList) {
+		str += getAuthorLabel(authorList[a].name);
 	}
 	
 	return str;
@@ -288,7 +325,14 @@ var methodCallGraph = function () {
 				strokeFunction: {
 					name: "Stroke of the nodes",
 					values: [finalStroke],
-				}
+				},
+				mouseover: {
+					values: [ mouseOverNode ]
+				},
+				
+				mouseout: {
+					values: [ mouseOut ]
+				},
 			}
 		},
 		edges: {
@@ -343,7 +387,17 @@ var authorsCollaborationGraph = function () {
 			options: {
 				colorFunction: {
 					values:[authorGraphColorFunction],
-				}
+				},
+				sizeFunction: {
+					values:[collaborationsSizeFunction],
+				},
+				mouseover: {
+					values: [ mouseOverAuthorNode ]
+				},
+				
+				mouseout: {
+					values: [ mouseOut ]
+				},
 			}
 		}
 	};
