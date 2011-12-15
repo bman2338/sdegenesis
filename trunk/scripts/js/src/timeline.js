@@ -93,14 +93,14 @@ function stackedBarChart (data,sizeX,sizeY,scale,version,step) {
 	
 	
 	vis.append("svg:text")
-	   .attr("x", w-20)
+	   .attr("x", w-50)
 	   .attr("y", h+10)
 	   .attr("dy", ".71em")
 	   .attr("text-anchor", "middle")
 	   .text("Rev."+currentLast);
 
 	vis.append("svg:text")
-	   .attr("x", 20)
+	   .attr("x", 50)
 	   .attr("y", h+10)
 	   .attr("dy", ".71em")
 	   .attr("text-anchor", "middle")
