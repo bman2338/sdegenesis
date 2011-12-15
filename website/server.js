@@ -25,7 +25,7 @@ var cleaner = require('./cleanHistoryServerSide');
 
 var mongoskin = mongo.db("localhost:8888/genesis_db");
 
-app.listen(8078);
+app.listen(8079);
 app.configure(function(){
 	app.use(express.bodyParser());
 	app.use(express.logger());
