@@ -127,14 +127,16 @@ var createAnalysis = function (name) {
 	return obj;
 }
 
+
+
 var classInheritance = function () {
 	var obj = createAnalysis("Class Inheritance");
-	obj.options["filter"] = {
+	/*obj.options["filter"] = {
 			name: "Filter Function",
 			values: [filterNodes("Class","superclassOf")],
-	};
+	};*/
 	obj.options["parametrizationFun"] = {
-		values: [ filterMixedGraph(["superclassOf"]) ],
+		values: [ filterInheritance() ],
 	};
 	obj.elements = {
 		nodes: {

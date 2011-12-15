@@ -71,7 +71,6 @@ function initialVisualization (analysisId,visualizationId) {
 				resultsToAnalyze.push(rev.graph.getNodeFromId(element.value));
 			});
 			});
-			alert(resultsToAnalyze.length);
 			if (resultsToAnalyze.length == 0)
 				return false;
 			
