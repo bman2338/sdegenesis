@@ -487,7 +487,7 @@ var history = { "_id" : ObjectId("4ee7f9cb0f3f079d4aeea606"), "2" : { "deletedFi
 	[
 		"src/uci/util/Dbg.java"
 	]
-], "author" : [ "jrobbins" ], "addedFilesCount" : [ 162 ], "project" : [ "argouml_rev2" ], "hasMse" : [ false ], "date" : [ "Mon Jan 26 23:19:17 CET 1998" ] }, "6" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 2 ], "modifiedFiles" : [
+], "author" : [ "teseo" ], "addedFilesCount" : [ 162 ], "project" : [ "argouml_rev2" ], "hasMse" : [ false ], "date" : [ "Mon Jan 26 23:19:17 CET 1998" ] }, "6" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 2 ], "modifiedFiles" : [
 	[
 		"src/uci/gef/RedrawManager.java"
 	],
@@ -649,7 +649,7 @@ var history = { "_id" : ObjectId("4ee7f9cb0f3f079d4aeea606"), "2" : { "deletedFi
 	[
 		"src/uci/graph/GraphNodeRenderer.java"
 	]
-], "author" : [ "jrobbins" ], "addedFilesCount" : [ 0 ], "project" : [ "argouml_rev25" ], "hasMse" : [ false ], "date" : [ "Thu Feb 12 03:28:07 CET 1998" ] }, "26" : { "deletedFilesCount" : [ 2 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [ [ "src/uci/graph/GraphEvent.java" ] ], "author" : [ "jrobbins" ], "addedFilesCount" : [ 1 ], "project" : [ "argouml_rev26" ], "hasMse" : [ false ], "date" : [ "Thu Feb 12 03:34:34 CET 1998" ], "deletedFiles" : [ "src/uci/graph/DefaultNodeRenderer.java" ] }, "28" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [ [ "src/uci/graph/MutableGraphSupport.java" ] ], "author" : [ "jrobbins" ], "addedFilesCount" : [ 1 ], "project" : [ "argouml_rev28" ], "hasMse" : [ false ], "date" : [ "Wed Feb 18 23:36:06 CET 1998" ] }, "29" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [
+], "author" : [ "teseo" ], "addedFilesCount" : [ 0 ], "project" : [ "argouml_rev25" ], "hasMse" : [ false ], "date" : [ "Thu Feb 12 03:28:07 CET 1998" ] }, "26" : { "deletedFilesCount" : [ 2 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [ [ "src/uci/graph/GraphEvent.java" ] ], "author" : [ "jrobbins" ], "addedFilesCount" : [ 1 ], "project" : [ "argouml_rev26" ], "hasMse" : [ false ], "date" : [ "Thu Feb 12 03:34:34 CET 1998" ], "deletedFiles" : [ "src/uci/graph/DefaultNodeRenderer.java" ] }, "28" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [ [ "src/uci/graph/MutableGraphSupport.java" ] ], "author" : [ "teseo" ], "addedFilesCount" : [ 1 ], "project" : [ "argouml_rev28" ], "hasMse" : [ false ], "date" : [ "Wed Feb 18 23:36:06 CET 1998" ] }, "29" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [
 	[
 		"src/uci/uml/test/omg/WindowExample.java"
 	],
@@ -1160,7 +1160,7 @@ var history = { "_id" : ObjectId("4ee7f9cb0f3f079d4aeea606"), "2" : { "deletedFi
 	[
 		"src/uci/argo/kernel/Decision.java"
 	]
-], "author" : [ "jrobbins" ], "addedFilesCount" : [ 23 ], "project" : [ "argouml_rev41" ], "hasMse" : [ false ], "date" : [ "Fri Mar 20 03:30:49 CET 1998" ] }, "42" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 22 ], "modifiedFiles" : [
+], "author" : [ "patrick" ], "addedFilesCount" : [ 23 ], "project" : [ "argouml_rev41" ], "hasMse" : [ false ], "date" : [ "Fri Mar 20 03:30:49 CET 1998" ] }, "42" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 22 ], "modifiedFiles" : [
 	[
 		"src/uci/uml/test/omg/HumanResourcesExample.java"
 	],
@@ -1345,7 +1345,7 @@ var history = { "_id" : ObjectId("4ee7f9cb0f3f079d4aeea606"), "2" : { "deletedFi
 	[
 		"src/uci/uml/ui/TabModelTarget.java"
 	]
-], "author" : [ "jrobbins" ], "addedFilesCount" : [ 39 ], "project" : [ "argouml_rev42" ], "hasMse" : [ false ], "date" : [ "Fri Mar 20 03:41:24 CET 1998" ] }, "43" : { "deletedFilesCount" : [ 43 ], "modifiedFilesCount" : [ 100 ], "modifiedFiles" : [
+], "author" : [ "patrick" ], "addedFilesCount" : [ 39 ], "project" : [ "argouml_rev42" ], "hasMse" : [ false ], "date" : [ "Fri Mar 20 03:41:24 CET 1998" ] }, "43" : { "deletedFilesCount" : [ 43 ], "modifiedFilesCount" : [ 100 ], "modifiedFiles" : [
 	[
 		"src/uci/gef/LayerDiagram.java"
 	],
@@ -1874,7 +1874,7 @@ var history = { "_id" : ObjectId("4ee7f9cb0f3f079d4aeea606"), "2" : { "deletedFi
 	[
 		"src/uci/uml/visual/ClassDiagramGraphModel.java"
 	]
-], "author" : [ "jrobbins" ], "addedFilesCount" : [ 4 ], "project" : [ "argouml_rev44" ], "hasMse" : [ false ], "date" : [ "Fri Mar 27 01:34:12 CET 1998" ] }, "45" : { "deletedFilesCount" : [ 12 ], "modifiedFilesCount" : [ 1 ], "modifiedFiles" : [ [ "src/uci/gef/demo/BasicApplication.java" ] ], "author" : [ "jrobbins" ], "addedFilesCount" : [ 0 ], "project" : [ "argouml_rev45" ], "hasMse" : [ false ], "date" : [ "Fri Mar 27 02:04:19 CET 1998" ], "deletedFiles" : [ "src/uci/ui/TreePerspective.java" ] }, "46" : { "deletedFilesCount" : [ 1 ], "modifiedFilesCount" : [ 0 ], "author" : [ "jrobbins" ], "addedFilesCount" : [ 0 ], "project" : [ "argouml_rev46" ], "hasMse" : [ false ], "date" : [ "Fri Mar 27 02:11:09 CET 1998" ], "deletedFiles" : [ "src/uci/uml/ui/TabDiagram.java" ] }, "47" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [
+], "author" : [ "cippo" ], "addedFilesCount" : [ 4 ], "project" : [ "argouml_rev44" ], "hasMse" : [ false ], "date" : [ "Fri Mar 27 01:34:12 CET 1998" ] }, "45" : { "deletedFilesCount" : [ 12 ], "modifiedFilesCount" : [ 1 ], "modifiedFiles" : [ [ "src/uci/gef/demo/BasicApplication.java" ] ], "author" : [ "cippo" ], "addedFilesCount" : [ 0 ], "project" : [ "argouml_rev45" ], "hasMse" : [ false ], "date" : [ "Fri Mar 27 02:04:19 CET 1998" ], "deletedFiles" : [ "src/uci/ui/TreePerspective.java" ] }, "46" : { "deletedFilesCount" : [ 1 ], "modifiedFilesCount" : [ 0 ], "author" : [ "jrobbins" ], "addedFilesCount" : [ 0 ], "project" : [ "argouml_rev46" ], "hasMse" : [ false ], "date" : [ "Fri Mar 27 02:11:09 CET 1998" ], "deletedFiles" : [ "src/uci/uml/ui/TabDiagram.java" ] }, "47" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [
 	[
 		"src/uci/gef/event/GraphSelectionEvent.java"
 	],
@@ -1927,7 +1927,7 @@ var history = { "_id" : ObjectId("4ee7f9cb0f3f079d4aeea606"), "2" : { "deletedFi
 	[
 		"src/uci/uml/ui/NavInheritance.java"
 	]
-], "author" : [ "jrobbins" ], "addedFilesCount" : [ 14 ], "project" : [ "argouml_rev48" ], "hasMse" : [ false ], "date" : [ "Fri Mar 27 02:27:53 CET 1998" ] }, "49" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [ [ "src/uci/util/EnumerationSingle.java" ] ], "author" : [ "jrobbins" ], "addedFilesCount" : [ 1 ], "project" : [ "argouml_rev49" ], "hasMse" : [ false ], "date" : [ "Fri Mar 27 02:45:48 CET 1998" ] }, "50" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 2 ], "modifiedFiles" : [
+], "author" : [ "jrobbins" ], "addedFilesCount" : [ 14 ], "project" : [ "argouml_rev48" ], "hasMse" : [ false ], "date" : [ "Fri Mar 27 02:27:53 CET 1998" ] }, "49" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [ [ "src/uci/util/EnumerationSingle.java" ] ], "author" : [ "misterX" ], "addedFilesCount" : [ 1 ], "project" : [ "argouml_rev49" ], "hasMse" : [ false ], "date" : [ "Fri Mar 27 02:45:48 CET 1998" ] }, "50" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 2 ], "modifiedFiles" : [
 	[
 		"src/uci/uml/visual/FigGeneralization.java"
 	],
@@ -2503,7 +2503,7 @@ var history = { "_id" : ObjectId("4ee7f9cb0f3f079d4aeea606"), "2" : { "deletedFi
 	[
 		"src/uci/uml/ui/SpacerPanel.java"
 	]
-], "author" : [ "jrobbins" ], "addedFilesCount" : [ 36 ], "project" : [ "argouml_rev57" ], "hasMse" : [ false ], "date" : [ "Tue Apr 14 00:48:45 CEST 1998" ] }, "58" : { "deletedFilesCount" : [ 5 ], "modifiedFilesCount" : [ 74 ], "modifiedFiles" : [
+], "author" : [ "misterX" ], "addedFilesCount" : [ 36 ], "project" : [ "argouml_rev57" ], "hasMse" : [ false ], "date" : [ "Tue Apr 14 00:48:45 CEST 1998" ] }, "58" : { "deletedFilesCount" : [ 5 ], "modifiedFilesCount" : [ 74 ], "modifiedFiles" : [
 	[
 		"src/uci/graph/DefaultGraphEdgeRenderer.java"
 	],
@@ -2814,7 +2814,7 @@ var history = { "_id" : ObjectId("4ee7f9cb0f3f079d4aeea606"), "2" : { "deletedFi
 	[
 		"src/uci/uml/critics/CrDisambigClassName.java"
 	]
-], "author" : [ "jrobbins" ], "addedFilesCount" : [ 29 ], "project" : [ "argouml_rev58" ], "hasMse" : [ false ], "date" : [ "Tue Apr 14 02:41:42 CEST 1998" ], "deletedFiles" : [ "src/uci/uml/ui/NavByDiagram.java" ] }, "59" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [
+], "author" : [ "misterX" ], "addedFilesCount" : [ 29 ], "project" : [ "argouml_rev58" ], "hasMse" : [ false ], "date" : [ "Tue Apr 14 02:41:42 CEST 1998" ], "deletedFiles" : [ "src/uci/uml/ui/NavByDiagram.java" ] }, "59" : { "deletedFilesCount" : [ 0 ], "modifiedFilesCount" : [ 0 ], "addedFiles" : [
 	[
 		"src/uci/argo/kernel/HistoryItemManipulation.java"
 	],
@@ -2839,7 +2839,7 @@ var history = { "_id" : ObjectId("4ee7f9cb0f3f079d4aeea606"), "2" : { "deletedFi
 	[
 		"src/uci/uml/visual/UMLClassDiagram.java"
 	]
-], "author" : [ "jrobbins" ], "addedFilesCount" : [ 8 ], "project" : [ "argouml_rev59" ], "hasMse" : [ false ], "date" : [ "Tue Apr 14 03:45:28 CEST 1998" ] }, "61" : { "deletedFilesCount" : [ 1 ], "modifiedFilesCount" : [ 0 ], "author" : [ "jrobbins" ], "addedFilesCount" : [ 0 ], "project" : [ "argouml_rev61" ], "hasMse" : [ false ], "date" : [ "Tue Apr 14 20:14:38 CEST 1998" ], "deletedFiles" : [ "src/uci/gef/CmdSetAttr.java" ] }, "62" : { "deletedFilesCount" : [ 1 ], "modifiedFilesCount" : [ 93 ], "modifiedFiles" : [
+], "author" : [ "misterX" ], "addedFilesCount" : [ 8 ], "project" : [ "argouml_rev59" ], "hasMse" : [ false ], "date" : [ "Tue Apr 14 03:45:28 CEST 1998" ] }, "61" : { "deletedFilesCount" : [ 1 ], "modifiedFilesCount" : [ 0 ], "author" : [ "jrobbins" ], "addedFilesCount" : [ 0 ], "project" : [ "argouml_rev61" ], "hasMse" : [ false ], "date" : [ "Tue Apr 14 20:14:38 CEST 1998" ], "deletedFiles" : [ "src/uci/gef/CmdSetAttr.java" ] }, "62" : { "deletedFilesCount" : [ 1 ], "modifiedFilesCount" : [ 93 ], "modifiedFiles" : [
 	[
 		"src/uci/gef/LayerDiagram.java"
 	],
