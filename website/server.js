@@ -214,7 +214,7 @@ app.post('/addProject', function(req, res){
 				//make the scala backend do something
 				//FOR NOW ITS COMMENTED BECAUSE THE SERVICE IS NOT ON THE SERVER
 				var net = require('net');
-				/*var client = net.createConnection(6969, 'localhost');
+				var client = net.createConnection(6969, 'localhost');
                 
                 client.write(
 					"projectName> "+ projectName + 
@@ -223,7 +223,7 @@ app.post('/addProject', function(req, res){
 					"\n projectBugTracker> " + projectBugTracker + 
 					"\n bugTrackerType> " + bugtrackerType + 
 					"\n projectBugTrackerName> " + projectNameBugtracker);
-				client.end();*/
+				client.end();
 				
 				//add the new project to the db
 				var projToAdd = {
