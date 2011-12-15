@@ -417,7 +417,7 @@ ul#navigation li a:link, ul#navigation li a:visited {
 
 ul#menu-nav {
 	height: 50px;
-	width: 432px;
+	width: 578px;
 	background: none;
 	margin: 0 auto;
 	position: relative;
@@ -617,6 +617,11 @@ div#chart.Block.Right {
   padding-top: 20px;
 }
 
+div#projects {
+	padding-top: 40px;
+	padding-bottom: 40px;
+}
+
 #vizContainer {
   padding-top: 30px;
   padding-bottom: 30px;
@@ -737,11 +742,22 @@ label.form-select {
     content: none;
 }
 
-
-.Candidates {
-    
+#waitbox {
+	z-index: 100;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0; 
+	top: 0;
+	overflow: hidden;
+	background-color: #c8c8c8;
+	opacity: 0.4;
 }
 
-.Candidates:hover {
-    cursor:pointer;
+#waitbox img {
+	position:absolute; 
+	top:50%; 
+	left:50%; 
+	margin-top:-25px;
+	margin-left:-25px;
 }

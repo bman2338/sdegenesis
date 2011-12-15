@@ -1,0 +1,140 @@
+.demo { 
+	width: 900px;
+	margin: auto;	
+}
+
+#show-hide {
+/*	padding: .5em 1em; */
+	text-decoration: none; 
+}
+
+#overlay h3 { 
+	margin: 0; 
+	padding: 0.4em; 
+	text-align: center; 
+}
+
+table#results-analysis {
+	width: 100%;
+}
+
+table#results-analysis td {
+	width: 50%;	
+	vertical-align: top;
+}
+
+table#results-table td {
+	width: auto;
+}
+table#results-table {
+	width: 100%;
+}
+
+#node-selection {
+	font-size: 14px;
+}
+
+.candidates {
+	font-size: 14px;
+}
+
+#overlay-transparent {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0; 
+	top: 0;
+	overflow: hidden;
+}
+
+#overlay {
+	z-index: 100;
+	position:absolute; 
+	width: 1000px;
+	top:50%; 
+	left:50%; 
+	margin-top:-263px;
+	margin-left:-500px;
+	padding: 0.4em; 
+}
+
+/*#overlay { 
+	width: 1000px; 
+	padding: 0.4em; 
+	margin: auto;
+	overflow: hidden;
+	position: absolute; 
+	z-index: 100;
+}*/
+
+/*#overlay-transparent {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0;
+	top: 0;
+	overflow: hidden;
+}
+
+#overlay-transparent div {
+	position:absolute; 
+	top:50%; 
+	left:50%; 
+	margin-top:-25px;
+	margin-left:-25px;
+}*/
+
+
+/*************************** List Tree **************************************/
+
+ul.tree, ul.tree ul {
+  font-size: 20px;
+  list-style-type: none;
+  background: url(../img/vline.png) repeat-y;
+  margin: 0;
+  padding: 0;
+}
+
+ul.tree {
+	margin-left: 10px;
+	margin-top: 10px;
+}
+
+ul.tree ul {
+  margin-left: 10px;
+}
+
+ul.tree li {
+  margin: 0;
+  padding: 0 12px;
+  line-height: 20px;
+  background: url(../img/node.png) no-repeat;
+  color: #777;
+  font-weight: bold;
+}
+
+ul.tree li.last {
+  font-size: 14px;
+  background: #C9C9C9 url(../img/lastnode.png) no-repeat;
+}
+
+ul.tree li.top-analysis {
+	font-size: 20px;
+	color: #555;
+}
+
+ul.tree li.inner-viz {
+	font-size: 14px;
+	color: #777;
+}
+
+
+ul.tree li.top-analysis:hover {
+	color: #777;
+	cursor: default;
+}
+
+ul.tree li:hover {
+	color: white;
+	cursor: pointer;
+}

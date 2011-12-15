@@ -14,8 +14,6 @@ script(src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/i18n/jquery-ui-
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/lib/mbostock/d3.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/lib/mbostock/d3.time.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/lib/mbostock/d3.layout.js")
-// script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/lib/jquery/jquery.js")
-// script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/lib/jquery/jquery.min.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/lib/mbostock/d3.geom.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/deepCopy.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/ModelGraph.js")
@@ -47,11 +45,8 @@ link(type="text/css", rel="stylesheet", href="http://atelier.inf.usi.ch/~babazad
 script(type="text/javascript")
 	
 	$(function() {
-		// $( "#show-hide" ).click(function() {
-		// 	showHide();
-		// 	return false;
-		// });
-		$( "#overlay" ).hide();
+		$( "#overlay-transparent" ).hide();
+		
 	});
 	
 	var projects = [];
@@ -131,28 +126,27 @@ script(type="text/javascript")
 			return count;
 	}
 
-// a(href="#", id="show-hide", class="ui-state-default ui-corner-all") Hide
-
-#overlay(class="ui-widget-content ui-corner-all")
-	h3(class="ui-widget-header ui-corner-all") Nodes
-		#nodes
+#overlay-transparent
+	#overlay(class="ui-widget-content ui-corner-all")
+		h3(class="ui-widget-header ui-corner-all") Nodes
+			#nodes
 		
-		script(type="text/javascript")
-			displayMultiple('nodes', [{name:'Class',value:'Classes'}, {name:'Method',value:'Methods'}, {name:'Revision',value:'History'}
-			//{name:'Attribute',value:'Attributes'}
-			]);
+			script(type="text/javascript")
+				displayMultiple('nodes', [{name:'Class',value:'Classes'}, {name:'Method',value:'Methods'}, {name:'Revision',value:'History'}
+				//{name:'Attribute',value:'Attributes'}
+				]);
 		
-		h3(class="ui-widget-header ui-corner-all") Query
-		input(type="text", style="width: 90%")
-		input(type="submit", value="Filter", style="width: 9%")
-		table(id="results-analysis")
-			tr
-				td
-					h3(class="ui-widget-header ui-corner-all") Candidates
-					#results
-				td			
-					h3(class="ui-widget-header ui-corner-all") Analysis
-					#analysis
+			h3(class="ui-widget-header ui-corner-all") Query
+			input(type="text", style="width: 89%; margin-right:10px")
+			input(type="submit", class="submit", style="width: 9%", value="Filter", id="submissionButton") Filter
+			table(id="results-analysis")
+				tr
+					td
+						h3(class="ui-widget-header ui-corner-all") Candidates
+						#results
+					td			
+						h3(class="ui-widget-header ui-corner-all") Analysis \& Viz
+						#analysis
 
 #topmenu
 	ul(id="menu-nav")
@@ -165,8 +159,8 @@ script(type="text/javascript")
 		li(class="logout")
 			a(class="topnav", target="_top", href="/logout") Logout
 
-#waitbox(style="z-index: 100; width:100%; height:100%; position:fixed; left:0; top:0; overflow:hidden; background-color: #c8c8c8; opacity: 0.4")
-	img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/loader.gif", style="position:absolute; top:50%; left:50%; margin-top:-25px; margin-left:-25px;")
+#waitbox
+	img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/loader.gif")
 
 #projects
 	form(name="saveProject", action="/saveProject/", method="post")
@@ -197,7 +191,7 @@ script(type="text/javascript")
 							td= item.status
 							td(id="deleteid") 
 								a(href="/delete_project/" + item.name)
-									img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/delete.png")
+									img(src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/website/pages/img/delete.png")
 		- else
 			p= "You have no project to analyze. Click New Project to add one."
 		input(type="submit", class="submit", value="Save", id="submissionButton") Save
@@ -276,8 +270,6 @@ script(type="text/javascript")
 			});
 		});
 	
-	// TODO: Do the fucking check on the required paramenters (*) in the form
-	// Moreover do not send 'undefined' to Luca that he's getting crazy :)
 	script
 		function validateSubmission(){
 			//Checks if some field has or is not an url
@@ -312,12 +304,6 @@ script(type="text/javascript")
 		document.getElementById("projects").style.display = "none";
 		document.getElementById("submissionButton").disabled = true;
 
-
-// #setOptions
-// 	span(style="float: right", onclick="document.getElementById('showOptions').style.display = 'block'; document.getElementById('setOptions').style.display = 'none';") X
-// 	#nodesOptions
-// 	#colorOptions
-
 #treename
 #monitor
 
@@ -326,8 +312,6 @@ script(type="text/javascript")
 	button(id="stack", class="active last", onclick="transitionStack()") Stack
 	button(id="highlight", class="active last", onclick="highlightMse()") toggle MSE
 	p
-
-// span(id="showOptions", onclick="document.getElementById('setOptions').style.display = 'block'; document.getElementById('showOptions').style.display = 'none';") Show Options
 
 div(class="Block", id="vizContainer")
 	#chart(class="Block Right", style="overflow:visible")
@@ -351,10 +335,6 @@ div(class="Block", id="vizContainer")
 			document.getElementById("slider_controls").style.display = "block";
 		}
 		
-		function showValue(newValue) {
-			//document.getElementById("range").innerHTML=newValue;
-		}
-		
 		function play(){
 			var src = document.getElementById("playbutton").src;
 			var file = src.substring(src.lastIndexOf("/")+1, src.length);
@@ -371,20 +351,18 @@ div(class="Block", id="vizContainer")
 			//adds directly a hook to get the version by adding as revision number the last element of the array of revisions
 			vizs += "<li onclick='getVersion(\\""+analysis[i].name+"\\", \\"!{vizJson.projectName}\\", !{vizJson.revisions[vizJson.revisions.length - 1]})'>" + analysis[i].name + "</li>"
 		}
-		//getVersion(" + analysis[i].name + ", \\"!{vizJson.projectName}\\", \\"!{vizJson.revisions[vizJson.revisions.length - 1]}\\")
 		vizs += "</ul>"
 		
 		function getVersion(analysisName, projectName, revisionNumber){
 			$.ajax({
 				url: '/get_data/'+ projectName +'/' + revisionNumber,
-				error: function (data ){
-					alert("error : " + JSON.stringify(data));
+				error: function (data){
+					//alert("error : " + JSON.stringify(data));
 				},
 				success: function( data ) {
 					var nodes = data.nodes;
 					var edges = data.edges;
 					
-					//DO SOMETHING TO VISUALIZE
 					var an = {};
 					for(var i = 0; i < analysis.length; i++){
 						if(analysis[i].name == analysisName){
@@ -408,9 +386,6 @@ div(class="Block", id="vizContainer")
 			}); 
 		}
 		
-		
-		
-		
 		//candidates is an array of candidates for a choosen visualization 
 		function addCandidatesToElement(vis){
 			//fill the options
@@ -418,7 +393,7 @@ div(class="Block", id="vizContainer")
 			var opList = getOptions(currentAnalysis, currentDisplayedVis);
 			opList = opList.nodes.sizeFunction;
 			for(var i = 0; i < opList.length; i++){
-				opts += "< class ='Candidates' li onclick=''>" + opList[i].name + "</li>"
+				opts += "<li  onclick=''>" + opList[i].name + "</li>"
 			}
 			opts += "</ul>"
 			document.getElementById('nodesOptions').innerHTML = opts;
@@ -426,7 +401,7 @@ div(class="Block", id="vizContainer")
 			var can = "<ul>"
 			var candidates = vis.candidates();
 			for(var i = 0; i < candidates.length; i++){
-				can += "<li onclick='displayGraphFromList(" + i + ");'>" + candidates[i].name + "</li>"
+				can += "<li class='Candidates' onclick='displayGraphFromList(" + i + ");'>" + candidates[i].name + "</li>"
 			}
 			can += "</ul>";
 			document.getElementById('roots').innerHTML = can;
