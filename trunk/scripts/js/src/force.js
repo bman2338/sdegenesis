@@ -35,7 +35,7 @@ function forceDirectedGraph(nodes, edges,visModel,augmentationCallback) {
 	.attr("cx", function(d) { return d.x; })
 	.attr("cy", function(d) { return d.y; })
 	.attr("r", 10)
-	.style("fill", function(d) { return fill(d.group); })
+	//.style("fill", function(d) { return fill(d.group); })
 	.call(force.drag);
 
 	if (augmentationCallback) {
