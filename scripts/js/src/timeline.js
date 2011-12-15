@@ -175,6 +175,8 @@ d3.select(window).on("keydown", function() {
 	switch (d3.event.keyCode) {
 		case 37: displacement = -200; break;
 		case 39: displacement = 200; break;
+		default:
+			return;
 	}
 	repaint(displacement,300);
 });
