@@ -41,36 +41,9 @@
 	<script type="text/javascript" src="calendar/history.js"></script>
 	<script type="text/javascript" src="calendar/calendar.js"></script>
 	<script type="text/javascript" src="QueryLanguage.js"></script>
-	
+
+	<link type="text/css" rel="stylesheet" href="../../../website/pages/style/tooltip.css"/>	
 	<link type="text/css" rel="stylesheet" href="calendar/calendar.css"/>
-<style type="text/css">
-#tt {
- position:absolute;
- display:block;
- background:url(images/tt_left.gif) top left no-repeat;
- }
- #tttop {
- display:block;
- height:5px;
- margin-left:5px;
- background:url(images/tt_top.gif) top right no-repeat;
- overflow:hidden;
- }
- #ttcont {
- display:block;
- padding:2px 12px 3px 7px;
- margin-left:5px;
- background:#666;
- color:#fff;
- }
-#ttbot {
-display:block;
-height:5px;
-margin-left:5px;
-background:url(images/tt_bottom.gif) top right no-repeat;
-overflow:hidden;
-}
-</style>
 
 	<script type="text/javascript">
 
@@ -107,14 +80,33 @@ overflow:hidden;
 		div.innerHTML = html;
 	}
 	
-	function testCalendar () {
+	function testCollaboration () {
 		var listOfAnalysis = analysisRegister.getEntries(["Revision"]);
 		var analysis = listOfAnalysis[1];
 		
 		
 		var vis = analysis.instantiateVisualization(0);
 		
-		vis.initialize(cleanHistory(history));
+		vis.initialize(cleanHistory(owl.deepCopy(history)));
+		var opts = getOptions(analysis,vis);
+		opts = setUnaryOptionsAndGet(vis,opts);
+		
+		var obj = {
+			types: ["Revision"],
+			nodes: [vis.source],
+		};
+		
+		vis.visualize(obj,"#chart");		
+	}
+	
+	function testCalendar () {
+		var listOfAnalysis = analysisRegister.getEntries(["Revision"]);
+		var analysis = listOfAnalysis[0];
+		
+		
+		var vis = analysis.instantiateVisualization(0);
+		
+		vis.initialize(cleanHistory(owl.deepCopy(history)));
 		var opts = getOptions(analysis,vis);
 		opts = setUnaryOptionsAndGet(vis,opts);
 		
@@ -297,6 +289,7 @@ overflow:hidden;
 		<li><a href="javascript:tree()"> Tree </li>
 		<li><a href="javascript:graph()"> Graph </a> </li>
 		<li><a href="javascript:hist()"> Histogram </a> </li> -->
+		<li><a href="javascript:javascript:testCollaboration()"> Collaboration <a> </li>
 		<li><a href="javascript:javascript:testCalendar()"> Calendar <a> </li>
 			<li><a href="javascript:javascript:sunburst(getTreeFromRelation(methods, classType));"> Invocations Sunburst <a> </li>
 				<li> <a href="javascript:roots(getTreeFromRelation(subclasses, classType));"> Inheritance Tree</a> </li>
