@@ -12,7 +12,7 @@ function forceDirectedGraph(nodes, edges,visModel,augmentationCallback) {
 
 	var force = d3.layout.force()
 	.charge(-100)
-	.linkDistance(50)
+	.linkDistance(200)
 	.nodes(nodes)
 	.links(edges)
 	.size([w, h])

@@ -136,10 +136,6 @@ var createAnalysis = function (name) {
 
 var classInheritance = function () {
 	var obj = createAnalysis("Class Inheritance");
-	/*obj.options["filter"] = {
-			name: "Filter Function",
-			values: [filterNodes("Class","superclassOf")],
-	};*/
 	obj.options["parametrizationFun"] = {
 		values: [ filterInheritance() ],
 	};
@@ -176,8 +172,6 @@ var mouseOut = function(revEntries) {
 	};
 }
 
-
-
 var calendarAugmentationFun = {
 	value: function (node,type,resultType,result,source) {
 
@@ -204,54 +198,6 @@ var calendarAugmentationFun = {
  		}
 	}
 }
-
-var authorColorGlobal = {};
-authorColorGlobal["*"] = d3.rgb(200, 200, 200);
-
-
-var getBestAuthor = function(entries) {
-	    var best = null;
-         var bestRank = 0;
-    
-        for(var e in entries) {
-            var entry = entries[e];
-            var currentRank = entry.addedFilesCount + entry.modifiedFilesCount + 0.5*entry.deletedFilesCount;
-            if(bestRank <= currentRank) {
-                best = entry.author;
-                bestRank = currentRank;
-            }
-        }
-
-		return best;
-}
-
-var authorColorFunction = function(revEntries) {
-return {
-		evalFun: function(entries) {
-        if(!entries) {
-            return d3.rgb(255, 255, 255);
-        }
-
-     	var best = getBestAuthor(entries);
-        
-        
-    
-        if(!best) {
-            best = "*";
-        }
-    
-        var color = authorColorGlobal[best];
-    
-        if(!color) {
-            color = d3.rgb(55 + 200*Math.random(), 100 + 155*Math.random(), 255*Math.random());
-            authorColorGlobal[best] = color;
-        }
-    
-        return color;
-    }
-    };
-};
-
 
 var authorMouseOverFunction = function(revEntries) {
 	return {
@@ -326,7 +272,7 @@ var revisionHistoryAnalysis = function () {
 var methodCallGraph = function () {
 	var obj = createAnalysis("Call Graph");
 	obj.options["parametrizationFun"] = {
-		values: [ filterInheritance() ],
+		values: [ filterCallGraph() ],
 	};
 	obj.elements = {
 		nodes: {
@@ -376,10 +322,10 @@ var mixedCallGraph = function() {
     obj.elements.nodes.options.colorFunction.values = [ typeColor ];
     obj.elements.nodes.options.sizeFunction.values = [  mixedMethodInvocAndClassMethods ];
 	obj.visualizations = [
-	{
+/*	{
 		name: "Call Tree",
 		visFactory: TreeVisualization,
-	},
+	},*/
 	{
 		name: "Call Graph",
 		visFactory: GraphVisualization,
@@ -389,12 +335,31 @@ var mixedCallGraph = function() {
 
 var authorsCollaborationGraph = function () {
 	var obj = createAnalysis("Authors Collboration");
+	obj.options["parametrizationFun"] = {
+		values: [ transformHistoryToAuthorCollaboration() ],
+	};
+	obj.elements = {
+		nodes: {
+			options: {
+				colorFunction: {
+					values:[authorGraphColorFunction],
+				}
+			}
+		}
+	};
+	obj.visualizations = [
+	{
+		name: "Collaboration Graph",
+		visFactory: GraphVisualization,
+	}
+	];
 	return obj;
 };
 
 var analysisRegister = AnalysisRegister()
 analysisRegister.addEntry(["Class"],classInheritance());
 analysisRegister.addEntry(["Revision"],revisionHistoryAnalysis());
+analysisRegister.addEntry(["Revision"],authorsCollaborationGraph());
 //analysisRegister.addEntry(["Class"],classCallGraph());
 analysisRegister.addEntry(["Method"],methodCallGraph());
 analysisRegister.addEntry(["Method", "Class" ],mixedCallGraph());

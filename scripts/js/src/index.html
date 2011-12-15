@@ -20,6 +20,9 @@
 	<script type="text/javascript" src="Graph.js"></script>
 		<script type="text/javascript" src="tooltip.js"></script>
 	<script type="text/javascript" src="GraphToD3Graph.js"></script>
+	<script type="text/javascript" src="authors/authors.js"></script>
+
+	<script type="text/javascript" src="authors/AuthorAnalysis.js"></script>
 
 
 	<script type="text/javascript" src="edge_data.js"></script>
@@ -106,7 +109,7 @@ overflow:hidden;
 	
 	function testCalendar () {
 		var listOfAnalysis = analysisRegister.getEntries(["Revision"]);
-		var analysis = listOfAnalysis[0];
+		var analysis = listOfAnalysis[1];
 		
 		
 		var vis = analysis.instantiateVisualization(0);

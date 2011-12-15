@@ -67,10 +67,10 @@ function filterGraph (relations,vis) {
 		}
 	}
     
-function filterMixedGraph(relations,vis) {
+function filterMixedGraph(relations) {
     return { 
         value : function(elements, obj) {
-			if (vis && vis.id != "Graph")
+			if (obj && obj.id != "Graph")
 				return elements;
 	
             var centers = obj.source.getNodeSelection(function(node) {
@@ -97,12 +97,64 @@ function filterMixedGraph(relations,vis) {
     };
 }    
 
-function filterInheritance (relations) {
+function filterCallGraph () {
+	return {
+		value: function (elements,obj) {
+			if (obj.id == "Graph")
+				return filterMixedGraph(["invokingMethods"]).value(elements,obj);
+			return filterNodes("Method","invokingMethods",obj.source).value(elements,obj);
+		}
+	}
+}
+
+function filterInheritance () {
 	return {
 		value: function (elements, obj) {
 			if (obj.id == "Graph")
 				return filterMixedGraph(["superclassOf"]).value(elements,obj);
 			return filterNodes("Class","superclassOf").value(elements,obj);
+		}
+	}
+}
+
+
+function transformHistoryToAuthorCollaboration () {
+	var matrix = null;
+	return {
+		value: function (elements,obj) {
+			if (!matrix)
+				matrix = getCoauthorshipMatrix(obj.source);
+			var nodes = [];
+			var collaborations = [];
+			for (var author in matrix) {
+				if (author == "__maxVal")
+					continue;
+				var authorNode = {
+					name: author,
+					uniqueId: author,
+					numberOfActions: matrix[author][author],
+					properties: {
+						name: author
+					},
+				};
+				for (var other in matrix[author]) {
+					if (other == "__maxVal" || other == author)
+						continue;
+					if (matrix[author][other]) {
+						var collaboration = {
+						 	from: author,
+							to: other,
+							value: matrix[author][other]/2.0,
+						};
+						collaborations.push(collaboration);
+					}
+				}
+				nodes.push(authorNode);
+			}
+			return {
+				types: elements.types,
+				nodes: [toD3Graph(nodes,collaborations)],
+			}
 		}
 	}
 }

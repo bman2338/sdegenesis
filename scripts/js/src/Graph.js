@@ -176,7 +176,23 @@ genesis.Graph.create = function(nodes, edges) {
 
 
 		getAdjList : function(relation, nodeId) {
-			return ifInRangeGet(relation, binarySearch(relation, nodeId, adjListLess, adjListEquals));
+			var ret = ifInRangeGet(relation, binarySearch(relation, nodeId, adjListLess, adjListEquals));
+			if (ret) {
+				var newList = {
+					from: ret.from,
+					to: [],
+				};
+				var pool = [];
+				for (var i = 0; i < ret.to.length; ++i) {
+					var adj = ret.to[i];
+					if (pool.indexOf(adj) != -1)
+						continue;
+					pool.push(adj);
+					newList.to.push(adj);
+				}
+				ret = newList;
+			}
+			return ret;
 
 		},
 
