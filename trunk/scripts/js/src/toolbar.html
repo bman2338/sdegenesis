@@ -84,7 +84,7 @@
 	<script type="text/javascript" charset="utf-8">
 		$(document).ready(function() {
 			$('#delete').click(function() {
-				var parent = $(this).closest('div').nextUntil('div');
+				var parent = $(this).closest('div').next().next();
 			    var head = parent.prev('h3');
 			    parent.add(head).fadeOut('slow',function(){$(this).remove();});
 			});

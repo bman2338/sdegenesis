@@ -61,5 +61,6 @@ function getVizFor(analysis) {
 }
 
 function getOptsFor(viz) {
-	var opts = getOptions(currentAnalysis, viz);
+	return ['option 1', 'option 2'];
+	// var opts = getOptions(currentAnalysis, viz);
 }

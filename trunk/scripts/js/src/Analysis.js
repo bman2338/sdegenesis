@@ -47,6 +47,15 @@ function setUnaryOptionsAndGet (visualization,optionsArr) {
 	return newOptions;
 }
 
+function bootstrapVisualization (analysis,index,source) {
+	var vis = analysis.instantiateVisualization(index);
+	vis.initialize(source);
+	var opts = getOptions(analysis,vis);
+	opts = setUnaryOptionsAndGet(vis,opts);
+	vis.availableOptions = opts;
+	return vis;
+}
+
 
 function AnalysisRegister () {
 	var registry = {};
@@ -73,6 +82,7 @@ function AnalysisRegister () {
 
 var createAnalysis = function (name) {
 	var obj = {};
+
 	obj.name = name;
 	obj.elements = {};
 	obj.options = {};
@@ -86,7 +96,10 @@ var createAnalysis = function (name) {
 		if (index >= obj.visualizations.length || index < 0)
 			return null;
 		return obj.visualizations[index];
-	}
+	};
+	obj.getVisualizations = function (roots) {
+		return obj.visualizations;
+	};
 	return obj;
 }
 

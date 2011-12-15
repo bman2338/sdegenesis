@@ -1,7 +1,20 @@
+script
+	var currentProject = "!{vizJson.projectName}";
+	function hideAll(){
+		document.getElementById('waitbox').style.visibility = 'visible';
+	}
+	function showAll(){
+		document.getElementById('waitbox').style.visibility = 'hidden';
+	}
+script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js", type="text/javascript")
+script(src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js", type="text/javascript")
+script(src="http://jquery-ui.googlecode.com/svn/tags/latest/external/jquery.bgiframe-2.1.2.js", type="text/javascript")
+script(src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/i18n/jquery-ui-i18n.min.js", type="text/javascript")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/d3.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/d3.time.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/d3.layout.js")
-script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/lib/jquery/jquery.js")
-script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/lib/jquery/jquery.min.js")
+// script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/lib/jquery/jquery.js")
+// script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/lib/jquery/jquery.min.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/mbostock/d3.geom.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/deepCopy.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/ModelGraph.js")
@@ -16,141 +29,134 @@ script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/VisualizationRegister.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Visualization.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/options/SizeFunction.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/options/StrokeFunction.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/options/ColorFunction.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/cleanHistory.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/AnalysisUtils.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Analysis.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Revision.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/Overlay.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/timeline.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/tooltip.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/testnode/js/calendar.js")
+link(type="text/css", rel="stylesheet", href="http://atelier.inf.usi.ch/~babazadm/testnode/pages/style/stack.css")
+link(type="text/css", rel="stylesheet", href="http://atelier.inf.usi.ch/~babazadm/testnode/pages/style/tooltip.css")
+link(type="text/css", rel="stylesheet", href="http://atelier.inf.usi.ch/~babazadm/testnode/pages/style/button.css")
 
 script(type="text/javascript")
 	
-	var subclasses = "superclassOf"; var classType = "Class";
-	var methods = "methods"; 
-	var classes = "classes";
-	var attributes = "attributes";
-	var namespaces = "namespaces"; packageType = "Namespace";
-	var register = new VisualizationsRegister();
-	var analysis = new Array();
-	var currentDisplayedViz;
-	var currentAnalysis;
-
-	analysis.push(inheritanceHierarchyAnalysis);
-	analysis.push(callGraph);
-	analysis.push(revisionRelatedChanges);
-	analysis.push(bugAuthorRelation);
-	analysis.push(entityAuthorRelation);
-	analysis.push(genericGraph);
-	
-	function filterNodes (element, relation, graph) {
-		var elementType = element;
-		var relationName = relation;
-		return function (graph) {                                                 
-			var c = [];
-			var nodes = graph.getNodesByType(elementType);
-			
-			for(var n in nodes) {
-				var node = nodes[n];
-				c.push( graph.getSubtreeByRelationName(relationName, node.uniqueId) );
-			}
-			return c;
-		}
-	}
-	
-	function filterNodesAndEdges(relationName, nodeType) {
-		return function (graph) {
-			var edges = owl.deepCopy(graph.getOneToOneEdges(relationName));
-			var nodes = owl.deepCopy(graph.getNodesByType(nodeType));
-			return [toD3Graph(nodes, edges)];
-		}
-	}
-
-	function getInvocationSelector() {
-		var relationName = "invokingMethods";
-			var nodeType = "Method";	
-			
-			var opt = {
-				maxEdges : 200,
-				currentEdges: 0,	
-				removeUnconnected : true,
-				selectRelation : function(rel) { return rel == relationName; },
-				selectNode : function(node) {   return node.properties.ElementType == nodeType; },
-				selectEdge : function(nodeFrom, nodeTo) { 
-					var ret = (this.currentEdges <= this.maxEdges); 
-					if(ret)  
-						this.currentEdges++; 
-					return ret 
-				}
-			};
-		return opt;
-	}
-	
-	
-	
-	function plotGraph() {
-		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
-		var opt = getInvocationSelector();
-		var selection = graph.getSelection(opt);
-		var subGraph = toD3Graph(selection.nodes, concat(selection.edges));
-		forceDirectedGraph(subGraph.nodes, subGraph.edges);
-	}
-	
-	
-	function getTreeFromRelation(relationName, elementType) {
-		var graph = genesis.Graph.create(node_data.nodes, edge_data.edges);
-		return toD3Trees(graph, relationName, elementType);
-	}
+	$(function() {
+		// $( "#show-hide" ).click(function() {
+		// 	showHide();
+		// 	return false;
+		// });
+		$( "#overlay" ).hide();
+	});
 	
 	var projects = [];
 	projects.push({
 		"!{vizJson.projectName}" : {
 			totalRevisions : [!{vizJson.revisions}],
-			//heldRevisions stores an object of the form {revisionNumber: nmbr, graph: graph}
-			heldRevisions : [],
+			//heldRevisions stores an object of the form {revisionNumber: nmbr, graph: graph, ecc.}
+			heldRevisions : new Array(),
 			history : undefined,
-			getRevision : function(rev){
-					for(var i = 0; i < heldRevisions.length; i++){
-						if(heldRevisions[i].revisionNumber){
-							return heldRevisions[i];
-						}
+			currRev : undefined,
+			getRevision : function(proj, rev, callback){
+					//for(var i = 0; i < heldRevisions.length; i++){
+					if(proj.heldRevisions[rev] == false){
+						return;
 					}
-					$.ajax({
+					if(proj.heldRevisions[rev] != undefined){
+						if(callback)
+							callback(proj.heldRevisions[rev]);
+					}
+					//}
+					else{
+						proj.heldRevisions[rev] = false;
+						hideAll();
+						$.ajax({
 							url: 'http://127.0.0.1:1234/get_data/'+ "!{vizJson.projectName}" +'/' + rev,
 							error: function (data ){
 								alert("Some problem happened: " + JSON.stringify(data));
 							},
 							success: function( data ) {
+								showAll();
 								var nodes = data.nodes;
 								var edges = data.edges;
 								var graph = genesis.Graph.create(nodes,edges);
-								var r = {"revisionNumber" : rev,
-										"graph" : graph,
-									};
-								heldRevisions.push(r);
-								return r;
+								proj.heldRevisions[rev] = new Revision(currentProject, rev);
+								proj.heldRevisions[rev].graph = graph;
+								if(callback){
+									callback(proj.heldRevisions[rev]);
+								}
 							}
-					});
+						});
+					}
 				},
-			getHistory : function(){
-					if(this.history == undefined){
+			getHistory : function(proj){
+					if(proj.history == undefined){
+						hideAll();
 						$.ajax({
-							url: 'http://127.0.0.1:1234/get_data/'+ "!{vizJson.projectName}" +'/history',
+							url: 'http://127.0.0.1:1234/get_history/'+ "!{vizJson.projectName}",
 							error: function (data ){
 								alert("Some problem happened: " + JSON.stringify(data));
 							},
 							success: function( data ) {
 								var h = data.history;
-								this.history = h;
+								proj.history = h;
+								proj.currRev = 500;
+								displayTimeline(h, 1200, 200, function(x){return x})
+								showAll();
 								return h;
 							}
 						});
 					}
 					else {
-						return this.history;
+						return proj.history;
 					}
 				},
 		}
 	});
-
 	
+	
+	function countProperties(obj) {
+		var count = 0;
+		
+		for(var prop in obj) {
+			if(obj.hasOwnProperty(prop))
+				++count;
+			}
+			
+			return count;
+	}
+
+// a(href="#", id="show-hide", class="ui-state-default ui-corner-all") Hide
+
+#overlay(class="ui-widget-content ui-corner-all")
+	h3(class="ui-widget-header ui-corner-all") Nodes
+		#nodes
+		
+		script(type="text/javascript")
+			displayMultiple('nodes', [{name:'Class',value:'Classes'}, {name:'Method',value:'Methods'}, {name:'Revision',value:'History'}
+			//{name:'Attribute',value:'Attributes'}
+			]);
+		
+		h3(class="ui-widget-header ui-corner-all") Query
+		input(type="text", style="width: 90%")
+		input(type="submit", value="Filter", style="width: 9%")
+		table(id="results-analysis")
+			tr
+				td
+					h3(class="ui-widget-header ui-corner-all") Candidates
+					#results
+				td			
+					h3(class="ui-widget-header ui-corner-all") Analysis
+					#analysis
+
 #topmenu
 	ul(id="menu-nav")
+		li(id="show-hide", class="two")
+			a(class="topnav", target="_top", href="#", onclick="showHide()") Show
 		li(class="two")
 			a(class="topnav", target="_top", href="#", onclick="clickProjects()") Projects
 		li(class="two")
@@ -158,23 +164,173 @@ script(type="text/javascript")
 		li(class="logout")
 			a(class="topnav", target="_top", href="/logout") Logout
 
+#waitbox(style="z-index: 100; width:100%; height:100%; position:fixed; left:0; top:0; overflow:hidden; background-color: #c8c8c8; opacity: 0.4")
+	img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/loader.gif", style="position:absolute; top:50%; left:50%; margin-top:-25px; margin-left:-25px;")
 
-#setOptions
-	span(style="float: right", onclick="document.getElementById('showOptions').style.display = 'block'; document.getElementById('setOptions').style.display = 'none';") X
-	#nodesOptions
-	#colorOptions
+#projects
+	form(name="saveProject", action="/saveProject/", method="post")
+		- var items = userInfo.projects
+		- if(items.length > 0)
+			table(id="projectstable")
+				tr
+					th Project Name
+					th Sharing Options
+					th Status
+					th(id="deleteid") Delete
+					each item in items
+						tr
+							td
+								a(href="show_project/" + item.name)= item.name + ""
+							- if(item.defaultShared)
+								td= "Shared"
+							- else
+								td
+									label(class="form-select")
+										select(name="project[shared]")
+											- if(item.open == 0)
+												option Private
+												option Shared
+											- else
+												option Shared
+												option Private
+							td= item.status
+							td(id="deleteid") 
+								a(href="/delete_project/" + item.name)
+									img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/delete.png")
+		- else
+			p= "You have no project to analyze. Click New Project to add one."
+		input(type="submit", class="submit", value="Save", id="submissionButton") Save
+
+#addProject
+	form(name="addProject", action="/addProject", method="post")
+		table
+			tr
+				td(class="caption") Project Name *
+				td(colspan="5")
+					input(type="text", id="projectName", name="project[name]", onblur="validateSubmission()")
+			tr
+				td(class="caption") Repository address *
+				td(colspan="5")
+					input(type="text", id="svnurl", name="project[repo]", onblur="validateSubmission()")
+				td(class="select")
+					label(class="form-select")
+						select(name="project[repoType]")
+							option SVN
+							option(disabled="disabled") CVS
+							option(disabled="disabled") GIT
+			tr
+				td(class="caption") Bugtracker Name
+				td(colspan="5")
+					input(type="text", id="projectNameBugtracker", name="project[projectnamebugtracker]", onblur="validateSubmission()")
+			tr
+				td(class="caption") Bugtracker address
+				td(colspan="5")
+					input(type="text", id="bugtracker", name="project[bugtracker]", onblur="validateSubmission()")
+				td(class="select")
+					label(class="form-select")
+						select(name="project[btType]")
+							option None
+							option Bugzilla
+							option(disabled="disabled") JIRA
+			tr
+				td(class="caption") Smaller revision *
+				td 
+					input(type="text", id="fromRev", name="project[fromRev]")
+				td(class="rev-caption-inner") Higher revision **
+				td 
+					input(type="text", id="toRev", name="project[toRev]")
+				td(class="rev-caption-inner") Revision step *
+				td 
+					input(type="text", id="stepRev", name="project[stepRev]")
+			tr
+				td(class="caption") Repository username
+				td(colspan="2")
+					input(type="text", id="repoUsername", name="project[repoUsername]")
+				td(class="caption-inner") Repository password
+				td(colspan="2") 
+					input(type="password", id="repoPassword", name="project[repoPassword]")
+			tr
+				td(class="caption") BugTracker username
+				td(colspan="2")
+					input(type="text", id=btUsername", name="project[btUsername]")
+				td(class="caption-inner") BugTracker password
+				td(colspan="2") 
+					input(type="password", id=btPassword", name="project[btPassword]")	
+			tr
+				td
+					#legend
+						p (*) Mandatory field
+						p (**) If not specified checkout until HEAD
+				td(colspan="6", class="but")
+					span 
+						input(type="submit", class="submit", value="Send", id="submissionButton") Submit request		
+		#error
+					
+	script(type="text/javascript")
+		$(document).ready(function(){
+			$("li.two a").click(function() {
+				$("li.two").removeClass("selected");
+				$(this).parents().addClass("selected");
+				return false;
+			});
+		});
+	
+	// TODO: Do the fucking check on the required paramenters (*) in the form
+	// Moreover do not send 'undefined' to Luca that he's getting crazy :)
+	script
+		function validateSubmission(){
+			//Checks if some field has or is not an url
+			var pname = document.getElementById('projectName');
+			var repourl = document.getElementById('svnurl');
+			var bturl = document.getElementById('bugtracker');
+			var regexp = "/http:\/\/[A-Za-z0-9\.-]{3,}\.[A-Za-z]{3}/";
+			if(!isUrl(repourl.value) || hasLineFeed(pname.value)){
+				document.getElementById('error').innerHTML = "The urls or the name contain invalid characters!";
+				document.getElementById("submissionButton").disabled = true;
+				return false;
+			}
+			else{
+				document.getElementById('error').innerHTML = "";
+				document.getElementById("submissionButton").disabled = false;
+				return true;
+			}
+		}
+	
+		function clickProjects(){
+			document.getElementById("projects").style.display = "block";
+			document.getElementById("addProject").style.display = "none";
+			document.getElementById("vizContainer").style.display = "none";
+		}
+		function clickNew(){
+			document.getElementById("addProject").style.display = "block";
+			document.getElementById("projects").style.display = "none";
+			document.getElementById("vizContainer").style.display = "none";
+		}
+
+		document.getElementById("addProject").style.display = "none";
+		document.getElementById("projects").style.display = "none";
+		document.getElementById("submissionButton").disabled = true;
+
+
+// #setOptions
+// 	span(style="float: right", onclick="document.getElementById('showOptions').style.display = 'block'; document.getElementById('setOptions').style.display = 'none';") X
+// 	#nodesOptions
+// 	#colorOptions
 
 #treename
 #monitor
 
-span(id="showOptions", onclick="document.getElementById('setOptions').style.display = 'block'; document.getElementById('showOptions').style.display = 'none';") Show Options
+#chart
+	button(id="group", class="first", onclick="transitionGroup()") Group
+	button(id="stack", class="active last", onclick="transitionStack()") Stack
+	button(id="highlight", class="active last", onclick="highlightMse()") toggle MSE
+	p
+
+// span(id="showOptions", onclick="document.getElementById('setOptions').style.display = 'block'; document.getElementById('showOptions').style.display = 'none';") Show Options
 
 div(class="Block", id="vizContainer")
 	#chart(class="Block Right", style="overflow:visible")
-	
-	
-	#roots(class="Block Left List")
-	
+		
 	script
 		
 		function graphTest() {
@@ -208,16 +364,6 @@ div(class="Block", id="vizContainer")
 				document.getElementById("playbutton").src = "img/play.png";
 			}
 		}
-		//var variousGraphs = graphTest();
-		//roots(variousGraphs);
-		
-		/*$.ajax({
-			url: 'http://127.0.0.1:4321/get_data/Argo/11',
-			success: function( data ) {
-				var nodes = data.nodes;
-				var edges = data.edges;
-			}
-		});*/
 		
 		var vizs = "<ul>";
 		for(var i = 0; i < analysis.length; i++){
@@ -226,7 +372,6 @@ div(class="Block", id="vizContainer")
 		}
 		//getVersion(" + analysis[i].name + ", \\"!{vizJson.projectName}\\", \\"!{vizJson.revisions[vizJson.revisions.length - 1]}\\")
 		vizs += "</ul>"
-		document.getElementById("roots").innerHTML = vizs;
 		
 		function getVersion(analysisName, projectName, revisionNumber){
 			$.ajax({
@@ -254,7 +399,7 @@ div(class="Block", id="vizContainer")
 					var vis = possibleVizs[0];
 					vis.options["filter"] = filterNodes(an.options.elementType, an.options.relation);
 					vis.initializeFromGraph(graph);
-					//fill the list & setup global variabl
+					//fill the list & setup global variable
 					currentDisplayedVis = vis;
 					addCandidatesToElement(vis);
 					
@@ -287,15 +432,7 @@ div(class="Block", id="vizContainer")
 		function displayGraphFromList(candidate){
 			var cans = currentDisplayedVis.candidates();
 			currentDisplayedVis.visualize(cans[candidate], "#chart");
-			//alert(JSON.stringify(getOptions(currentAnalysis, currentDisplayedVis)));
 		}
-		
-		//getOptions(analysis, vis)
-		
-		register.addVisualization(TreeVisualization);
-		register.addVisualization(GraphVisualization);
-		register.addVisualization(SunburstVisualization);
-		document.getElementById('setOptions').style.display = 'none';
 		
 		function clickProjects(){
 			document.getElementById("projects").style.display = "block";
@@ -309,3 +446,11 @@ div(class="Block", id="vizContainer")
 			document.getElementById('chart').style.display = 'none';
 			document.getElementById('roots').style.display = 'none';
 		}
+		
+		$(function() {
+			$('#nodes input').click(updateResults);
+		});
+		
+		// document.getElementById('overlay').style.visibility = 'hidden';
+		document.getElementById('waitbox').style.visibility = 'hidden';
+		projects[0]['argouml'].getHistory(projects[0]['argouml']);
