@@ -45,6 +45,8 @@ var tooltip=function(){
    }
   if(tt.offsetWidth > maxw){tt.style.width = maxw + 'px'}
   h = parseInt(tt.offsetHeight) + top;
+  if (!tt)
+	return;
   clearInterval(tt.timer);
   tt.timer = setInterval(function(){tooltip.fade(1)},timer);
   },
