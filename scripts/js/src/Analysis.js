@@ -90,7 +90,10 @@ var defaultAugmentation = {
 			node.attr("r",result);
 			break;
 		case "mouseover":
-			node.on("mouseover",result);
+			node.on("mouseover", wrapper);	
+			break;
+		case "mouseout":
+			node.on("mouseout", wrapper);
 			break;
 		case "strokeFunction":
 			node.style("stroke",result);
@@ -165,29 +168,6 @@ var classInheritance = function () {
 	return obj;
 }
 
-function colorFun (source) {
-	return {
-		evalFun: function(node) {
-			if (node) {
-				return d3.rgb(255,0,0);
-			}
-			return d3.rgb(255,255,255);
-		}
-	}
-}
-
-function textFun (source) {
-	return { 
-		evalFun: function(node) {
-			if (node) {
-				return node[0].author;
-			}
-			return "";
-		}
-	}
-}
-
-
 var mouseOut = function(revEntries) {
 	return {
 		evalFun: function(entries) {
@@ -213,7 +193,7 @@ var calendarAugmentationFun = {
 			node.style("fill",wrapper);
 			break;
 		case "textFunction":
-			node.selectAll("text").text(wrapper);
+			//node.selectAll("text").text(wrapper);
 			break;
 		case "mouseover":
 			node.on("mouseover", wrapper);	
@@ -325,10 +305,6 @@ var revisionHistoryAnalysis = function () {
 					name: "Entities Color Function",
 					values: [authorColorFunction],
 				},
-				// textFunction: {
-				// 		name: "Entities Tooltip Text Function",
-				// 		values: [textFun],
-				// 	},
 				mouseover: {
 					name: "Show the developers which committed that day",
 					values: [ authorMouseOverFunction ]
