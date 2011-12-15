@@ -122,6 +122,9 @@ function stackedBarChart (data,sizeX,sizeY,scale,version,step) {
 		.attr("transform", function(d) { return "translate(" + x(d) + ",0)"; })
 		.on("click", function(d, i) {
 			highlightCurrent(i);
+			/*projects[0][currentProject].getRevision(projects[0][currentProject], cleanedHist.i, function(rev){
+				projects[0][currentProject].currRev = rev.revisionNumber;
+			});*/
 	});
 	
 	

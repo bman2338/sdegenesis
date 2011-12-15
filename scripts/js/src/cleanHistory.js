@@ -50,6 +50,8 @@
 		var format = d3.time.format(getHistoryDateFormatString())
 		for(var e in hist) {
 			var entry = hist[e];
+			if (entry.date == undefined)
+				continue;
 			entry.number = e;
 			var dateStr = getDateStrNoZone(entry.date);
 			

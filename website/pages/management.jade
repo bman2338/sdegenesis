@@ -8,37 +8,38 @@
 			a(class="topnav", target="_top", href="/logout") Logout
 
 #projects
-	form(name="saveProject", action="/saveProject/!{}", method="post")
+	form(name="saveProject", action="/saveProject/", method="post")
 		- var items = userInfo.projects
 		- if(items.length > 0)
 			table(id="projectstable")
 				tr
 					th Project Name
-					// th Sharing Options
+					th Sharing Options
 					th Status
 					th(id="deleteid") Delete
 					each item in items
 						tr
 							td
 								a(href="show_project/" + item.name)= item.name + ""
-							// - if(item.defaultShared)
-							// 	td= Shared
-							// - else
-							// 	td
-							// 		label(class="form-select")
-							// 			select(name="project[shared]")
-							// 				- if(item.open == 0)
-							// 					option Private
-							// 					option Shared
-							// 				- else
-							// 					option Shared
-							// 					option Private
+							- if(item.defaultShared)
+								td= "Shared"
+							- else
+								td
+									label(class="form-select")
+										select(name="project[shared]")
+											- if(item.open == 0)
+												option Private
+												option Shared
+											- else
+												option Shared
+												option Private
 							td= item.status
 							td(id="deleteid") 
-								img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/delete.png")
+								a(href="/delete_project/" + item.name)
+									img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/delete.png")
 		- else
 			p= "You have no project to analyze. Click New Project to add one."
-		input(type="submit", class="submit", value="Send", id="submissionButton") Save
+		input(type="submit", class="submit", value="Save", id="submissionButton") Save
 
 #addProject
 	form(name="addProject", action="/addProject", method="post")
@@ -114,6 +115,8 @@ script(type="text/javascript")
 		});
 	});
 	
+// TODO: Do the fucking check on the required paramenters (*) in the form
+// Moreover do not send 'undefined' to Luca that he's getting crazy :)
 script
 	function validateSubmission(){
 		//Checks if some field has or is not an url

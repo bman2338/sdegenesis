@@ -1,0 +1,40 @@
+.demo { 
+	width: 900px;
+	margin: auto;	
+}
+
+#show-hide {
+	padding: .5em 1em; 
+	text-decoration: none; 
+}
+
+#overlay { 
+	width: 1000px; 
+	padding: 0.4em; 
+	margin: auto;
+	position: absolute; 
+	left: 50px; 
+	top: 100px
+}
+
+#overlay h3 { 
+	margin: 0; 
+	padding: 0.4em; 
+	text-align: center; 
+}
+
+table#results-analysis {
+	width: 100%;
+}
+
+table#results-analysis td {
+	width: 50%;	
+	vertical-align: top;
+}
+
+table#results-table td {
+	width: auto;
+}
+table#results-table {
+	width: 100%;
+}
