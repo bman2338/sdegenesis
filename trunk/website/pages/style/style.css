@@ -736,3 +736,12 @@ label.form-select {
 .no-pointer-events .form-select:after {
     content: none;
 }
+
+
+.Candidates {
+    
+}
+
+.Candidates:hover {
+    cursor:pointer;
+}

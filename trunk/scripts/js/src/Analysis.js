@@ -99,6 +99,8 @@ var defaultAugmentation = {
 	}
 }
 
+
+
 var createAnalysis = function (name) {
 	var obj = {};
 
@@ -207,6 +209,49 @@ var calendarAugmentationFun = {
 	}
 }
 
+var authorColorGlobal = {};
+authorColorGlobal["*"] = d3.rgb(200, 200, 200);
+
+
+var authorColorFunction = function(revEntries) {
+return {
+		evalFun: function(entries) {
+        if(!entries) {
+            return d3.rgb(255, 255, 255);
+        }
+
+            var best = null;
+            var bestRank = 0;
+    
+        for(var e in entries) {
+            var entry = entries[e];
+            var currentRank = entry.addedFilesCount + entry.modifiedFilesCount + 0.5*entry.deletedFilesCount;
+            if(bestRank <= currentRank) {
+                best = entry.author;
+                bestRank = currentRank;
+            }
+        }
+        
+        
+    
+        if(!best) {
+            best = "*";
+        }
+    
+        var color = authorColorGlobal[best];
+    
+        if(!color) {
+            color = d3.rgb(55 + 200*Math.random(), 100 + 155*Math.random(), 255*Math.random());
+            authorColorGlobal[best] = color;
+        }
+    
+        return color;
+    }
+    };
+};
+
+
+
 var revisionHistoryAnalysis = function () {
 	var obj = createAnalysis("Revision History Analysis");
 	obj.allowsMultipleRoots = false;
@@ -221,7 +266,7 @@ var revisionHistoryAnalysis = function () {
 			options: {
 				colorFunction: {
 					name: "Entities Color Function",
-					values: [colorFun],
+					values: [authorColorFunction],
 				},
 				textFunction: {
 					name: "Entities Tooltip Text Function",
