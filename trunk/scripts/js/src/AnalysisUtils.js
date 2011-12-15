@@ -3,17 +3,20 @@ function filterNodes (element, relation, graph) {
 	var relationName = relation;
 	
 	return {
-		value: function (graph) {                                                 
+		value: function (elements,obj) {                                                 
 		var c = [];
-		var nodes = graph.getNodesByType(elementType);
+		var nodes = elements.nodes;
 
 		for(var n in nodes) {
 			var node = nodes[n];
-			var sTree = graph.getSubtreeByRelationName(relationName, node.uniqueId);
+			var sTree = obj.source.getSubtreeByRelationName(relationName, node.uniqueId);
 			if (sTree != null)
 				c.push(sTree);
 		}
-		return c;
+		          return {
+	                types: elements.types,
+	                nodes: c,
+	            };
 		}
 	};
 }
@@ -91,6 +94,14 @@ function filterMixedGraph(relations,vis) {
             };
         }
     };
-
-
 }    
+
+function filterInheritance (relations) {
+	return {
+		value: function (elements, obj) {
+			if (obj.id == "Graph")
+				return filterMixedGraph(["superclassOf"]).value(elements,obj);
+			return filterNodes("Class","superclassOf").value(elements,obj);
+		}
+	}
+}

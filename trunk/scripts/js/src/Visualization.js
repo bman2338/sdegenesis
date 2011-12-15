@@ -77,6 +77,7 @@ var BaseVisualization = function () {
 
 var TreeVisualization = function() { 
 	var obj = BaseVisualization();
+	obj.id = "TreeVisualization";
 	obj.addOption("elementsComparator", function (a,b) {
 			if(b.children) {
 				if(a.children) {
