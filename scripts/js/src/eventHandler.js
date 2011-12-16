@@ -7,13 +7,6 @@ var eventHandler = EventHandler();
 
 function EventHandler(){
 	var handlers = {
-		window: {
-			defaults: {
-				keydown: null,
-			},
-			values: {
-			}
-		}
 	};
 	return{
 		pause: function(){
@@ -34,7 +27,7 @@ function EventHandler(){
 		
 		add: function(object, type, handler){
 			if (!handlers[object])
-				handlers[object] = { defaults: {}, values: {} };
+				handlers[object] = { defaults:{ keydown: null, }, values: {} };
 			handlers[object].values[type] = handler;
 			//handlers.push({obj:object, hand:handler, typ:type, running:true});
 			d3.select(object).on(type,handler);
