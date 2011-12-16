@@ -46,6 +46,8 @@ function stackedBarChart (data,sizeX,sizeY,scale,version,step,canvas) {
 
 	if (canvas)
 		currentCanvas = canvas;
+	if (scale == null)
+		scale = function (x) { return x; };
     d3.select(currentCanvas).html("");
 	$(currentCanvas).html = "";
 	currentLast = version;

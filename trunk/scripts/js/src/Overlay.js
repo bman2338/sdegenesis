@@ -159,13 +159,13 @@ function showResults() {
 			});
 
 		// alert(JSON.stringify(results));
+		var resultDiv = document.getElementById("results");
 
 		if (shouldSkip.length == elementsSelected.length) {
 			resultDiv.innerHTML = "";
 			return;
 		}
 			
-		var resultDiv = document.getElementById("results");
 			
 		resultDiv.innerHTML = getTable(shouldSkip, results);
 	
