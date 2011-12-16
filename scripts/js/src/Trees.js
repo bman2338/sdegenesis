@@ -68,7 +68,7 @@ function hTree(root, target,visModel,augmentationCallback) {
 	var offsetY = height / 2.0;
     var r = height/2;
     var tree = d3.layout.tree()
-		.size([360, r - 120])
+		.size([360, r - 10])
 		.separation(function(a,b) { return (a.parent == b.parent ? 1: 2)/a.depth });
     
     var diagonal = d3.svg.diagonal.radial()

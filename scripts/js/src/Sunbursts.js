@@ -62,7 +62,7 @@ function sunburst (rawJson) {
 		r = w / 2,
 		x = d3.scale.linear().range([0, 2 * Math.PI]),
 		y = d3.scale.pow().exponent(1.3).domain([0, 1]).range([0, r]),
-		p = 5,
+		p = 0,
 		duration = 1000;
 		var color = d3.scale.category20c();
 		var div = d3.select(target);
@@ -76,7 +76,7 @@ function sunburst (rawJson) {
 		var partition = d3.layout.partition()
 		.sort(null)
 		.value(function(d) { 
-			return 5.8 - d.depth; 
+			return 15.8 - d.depth; 
 		});
 
 		var arc = d3.svg.arc()
