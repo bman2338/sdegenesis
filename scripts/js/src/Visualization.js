@@ -123,39 +123,17 @@ var TreeVisualization = function() {
 			},
 		},
 	};
-	/*obj.candidates = function () {
-		if (obj.source == undefined)
-			return [];
-
-		var roots = [];
-		if (obj.options["filter"])
-			roots = obj.options["filter"].value(obj.source);
-		if (roots.length == 0)
-			return [];	
-		
-		if (obj.options["elementsComparator"])
-			roots = roots.sort(obj.options["elementsComparator"].value)
-
-		jQuery.each(roots, function() {
-			var that = this;
-			if(that.children) {
-				if (obj.options["elementsComparator"])
-					that.children = that.children.sort(obj.options["elementsComparator"].value)
-			}
-		});
-		return roots;
-	};*/
 	return obj;
 }
 
 var SunburstVisualization = function () {
 	var obj = TreeVisualization();
 	obj.id = "Sunburst";
-	obj.options["visFun"].value = function(element,canvas) {
+	obj.options["visFun"].value = function(element,canvas,base,augmentationFun) {
 		if (!element.children)
-			_sunburst([],canvas,obj.name(),obj);
+			_sunburst([],canvas,obj,augmentationFun);
 		else
-			_sunburst(element.children,canvas,obj.name(),obj);
+			_sunburst(element.children,canvas,obj,augmentationFun);
 	}
 	return obj;
 }
