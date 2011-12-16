@@ -8,8 +8,8 @@ function plotHistoryCalendar(history, visModel, augmentationCallback) {
 	var historyData = history.data;
 	
 	var m = [19, 20, 20, 19], // top right bottom left margin
-	w = 960 - m[1] - m[3], // width
-	h = 136 - m[0] - m[2], // height
+	w = canvas_width - m[1] - m[3], // width
+	h = canvas_height - m[0] - m[2], // height
 	z = 17; // cell size
 
 	var day = d3.time.format("%w"),

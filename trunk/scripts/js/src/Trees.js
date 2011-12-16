@@ -60,9 +60,12 @@ function isBranch(d) {
 function hTree(root, target,visModel,augmentationCallback) {
     d3.select(target).html("");
     var json = root;
+
+	var width = canvas_width;
+	var height = canvas_height;
     
     var offset = -10;
-    var r = 900/2;
+    var r = height/2;
     var tree = d3.layout.tree()
 		.size([360, r - 120])
 		.separation(function(a,b) { return (a.parent == b.parent ? 1: 2)/a.depth });
@@ -74,8 +77,8 @@ function hTree(root, target,visModel,augmentationCallback) {
     
     var vis = d3.select(target)
 		.append("svg:svg")
-		.attr("width", r*3)
-		.attr("height", r*3 - 150)
+		.attr("width", width)
+		.attr("height", height)
 		.append("svg:g")
 		.attr("transform", "translate(" + (r+offset )+ "," + (r+offset ) + ")");
     
@@ -108,11 +111,11 @@ function hTree(root, target,visModel,augmentationCallback) {
 			.on("click", function(d, i) {
 				if(isBranch(d)) {
 					if(d.hParent) {
-						hTree(d.hParent, target);
+						hTree(d.hParent, target,visModel,augmentationCallback);
 						d.hParent = null;
 					} else {
 						d.hParent = root;
-						hTree(d, target) 
+						hTree(d, target,visModel,augmentationCallback) 
 					}
 				}
 			});
