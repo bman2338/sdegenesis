@@ -16,7 +16,7 @@ var cleanedHist;
 var layers;
 var currentCanvas;
     
-var p = 20,
+var p = 100,
     w, //size x
     h, //size y
     mx,my,mz,
@@ -285,7 +285,7 @@ function getData(history, scale){
 
 
 function highlightMse(){
-	var group = d3.selectAll("#chart");
+	var group = d3.selectAll(currentCanvas);
 	
 	group.selectAll("g.layer rect")
 		.transition()
@@ -303,7 +303,7 @@ function highlightMse(){
 }
 
 function undoHighlight(){
-	var group = d3.selectAll("#chart");
+	var group = d3.selectAll(currentCanvas);
 	
 	group.selectAll("g.layer rect")
 		.transition()
@@ -322,7 +322,7 @@ function undoHighlight(){
  
 
 function transitionGroup() {
-  var group = d3.selectAll("#chart");
+  var group = d3.selectAll(currentCanvas);
 
   group.select("#group")
       .attr("class", "first active");
@@ -349,7 +349,7 @@ function transitionGroup() {
 
 
 function transitionStack() {
-  var stack = d3.select("#chart");
+  var stack = d3.select(currentCanvas);
 
   stack.select("#group")
       .attr("class", "first");
