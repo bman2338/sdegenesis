@@ -12,7 +12,13 @@ function typeColor (graph) {
 	return {
 		name: "Color for node type",
 		evalFun: function (node) {
-				var type = node.properties.ElementType
+				var type = null;
+				if (node.properties) {
+					type = node.properties.ElementType;
+				}
+				else {
+					type = "*";
+				}
 				var func = colors[type];
 				if (!func)
 					func = colors["*"];
