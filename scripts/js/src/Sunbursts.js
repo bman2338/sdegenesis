@@ -57,7 +57,7 @@ function sunburst (rawJson) {
 
 	}
 	function _sunburst(root, target,name) { 
-		var w = 840,
+		var w = canvas_height-5,
 		h = w,
 		r = w / 2,
 		x = d3.scale.linear().range([0, 2 * Math.PI]),

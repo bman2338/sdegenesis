@@ -1,7 +1,7 @@
 
 function forceDirectedGraph(nodes, edges,visModel,augmentationCallback) {
-	var w = 900,
-	h = 600,
+	var w = canvas_width,
+	h = canvas_height,
 	fill = d3.scale.category20();
 	d3.select("#chart").html("");
 	var vis = d3.select("#chart").append("svg:svg")
@@ -12,7 +12,7 @@ function forceDirectedGraph(nodes, edges,visModel,augmentationCallback) {
 
 	var force = d3.layout.force()
 	.charge(-100)
-	.linkDistance(200)
+	.linkDistance(300)
 	.nodes(nodes)
 	.links(edges)
 	.size([w, h])
