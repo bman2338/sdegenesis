@@ -9,7 +9,7 @@ function EventHandler(){
 	var handlers = {
 		window: {
 			defaults: {
-				keydown: undefined,
+				keydown: null,
 			},
 			values: {
 			}
@@ -17,15 +17,18 @@ function EventHandler(){
 	};
 	return{
 		pause: function(){
-			for(hndlr in handlers){
-				alert(JSON.stringify(hndlr))
-				d3.select(hndlr).on(hndlr.values, hndlr.values.handler).remove();
+			for(var hndlr in handlers){
+				for (var value in handlers[hndlr].defaults) {
+					d3.select(hndlr).on(value, handlers[hndlr].defaults[value]);
+				}
 			}
 		},
 		
 		resume: function(){
-			for(hndlr in handlers){
-				d3.select(hndlr).on(hndlr.values, hndlr.values.handler);
+			for(var hndlr in handlers){
+				for (var value in handlers[hndlr].values) {
+					d3.select(hndlr).on(value, handlers[hndlr].values[value]);
+				}
 			}
 		},
 		
