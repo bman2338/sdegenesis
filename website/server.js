@@ -373,7 +373,9 @@ app.get('/show_project/:projectname', function(req, res){
 			
 			var newJson = {};
 			newJson.projectName = req.params.projectname;
-			newJson.revisions = proj[0].revisions;
+			newJson.revisions = [];
+			if(proj)
+				newJson.revisions = proj[0].revisions;
 			
 			//newJson.name = nodes.project;
 			newJson.children = [];
@@ -399,14 +401,14 @@ app.get('/show_project/:projectname', function(req, res){
 * Redirect for the AJAX request of the revisions
 */
 app.get('/get_data/:projectname/:rev', function(req, res){
-	console.log(req.params.projectname + '_rev' + req.params.rev + '_edges RICHIESTI');
+	console.log(req.params.projectname + '_rev' + req.params.rev + '_* RICHIESTI');
 	mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(req.params.projectname + '_rev' + req.params.rev + '_edges').find().toArray(function(err, edges){
 		mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(req.params.projectname + '_rev' + req.params.rev + '_nodes').find().toArray(function(err, nodes){
 			//SEND BACK VIA AJAX THE RESULTS nodes[0] and edges[0]
 			//if (req.xhr) {
 		    // respond with the each user in the collection
 		    // passed to the "user" view
-			if(nodes[0]){
+			if(nodes && nodes[0]){
 				res.send({
 					nodes: nodes[0].nodes,
 					edges: edges[0].edges,
@@ -461,7 +463,8 @@ app.get('/get_history/:projectname', function(req, res){
 							
 							//get that history, give it to the cleaner, save it
 							//back in the target, continue with the next
-							target = cleaner.cleanHistory(hist[0], target);
+							if(hist)
+								target = cleaner.cleanHistory(hist[0], target);
 							counter = counter + 1;
 							target.last = biggest;
 							if(counter == numberOfColl){
