@@ -80,6 +80,25 @@
 		div.innerHTML = html;
 	}
 	
+	function testDensity () {
+		var listOfAnalysis = analysisRegister.getEntries(["Revision"]);
+		var analysis = listOfAnalysis[2];
+		
+		
+		var vis = analysis.instantiateVisualization(0);
+		
+		vis.initialize(cleanHistory(owl.deepCopy(history)));
+		var opts = getOptions(analysis,vis);
+		opts = setUnaryOptionsAndGet(vis,opts);
+		
+		var obj = {
+			types: ["Revision"],
+			nodes: [vis.source],
+		};
+		
+		vis.visualize(obj,"#chart");
+	}
+	
 	function testCollaboration () {
 		var listOfAnalysis = analysisRegister.getEntries(["Revision"]);
 		var analysis = listOfAnalysis[1];
@@ -289,6 +308,7 @@
 		<li><a href="javascript:tree()"> Tree </li>
 		<li><a href="javascript:graph()"> Graph </a> </li>
 		<li><a href="javascript:hist()"> Histogram </a> </li> -->
+		<li><a href="javascript:javascript:testDensity()"> Density Map <a> </li>
 		<li><a href="javascript:javascript:testCollaboration()"> Collaboration <a> </li>
 		<li><a href="javascript:javascript:testCalendar()"> Calendar <a> </li>
 			<li><a href="javascript:javascript:sunburst(getTreeFromRelation(methods, classType));"> Invocations Sunburst <a> </li>

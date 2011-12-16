@@ -158,3 +158,30 @@ function transformHistoryToAuthorCollaboration () {
 		}
 	}
 }
+
+function historyDensityCalculation () {
+	return {
+		value: function (element,vis) {
+			var history = vis.source;
+			var max = 0;
+			for (var date in history.data) {
+				var entries = history.data[date];
+				var value = 0;
+				for (var e in entries) {
+					var entry = entries[e];
+					value += getAuthorContributionValue(entry);
+				}
+				entries[0].dayContributionValue = value;
+				max = Math.max(value,max);
+			}
+			for (var date in history.data) {
+				var entries = history.data[date];
+				entries[0].dayContributionValue = entries[0].dayContributionValue/(1.0*max);
+			}
+			return {
+				types: element.types,
+				nodes: [history],
+			};
+	}
+}
+}

@@ -1,6 +1,9 @@
 var authorColorGlobal = {};
 authorColorGlobal["*"] = d3.rgb(200, 200, 200);
 
+function getAuthorContributionValue (entry) {
+	return entry.addedFilesCount + entry.modifiedFilesCount + entry.deletedFilesCount/2.0;
+}
 
 var getBestAuthor = function(entries) {
 	    var best = null;
@@ -85,3 +88,22 @@ var mouseOverAuthorNode = function () {
 		}
 	}
 }
+
+
+var densityColorFunction = function() {
+	return {
+		evalFun: function(entries) {
+        if(!entries) {
+            return d3.rgb(255, 255, 255);
+        }
+		var color = [255,255,255];
+		var entry = entries[0];
+		var value = 0;
+		if (entry.dayContributionValue)
+			value = 1.0-entry.dayContributionValue;
+		else
+			return d3.rgb(255,255,255);
+		return d3.rgb(value*color[0],value*color[1],value*color[2]);
+    	},
+	}
+};

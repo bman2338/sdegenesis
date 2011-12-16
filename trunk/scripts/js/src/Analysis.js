@@ -224,11 +224,6 @@ var authorMouseOverFunction = function(revEntries) {
 	};
 }
 
-function getAuthorContributionValue (entry) {
-	return entry.addedFilesCount + entry.modifiedFilesCount + entry.deletedFilesCount/2.0;
-}
-
-
 var getAuthorListStr = function(entries) {
 	var str = "";
 	var authors = {};
@@ -273,7 +268,7 @@ var getAuthorListStrFunction = function(revEntries) {
 
 
 var revisionHistoryAnalysis = function () {
-	var obj = createAnalysis("Revision History Analysis");
+	var obj = createAnalysis("Repository Activity Author Analysis");
 	obj.allowsMultipleRoots = false;
 	obj.options = {
 		augmentationFun: {
@@ -301,8 +296,21 @@ var revisionHistoryAnalysis = function () {
 		},
 	};
 	obj.visualizations = [
-	{name:"Calendar View", visFactory:CalendarVisualization}
+		{name:"Calendar View", visFactory:CalendarVisualization}
 	]
+	return obj;
+}
+
+var activityDensityAnalysis = function () {
+	var obj = revisionHistoryAnalysis();
+	obj.name = "Activitiy Density Analysis";
+	obj.options["parametrizationFun"] = {
+		values: [historyDensityCalculation()],
+	};
+	obj.elements["entries"].options["colorFunction"].values = [densityColorFunction];
+	obj.visualizations = [
+		{name:"Calendar Intensity View", visFactory:CalendarVisualization}
+	];
 	return obj;
 }
 
@@ -366,10 +374,6 @@ var mixedCallGraph = function() {
     obj.elements.nodes.options.colorFunction.values = [ typeColor ];
     obj.elements.nodes.options.sizeFunction.values = [  mixedMethodInvocAndClassMethods ];
 	obj.visualizations = [
-/*	{
-		name: "Call Tree",
-		visFactory: TreeVisualization,
-	},*/
 	{
 		name: "Call Graph",
 		visFactory: GraphVisualization,
@@ -414,7 +418,6 @@ var analysisRegister = AnalysisRegister()
 analysisRegister.addEntry(["Class"],classInheritance());
 analysisRegister.addEntry(["Revision"],revisionHistoryAnalysis());
 analysisRegister.addEntry(["Revision"],authorsCollaborationGraph());
-//analysisRegister.addEntry(["Class"],classCallGraph());
+analysisRegister.addEntry(["Revision"],activityDensityAnalysis());
 analysisRegister.addEntry(["Method"],methodCallGraph());
 analysisRegister.addEntry(["Method", "Class" ],mixedCallGraph());
-//analysisRegister.addEntry(["Class","Method"],mixedCallGraph());
