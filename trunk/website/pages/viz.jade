@@ -40,6 +40,7 @@ script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenes
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/timeline.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/tooltip.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/calendar/calendar.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/Helpers.js")
 
 script(type="text/javascript")
 	
@@ -101,7 +102,8 @@ script(type="text/javascript")
 								var h = data.history;
 								proj.history = h;
 								proj.currRev = 500;
-								displayTimeline(h, canvas_width, canvas_height, function(x){return x})
+								displayTimeline(h, canvas_width, canvas_height, function(x){return x});
+								insertButtonsForTimeline();
 								showAll();
 								return h;
 							}

@@ -95,7 +95,6 @@ function displayAnalysis (divId,elements) {
 		
 		var innerTree;
 		
-		// var visz = element.getVisualizations(nodes);
 		var visz = element.getVisualizations(element);
 		
 		alert(JSON.stringify(visz));
