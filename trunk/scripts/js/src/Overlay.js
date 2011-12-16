@@ -12,12 +12,12 @@ function showHide() {
 		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Hide</a>');
 		canvas_width = $( "#content-div" ).width();
 		canvas_height = $( window ).height() - $( "#logo" ).height() - parseInt($( "#content-div" ).css("padding-top")) * 2;
-		//eventHandler.pause();
+		eventHandler.pause();
 		hidden = false;
 	} else {
 		$( "#overlay-transparent" ).hide( 'blind', {}, 600);
 		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Show</a>');
-		//eventHandler.resume();
+		eventHandler.restart();
 		hidden = true;
 	}
 };
