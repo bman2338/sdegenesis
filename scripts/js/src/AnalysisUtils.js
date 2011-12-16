@@ -176,7 +176,7 @@ function historyDensityCalculation () {
 			}
 			for (var date in history.data) {
 				var entries = history.data[date];
-				entries[0].dayContributionValue = entries[0].dayContributionValue/(1.0*max);
+				entries[0].dayContributionValue = Math.log(entries[0].dayContributionValue)/(1.0*Math.log(max));
 			}
 			return {
 				types: element.types,
