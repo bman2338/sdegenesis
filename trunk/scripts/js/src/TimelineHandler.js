@@ -23,7 +23,7 @@ function TimelineHandler () {
 	};
 	obj.pauseFunction = function (button) { 
 		document.getElementById(button.id).innerHTML="Play";	
-		obj.playInterval = clearTimeout(obj.playInterval);
+		obj.playInterval = clearInterval(obj.playInterval);
 	};
 	
 	obj.setBehavior = function (f,b) {

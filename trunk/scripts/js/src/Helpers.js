@@ -39,17 +39,18 @@ function countProperties(obj) {
 		return count;
 }
 
-var prefetchRevisions = function(prefetchRev, history){
+var prefetchRevisions = function(prefetchRev, history, proj){
 	var prefetchRevisions = [];
 	for (var i = history.last; i >= 0; --i) {
 		if (!history[i])
 			continue;
-		if (history[i].hasMse == "true")
-			prefechRevisions.push(i);
-		if (prefetchVersions.length >= prefetchRev)
+		if (history[i].hasMse == true) {
+			prefetchRevisions.push(i);
+		}
+		if (prefetchRevisions.length >= prefetchRev)
 			break;
 	}	
 	for(var i = 0; i < prefetchRevisions.length; ++i){
-		getRevision(proj, prefetchRevisions[i]);
+		proj.getRevision(proj, prefetchRevisions[i]);
 	}
 }

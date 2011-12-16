@@ -87,6 +87,10 @@ script(type="text/javascript")
 								//alert("ricevuto: " + JSON.strigify(data));
 								var nodes = data.nodes;
 								var edges = data.edges;
+								if (nodes == "ERROR" || edges == "ERROR") {
+									proj.history[rev].hasMse = false;
+									return;
+								}
 								var graph = genesis.Graph.create(nodes,edges);
 								proj.heldRevisions[rev] = new Revision(currentProject, rev);
 								proj.heldRevisions[rev].graph = graph;
@@ -336,7 +340,7 @@ script(type="text/javascript")
 
 		#chart(class="Block Right", style="overflow:visible")
 
-#slideUpTimeline
+#bottompart
 	img(src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/website/pages/style/arrow.png", style="left: -50px")
 	
 script
@@ -455,9 +459,9 @@ script
 	
 	jQuery(function( $ ){
 		// Get a reference to the container.
-		var container = $( "#slidingUpTimeline" );
+		var container = $( "#bottompart" );
 		// Bind the link to toggle the slide.
-		$( "#slideUpTimeline" ).click(
+		$( "#slidingUpTimeline" ).click(
 			function( event ){
 			// Prevent the default event.
 			event.preventDefault();
