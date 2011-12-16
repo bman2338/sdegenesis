@@ -47,6 +47,10 @@ script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenes
 
 script(type="text/javascript")
 	
+	function filterArray (rev) {
+		rev.splice(rev.length-2,1);
+	}
+	
 	var timeline_state = timelineState();
 	
 	$(function() {
@@ -62,14 +66,20 @@ script(type="text/javascript")
 			history : undefined,
 			currRev : undefined,
 			btInfo : undefined,
+			cleaned: false,
+			getRevisionList: function (proj) { 
+				if (!proj.cleaned)
+					filterArray(proj.totalRevisions);
+				proj.cleaned = true;
+				return proj.totalRevisions;
+			},
 			getRevision : function(proj, rev, callback){
 					//for(var i = 0; i < heldRevisions.length; i++){
 					if(proj.heldRevisions[rev] == false){
 						//alert("ritorno");
 						return;
 					}
-					else if(proj.heldRevisions[rev] != undefined){
-						//alert("cel'ho già")
+					else if(proj.heldRevisions[rev]){
 						if(callback)
 							callback(proj.heldRevisions[rev]);
 					}
@@ -113,7 +123,7 @@ script(type="text/javascript")
 							success: function( data ) {
 								var h = data.history;
 								proj.history = h;
-								proj.currRev = h.last;
+								proj.currRev = h.last-1;
 								// displayTimeline(h, canvas_width, canvas_height, function(x){return x});
 								//insertButtonsForTimeline();
 								var revsToPrefetch = prefetchRevisions(10, h, proj);
@@ -185,7 +195,7 @@ script(type="text/javascript")
 #topmenu
 	ul(id="menu-nav")
 		li(id="show-hide", class="two")
-			a(class="topnav", target="_top", href="#", onclick="showHide()") Show
+			a(class="topnav", target="_top", href="#", onclick="showHide()") Show Tools
 		li(class="two")
 			a(class="topnav", target="_top", href="#", onclick="clickProjects()") Projects
 		li(class="two")

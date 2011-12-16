@@ -10,14 +10,14 @@ function showHide() {
 	if(hidden) {
 		$( "#overlay-transparent" ).show( 'blind', {}, 600);
 		$('#node-selection').click(updateResults);
-		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Hide</a>');
+		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Hide Tools</a>');
 		canvas_width = $( "#content-div" ).width();
 		canvas_height = $( window ).height() - $( "#logo" ).height() - parseInt($( "#content-div" ).css("padding-top")) * 2 - 20;
 		eventHandler.pause();
 		hidden = false;
 	} else {
 		$( "#overlay-transparent" ).hide( 'blind', {}, 600);
-		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Show</a>');
+		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Show Tools</a>');
 		eventHandler.resume();
 		hidden = true;
 	}
@@ -31,20 +31,30 @@ function displayList(divId, elements, callback) {
 	});
 }
 
-function drawFunction (vis,analysis,nodes,types) {
+function drawFunction (vis,analysis,nodes,types,override) {
 	var canvas = "#chart";
 	$(canvas).html("");
 	var obj = {
 		types: types,
 		nodes: nodes,
 	};
-	showHide();
+	if (override)
+		showHide();
 	vis.visualize(obj,canvas);
 }
 
-function initialVisualization (analysisId,visualizationId) {	
-	var analysisAvailable = getAvailableAnalysis(elementsSelected);
+var globalAnalysisId;
+var globalVisualizationId;
+var globalElementsSelected;
+var globalResultsToAnalyze;
+
+function initialVisualization (analysisId,visualizationId,els,override) {	
+	var analysisAvailable = getAvailableAnalysis(els);
 	var analysis = analysisAvailable[analysisId];
+	
+	globalVisualizationId = visualizationId;
+	globalAnalysisId = analysisId;
+	globalElementsSelected = owl.deepCopy(els);
 	
 	var useHistory = true;
 	
@@ -68,12 +78,23 @@ function initialVisualization (analysisId,visualizationId) {
 			if (resultsToAnalyze.length == 0)
 				return false;
 	
-			drawFunction(vis,analysis,resultsToAnalyze,elementsSelected);
+			d3.select(window).on("keydown",	function() {   
+				var displacement = 0;  
+				switch (d3.event.keyCode) {
+					case 37: previousRevision(); break;
+					case 39: nextRevision(); break;
+					default:
+						return;
+				}
+			});
+			if (override)
+				globalResultsToAnalyze = owl.deepCopy(resultsToAnalyze);
+			drawFunction(vis,analysis,globalResultsToAnalyze,elementsSelected,override);
 		});
 	} else {
 		var history = projects[0][currentProject].history;
 		var vis = bootstrapVisualization(analysis,visualizationId,history);		
-		drawFunction(vis,analysis,[vis.source],elementsSelected);
+		drawFunction(vis,analysis,[vis.source],elementsSelected,override);
 	}
 }
 	
@@ -107,7 +128,7 @@ function displayAnalysis (divId,elements) {
 				innerTree = list.append("<ul></ul>").find('ul').last();
 			}
 			
-			var clickFun = "javascript:initialVisualization(" + analysisIndex + "," + idx +")"
+			var clickFun = "javascript:initialVisualization(" + analysisIndex + "," + idx +",elementsSelected,true)"
 			if (idx == visz.length - 1)
 				innerTree.append("<li class=\"last\" onclick=\"" + clickFun + "\">"+elmn.name+"</li>");
 			else

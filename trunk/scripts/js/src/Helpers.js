@@ -53,4 +53,5 @@ var prefetchRevisions = function(prefetchRev, history, proj){
 	for(var i = 0; i < prefetchRevisions.length; ++i){
 		proj.getRevision(proj, prefetchRevisions[i]);
 	}
+	return prefetchRevisions;
 }

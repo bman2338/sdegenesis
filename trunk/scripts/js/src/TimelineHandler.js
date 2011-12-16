@@ -34,9 +34,27 @@ function TimelineHandler () {
 }
 
 function nextRevision () {
-	
+	var proj = projects[0][currentProject];
+	var revs = projects[0][currentProject].getRevisionList(proj);
+	var cur = proj.currRev;
+	var index = revs.indexOf(cur);
+	if (index == -1 || index == revs.length - 1)
+		return;
+	proj.getRevision(proj,revs[index+1], function(rev) {
+		proj.currRev = rev.revisionNumber;
+		initialVisualization(globalAnalysisId,globalVisualizationId,globalElementsSelected,false);
+	});
 }
 
 function previousRevision () {
-	
+	var proj = projects[0][currentProject];
+	var revs = projects[0][currentProject].getRevisionList(proj);
+	var cur = proj.currRev;
+	var index = revs.indexOf(cur);
+	if (index <= 0)
+		return;
+	proj.getRevision(proj,revs[index-1], function(rev) {
+		proj.currRev = rev.revisionNumber;
+		initialVisualization(globalAnalysisId,globalVisualizationId,globalElementsSelected,false);
+	});
 }
