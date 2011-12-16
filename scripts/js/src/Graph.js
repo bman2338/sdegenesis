@@ -67,6 +67,21 @@ function concat(listOfLists) {
 }
 
 
+function fromArrayToSetArray(numbers) {
+	var unique = {};
+	for(var n in numbers) {
+		unique[numbers[n]] = true;
+	}
+	
+	var arr = [];
+	for(var n in unique) {
+		arr.push(n);
+	}
+	
+	return arr;
+}
+
+
 var genesis = { Graph : {}};
 genesis.Graph.create = function(nodes, edges) {
 	//private functions
@@ -115,12 +130,15 @@ genesis.Graph.create = function(nodes, edges) {
 				this.edges[e] = this.edges[e].sort(adjListComparator);
 				var rel = this.edges[e] ;
 				for(var adjList in rel) {
+					rel[adjList].to = fromArrayToSetArray(rel[adjList].to);
 					rel[adjList].to = rel[adjList].to.sort();
 				}
 			}
 			return this;
 		},
 
+		
+		
 
 		getOneToOneEdges : function(relationName) {
 			if(this.oneToOneEdges[relationName]) {
@@ -177,21 +195,21 @@ genesis.Graph.create = function(nodes, edges) {
 
 		getAdjList : function(relation, nodeId) {
 			var ret = ifInRangeGet(relation, binarySearch(relation, nodeId, adjListLess, adjListEquals));
-			if (ret) {
-				var newList = {
-					from: ret.from,
-					to: [],
-				};
-				var pool = [];
-				for (var i = 0; i < ret.to.length; ++i) {
-					var adj = ret.to[i];
-					if (pool.indexOf(adj) != -1)
-						continue;
-					pool.push(adj);
-					newList.to.push(adj);
-				}
-				ret = newList;
-			}
+			// if (ret) {
+			// 	var newList = {
+			// 		from: ret.from,
+			// 		to: [],
+			// 	};
+			// 	var pool = [];
+			// 	for (var i = 0; i < ret.to.length; ++i) {
+			// 		var adj = ret.to[i];
+			// 		if (pool.indexOf(adj) != -1)
+			// 			continue;
+			// 		pool.push(adj);
+			// 		newList.to.push(adj);
+			// 	}
+			// 	ret = newList;
+			// }
 			return ret;
 
 		},
