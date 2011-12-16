@@ -19,7 +19,7 @@ function EventHandler(){
 		resume: function(){
 			for(var hndlr in handlers){
 				for (var value in handlers[hndlr].values) {
-					d3.select(hndlr).on(value, handlers[hndlr].values[value]);
+					d3.select(handlers[hndlr].object).on(value, handlers[hndlr].values[value]);
 				}
 			}
 		},
