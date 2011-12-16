@@ -9,7 +9,7 @@ function plotHistoryCalendar(history, visModel, augmentationCallback) {
 	
 	var m = [19, 20, 20, 19], // top right bottom left margin
 	w = canvas_width - m[1] - m[3], // width
-	h = canvas_height - m[0] - m[2], // height
+	h = 150 - m[0] - m[2], // height
 	z = 17; // cell size
 
 	var day = d3.time.format("%w"),
@@ -28,7 +28,7 @@ function plotHistoryCalendar(history, visModel, augmentationCallback) {
 	.attr("height", h + m[0] + m[2])
 	.attr("class", "RdYlGn")
 	.append("svg:g")
-	.attr("transform", "translate(" + (m[3] + (w - z * 53) / 2) + "," + (m[0] + (h - z * 7) / 2) + ")");
+	.attr("transform", "translate(" + (m[3] + (w - z * 53) / 2) + "," + (m[0] + (canvas_height/2.0 - z * 7) / 2) + ")");
 
 	svg.append("svg:text")
 	.attr("transform", "translate(-6," + z * 3.5 + ")rotate(-90)")

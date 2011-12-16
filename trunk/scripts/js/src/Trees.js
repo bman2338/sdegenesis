@@ -64,7 +64,8 @@ function hTree(root, target,visModel,augmentationCallback) {
 	var width = canvas_width;
 	var height = canvas_height;
     
-    var offset = -10;
+	var offsetX = width / 2.0 ;
+	var offsetY = height / 2.0;
     var r = height/2;
     var tree = d3.layout.tree()
 		.size([360, r - 120])
@@ -80,7 +81,7 @@ function hTree(root, target,visModel,augmentationCallback) {
 		.attr("width", width)
 		.attr("height", height)
 		.append("svg:g")
-		.attr("transform", "translate(" + (r+offset )+ "," + (r+offset ) + ")");
+		.attr("transform", "translate(" + (offsetX )+ "," + (offsetY ) + ")");
     
     var nodes = tree.nodes(json);
     var link = vis.selectAll("path.link")

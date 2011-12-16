@@ -56,7 +56,7 @@ function sunburst (rawJson) {
 	  sunburstRoots(rawJson)
 
 	}
-	function _sunburst(root, target,name) { 
+	function _sunburst(root, target,vis,augmentationCallback) { 
 		var w = canvas_height-5,
 		h = w,
 		r = w / 2,
@@ -68,10 +68,10 @@ function sunburst (rawJson) {
 		var div = d3.select(target);
 		div.html("");
 		var vis = div.append("svg:svg")
-		.attr("width", w + p * 2)
-		.attr("height", h + p * 2)
+		.attr("width", canvas_width + p * 2)
+		.attr("height", canvas_height + p * 2)
 		.append("svg:g")
-		.attr("transform", "translate(" + (r + p) + "," + (r + p) + ")");
+		.attr("transform", "translate(" + (canvas_width/2.0) + "," + (canvas_height/2.0) + ")");
 
 		var partition = d3.layout.partition()
 		.sort(null)
@@ -88,7 +88,10 @@ function sunburst (rawJson) {
 		var json = root;
 		var nodes = partition.nodes({children: json});
 
-		nodes[0].name = name;
+		if (vis.name)
+			nodes[0].name = vis.name();
+		else
+			nodes[0].name = "Sunburst Root";
 		nodes[0].isRoot = true;
 
 		var path = vis.selectAll("path").data(nodes);
@@ -125,7 +128,10 @@ function sunburst (rawJson) {
                 elements.attr("visibility", "hidden");
             });
 
-		var text = vis.selectAll("text").data(nodes);
+		if (augmentationCallback)
+			path.call(visModel.augment("nodes",augmentationCallback));
+
+		/*var text = vis.selectAll("text").data(nodes);
 		var textEnter = text.enter().append("svg:text")
 		.style("opacity", 1)
 		.attr("id", function(d, i) {
@@ -169,14 +175,14 @@ function sunburst (rawJson) {
 		.attr("x", 0)
 		.attr("dy", "1em")
 		.attr("visibility","hidden")
-		.text(function(d) { return d.depth ? d.name.split(" ")[1] || "" : ""; });
+		.text(function(d) { return d.depth ? d.name.split(" ")[1] || "" : ""; });*/
 
 		function click(d) {
 			path.transition()
 			.duration(duration)
 			.attrTween("d", arcTween(d));
 
-			text
+			/*text
 			.style("visibility", function(e) {
 				return isParentOf(d, e) ? null : d3.select(this).style("visibility");
 			})
@@ -199,7 +205,7 @@ function sunburst (rawJson) {
 			//.style("opacity", function(e) { return isParentOf(d, e) ? 1 : 1e-6; })
 			.each("end", function(e) {
 				d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
-			});
+			});*/
 		}
 
 		function isParentOf(p, c) {
