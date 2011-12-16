@@ -18,13 +18,14 @@ function EventHandler(){
 	return{
 		pause: function(){
 			for(hndlr in handlers){
+				alert(JSON.stringify(hndlr))
 				d3.select(hndlr).on(hndlr.values, hndlr.values.handler).remove();
 			}
 		},
 		
 		resume: function(){
 			for(hndlr in handlers){
-				d3.select(hndlr).on(hndlr.values, hndler.values.handler);
+				d3.select(hndlr).on(hndlr.values, hndlr.values.handler);
 			}
 		},
 		
