@@ -81,7 +81,7 @@ app.post('/login', function (req, res) {
 				projects: result[0].Projects,
 			};
 			console.log(JSON.stringify(usr));
-			mongo.db("localhost:8888/genesis_db").collection("projects").find({open: 1}).toArray(function(err, openProjs){
+			mongo.db("localhost:8888/genesis_db?auto_reconnect").collection("projects").find({open: 1}).toArray(function(err, openProjs){
 				
 				for(var i = 0; i < openProjs.length; i++){
 					console.log(openProjs[i]);
@@ -211,7 +211,7 @@ app.post('/addProject', function(req, res){
 	var BTUsername = req.body.project.btUsername || "";
 	var BTPass = req.body.project.btPassword || "";
 	
-	mongo.db("localhost:8888/genesis_db").collection("projects").find({name: projectName}).toArray(function(err, projects){
+	mongo.db("localhost:8888/genesis_db?auto_reconnect").collection("projects").find({name: projectName}).toArray(function(err, projects){
 		console.log("prima del for con username " + req.session.username);
 		console.log("RECEIVED: projectName> "+ projectName + 
 		"\n projectRepo> " + projectrepo + 
@@ -313,7 +313,7 @@ app.get('/delete_project/:projectname', function(req, res){
 	var projectName = req.params.projectname;
 	if(req.session.userAuthenticated){
 		//user connected, check if he/she has the project
-		mongo.db('localhost:8888/genesis_db').collection('users').find({"Username" : req.session.username}).toArray(function (err, user){
+		mongo.db('localhost:8888/genesis_db?auto_reconnect').collection('users').find({"Username" : req.session.username}).toArray(function (err, user){
 			var projs = user[0].Projects;
 			for(var i = 0; i < projs.length; i++){
 				if(projs[i].name == req.params.projectname){
@@ -325,15 +325,15 @@ app.get('/delete_project/:projectname', function(req, res){
 						//first from the db itself
 						var revisions = projs[i].revisions;
 						for(var j = 0; j < revisions.length; j++){
-							mongo.db('localhost:8888/genesis_db').collection(projectName + '_rev' + revisions[j] + '_nodes').drop();
-							mongo.db('localhost:8888/genesis_db').collection(projectName + '_rev' + revisions[j] + '_edges').drop();
+							mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(projectName + '_rev' + revisions[j] + '_nodes').drop();
+							mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(projectName + '_rev' + revisions[j] + '_edges').drop();
 						}
 						
 						//from the projects array
-						mongo.db('localhost:8888/genesis_db').collection('projects').remove({"name" : projectName});
+						mongo.db('localhost:8888/genesis_db?auto_reconnect').collection('projects').remove({"name" : projectName});
 						
 						//then from the list of the user
-						mongo.db('localhost:8888/genesis_db').collection('users').update({"Username" : req.session.username}, {$pull : {"Projects" : {"name" : projectName}}}, function(){
+						mongo.db('localhost:8888/genesis_db?auto_reconnect').collection('users').update({"Username" : req.session.username}, {$pull : {"Projects" : {"name" : projectName}}}, function(){
 							var usr = {
 								name: req.session.username,
 								projects: req.session.projects,
@@ -347,7 +347,7 @@ app.get('/delete_project/:projectname', function(req, res){
 					else {
 						//public, remove it ONLY from the list of the user
 						console.log("project open");
-						mongo.db('localhost:8888/genesis_db').collection('users').update({"Username" : req.session.username}, {$pull : {"Projects" : {"name" : projectName}}}, function(){
+						mongo.db('localhost:8888/genesis_db?auto_reconnect').collection('users').update({"Username" : req.session.username}, {$pull : {"Projects" : {"name" : projectName}}}, function(){
 							var usr = {
 								name: req.session.username,
 								projects: req.session.projects,
@@ -369,7 +369,7 @@ app.get('/delete_project/:projectname', function(req, res){
 */
 app.get('/show_project/:projectname', function(req, res){
 	
-	mongo.db('localhost:8888/genesis_db').collection('projects').find({"name": req.params.projectname}).toArray(function (err, proj){
+	mongo.db('localhost:8888/genesis_db?auto_reconnect').collection('projects').find({"name": req.params.projectname}).toArray(function (err, proj){
 			
 			var newJson = {};
 			newJson.projectName = req.params.projectname;
@@ -400,8 +400,8 @@ app.get('/show_project/:projectname', function(req, res){
 */
 app.get('/get_data/:projectname/:rev', function(req, res){
 	console.log(req.params.projectname + '_rev' + req.params.rev + '_edges');
-	mongo.db('localhost:8888/genesis_db').collection(req.params.projectname + '_rev' + req.params.rev + '_edges').find().toArray(function(err, edges){
-		mongo.db('localhost:8888/genesis_db').collection(req.params.projectname + '_rev' + req.params.rev + '_nodes').find().toArray(function(err, nodes){
+	mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(req.params.projectname + '_rev' + req.params.rev + '_edges').find().toArray(function(err, edges){
+		mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(req.params.projectname + '_rev' + req.params.rev + '_nodes').find().toArray(function(err, nodes){
 			//SEND BACK VIA AJAX THE RESULTS nodes[0] and edges[0]
 			//if (req.xhr) {
 		    // respond with the each user in the collection
@@ -432,7 +432,7 @@ app.get('/get_history/:projectname', function(req, res){
 	
 	var nmn_connect = require('mongoose/node_modules/mongodb').connect;
 
-	nmn_connect('mongo://localhost:8888/genesis_db', function(err, db) {
+	nmn_connect('mongo://localhost:8888/genesis_db?auto_reconnect', function(err, db) {
 		var interestingCollections = new Array();
 		var numberOfColl = 0;
 		var counter = 0;
@@ -457,7 +457,7 @@ app.get('/get_history/:projectname', function(req, res){
 					numberOfColl = interestingCollections.length;
 					for(var i = 0 ; i < interestingCollections.length; i++){
 						//console.log(interestingCollections[i]);
-						mongo.db('localhost:8888/genesis_db').collection(interestingCollections[i]).find({}, {modifiedFiles : 0, addedFiles: 0, deletedFiles: 0}).toArray(function(err, hist){
+						mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(interestingCollections[i]).find({}, {modifiedFiles : 0, addedFiles: 0, deletedFiles: 0}).toArray(function(err, hist){
 							
 							//get that history, give it to the cleaner, save it
 							//back in the target, continue with the next
@@ -490,7 +490,7 @@ app.get('/get_data/:projectname/history/deleted_files/:rev', function(req, res){
 	var smallestFound = 9007199254740992; //max integer in javascript
 	var nmn_connect = require('mongoose/node_modules/mongodb').connect;
 	
-	nmn_connect('mongo://localhost:8888/genesis_db', function(err, db) {
+	nmn_connect('mongo://localhost:8888/genesis_db?auto_reconnect', function(err, db) {
 		if(!err){
 			db.collectionNames(function(err, names){ // what I was looking for
 				if(!err){
@@ -509,7 +509,7 @@ app.get('/get_data/:projectname/history/deleted_files/:rev', function(req, res){
 					
 					//create the name of the collection searched
 					var collectionName = req.params.projectname + "_history_" + smallestFound;
-					mongo.db('localhost:8888/genesis_db').collection(collectionName).find().toArray(function(err, hist){
+					mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(collectionName).find().toArray(function(err, hist){
 						var stringRev = "" + searchedRevision;
 						console.log(hist[0][stringRev].deletedFiles);
 						if(hist[0][stringRev].deletedFiles != undefined)
@@ -538,7 +538,7 @@ app.get('/get_data/:projectname/history/added_files/:rev', function(req, res){
 	var smallestFound = 9007199254740992; //max integer in javascript
 	var nmn_connect = require('mongoose/node_modules/mongodb').connect;
 	
-	nmn_connect('mongo://localhost:8888/genesis_db', function(err, db) {
+	nmn_connect('mongo://localhost:8888/genesis_db?auto_reconnect', function(err, db) {
 		if(!err){
 			db.collectionNames(function(err, names){ // what I was looking for
 				if(!err){
@@ -556,7 +556,7 @@ app.get('/get_data/:projectname/history/added_files/:rev', function(req, res){
 					
 					//create the name of the collection searched
 					var collectionName = req.params.projectname + "_history_" + smallestFound;
-					mongo.db('localhost:8888/genesis_db').collection(collectionName).find().toArray(function(err, hist){
+					mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(collectionName).find().toArray(function(err, hist){
 						var stringRev = "" + searchedRevision;
 						console.log(hist[0][stringRev].addedFilesCount);
 						if(hist[0][stringRev].addedFiles[0] != undefined)
@@ -585,7 +585,7 @@ app.get('/get_data/:projectname/history/modified_files/:rev', function(req, res)
 	var smallestFound = 9007199254740992; //max integer in javascript
 	var nmn_connect = require('mongoose/node_modules/mongodb').connect;
 	
-	nmn_connect('mongo://localhost:8888/genesis_db', function(err, db) {
+	nmn_connect('mongo://localhost:8888/genesis_db?auto_reconnect', function(err, db) {
 		if(!err){
 			db.collectionNames(function(err, names){ // what I was looking for
 				if(!err){
@@ -603,7 +603,7 @@ app.get('/get_data/:projectname/history/modified_files/:rev', function(req, res)
 					
 					//create the name of the collection searched
 					var collectionName = req.params.projectname + "_history_" + smallestFound;
-					mongo.db('localhost:8888/genesis_db').collection(collectionName).find().toArray(function(err, hist){
+					mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(collectionName).find().toArray(function(err, hist){
 						var stringRev = "" + searchedRevision;
 						console.log(hist[0][stringRev].modifiedFiles);
 						if(hist[0][stringRev].modifiedFiles[0] != undefined)
@@ -717,7 +717,7 @@ app.get('/test', function(req, res){
 	    collection.find().toArray(function(a,b) { 
 		});
 	});*/
-	mongo.db('localhost:8888/genesis_db').collection().ToArray(function (err, colls){
+	mongo.db('localhost:8888/genesis_db?auto_reconnect').collection().ToArray(function (err, colls){
 		console.log(JSON.stringify("COLLS : " + colls));
 	});
 });
@@ -727,7 +727,7 @@ app.get('/test', function(req, res){
 */
 function registerUser(request, f){
 	console.log("in registerUser");
-	mongo.db('localhost:8888/genesis_db').collection('users').find({Username: request.body.user.name}).toArray(function(err, users){
+	mongo.db('localhost:8888/genesis_db?auto_reconnect').collection('users').find({Username: request.body.user.name}).toArray(function(err, users){
 		//No user with the same username was found!
 		if(users.length == 0){
 			console.log("no users with this name and chosen password " + request.body.user.pass);
@@ -738,7 +738,7 @@ function registerUser(request, f){
 			u.Projects = [];
 		
 			//save the user
-			mongo.db('localhost:8888/genesis_db').collection('users').save(u, function(err, users){
+			mongo.db('localhost:8888/genesis_db?auto_reconnect').collection('users').save(u, function(err, users){
 				f(true);
 			});
 		}
@@ -753,7 +753,7 @@ function registerUser(request, f){
 * Function to login users
 */
 function loginUser(username, password, f){
-	mongo.db('localhost:8888/genesis_db').collection('users').find({Username: username}).toArray(function(err, users){
+	mongo.db('localhost:8888/genesis_db?auto_reconnect').collection('users').find({Username: username}).toArray(function(err, users){
   		if (err) {
   	 		throw err; 
   		} 

@@ -2,17 +2,22 @@ var skipElements = ["Revision","Author"];
 var elementsSelected = [];
 var hidden = true;
 
+var canvas_width = 1200;
+var canvas_height = 200;
+
 function showHide() {
 	if(hidden) {
-		$( "#overlay-transparent" ).show( 'blind', {}, 500);
+		$( "#overlay-transparent" ).show( 'blind', {}, 600);
 		$('#node-selection').click(updateResults);
 		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Hide</a>');
-		// eventHandler.pause();
+		canvas_width = $( "#content-div" ).width();
+		canvas_height = $( window ).height() - $( "#logo" ).height() - parseInt($( "#content-div" ).css("padding-top")) * 2;
+		//eventHandler.pause();
 		hidden = false;
 	} else {
-		$( "#overlay-transparent" ).hide( 'blind', {}, 500);
+		$( "#overlay-transparent" ).hide( 'blind', {}, 600);
 		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Show</a>');
-		// eventHandler.restart();
+		//eventHandler.restart();
 		hidden = true;
 	}
 };

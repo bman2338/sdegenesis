@@ -31,6 +31,8 @@ script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenes
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/options/StrokeFunction.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/options/ColorFunction.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/cleanHistory.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/authors/AuthorAnalysis.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/authors/authors.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/AnalysisUtils.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/Analysis.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/Revision.js")
@@ -98,7 +100,7 @@ script(type="text/javascript")
 								var h = data.history;
 								proj.history = h;
 								proj.currRev = 500;
-								displayTimeline(h, 1200, 200, function(x){return x})
+								displayTimeline(h, canvas_width, canvas_height, function(x){return x})
 								showAll();
 								return h;
 							}
@@ -155,7 +157,7 @@ script(type="text/javascript")
 			a(class="topnav", target="_top", href="/logout") Logout
 
 #waitbox
-	img(src="http://atelier.inf.usi.ch/~babazadm/testnode/pages/img/loader.gif")
+	img(src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/website/pages/img/loader.gif")
 
 #projects
 	form(name="saveProject", action="/saveProject/", method="post")
@@ -170,7 +172,7 @@ script(type="text/javascript")
 					each item in items
 						tr
 							td
-								a(href="show_project/" + item.name)= item.name + ""
+								a(href=item.name + "/")= item.name + ""
 							- if(item.defaultShared)
 								td= "Shared"
 							- else
@@ -189,7 +191,7 @@ script(type="text/javascript")
 									img(src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/website/pages/img/delete.png")
 		- else
 			p= "You have no project to analyze. Click New Project to add one."
-		input(type="submit", class="submit", value="Save", id="submissionButton") Save
+		// input(type="submit", class="submit", value="Save", id="submissionButton") Save
 
 #addProject
 	form(name="addProject", action="/addProject", method="post")
@@ -287,12 +289,12 @@ script(type="text/javascript")
 		function clickProjects(){
 			document.getElementById("projects").style.display = "block";
 			document.getElementById("addProject").style.display = "none";
-			document.getElementById("vizContainer").style.display = "none";
+			// document.getElementById("vizContainer").style.display = "none";
 		}
 		function clickNew(){
 			document.getElementById("addProject").style.display = "block";
 			document.getElementById("projects").style.display = "none";
-			document.getElementById("vizContainer").style.display = "none";
+			// document.getElementById("vizContainer").style.display = "none";
 		}
 
 		document.getElementById("addProject").style.display = "none";
@@ -308,123 +310,123 @@ script(type="text/javascript")
 	button(id="highlight", class="active last", onclick="highlightMse()") toggle MSE
 	p
 
-div(class="Block", id="vizContainer")
-	#chart(class="Block Right", style="overflow:visible")
+// div(class="Block", id="vizContainer")
+#chart(class="Block Right", style="overflow:visible")
+	
+script
+	
+	function graphTest() {
+		var graph = genesis.Graph.create(!{JSON.stringify(nodes)}, !{JSON.stringify(edges)});
+		var edges = graph.edges;
+		var inhTree = graph.getSubtreeByRelationName("superclassOf", -2061828931);
 		
-	script
-		
-		function graphTest() {
-			var graph = genesis.Graph.create(!{JSON.stringify(nodes)}, !{JSON.stringify(edges)});
-			var edges = graph.edges;
-			var inhTree = graph.getSubtreeByRelationName("superclassOf", -2061828931);
-			
-			var c = [];
-			for(var n in graph.nodes) {
-				var node = graph.nodes[n];
-				c.push( graph.getSubtreeByRelationName("superclassOf", node.uniqueId) )
-			}
-			return { name: "Inheritance Tree", children: c };
+		var c = [];
+		for(var n in graph.nodes) {
+			var node = graph.nodes[n];
+			c.push( graph.getSubtreeByRelationName("superclassOf", node.uniqueId) )
 		}
+		return { name: "Inheritance Tree", children: c };
+	}
+	
+	function update () {
+		document.getElementById("slider_controls").style.display = "block";
+	}
+	
+	function play(){
+		var src = document.getElementById("playbutton").src;
+		var file = src.substring(src.lastIndexOf("/")+1, src.length);
 		
-		function update () {
-			document.getElementById("slider_controls").style.display = "block";
+		if(file == "play.png"){
+			document.getElementById("playbutton").src="img/pause.png";
+		}else if(file =="pause.png"){
+			document.getElementById("playbutton").src = "img/play.png";
 		}
-		
-		function play(){
-			var src = document.getElementById("playbutton").src;
-			var file = src.substring(src.lastIndexOf("/")+1, src.length);
-			
-			if(file == "play.png"){
-				document.getElementById("playbutton").src="img/pause.png";
-			}else if(file =="pause.png"){
-				document.getElementById("playbutton").src = "img/play.png";
-			}
-		}
-		
-		var vizs = "<ul>";
-		for(var i = 0; i < analysis.length; i++){
-			//adds directly a hook to get the version by adding as revision number the last element of the array of revisions
-			vizs += "<li onclick='getVersion(\\""+analysis[i].name+"\\", \\"!{vizJson.projectName}\\", !{vizJson.revisions[vizJson.revisions.length - 1]})'>" + analysis[i].name + "</li>"
-		}
-		vizs += "</ul>"
-		
-		function getVersion(analysisName, projectName, revisionNumber){
-			$.ajax({
-				url: '/get_data/'+ projectName +'/' + revisionNumber,
-				error: function (data){
-					//alert("error : " + JSON.stringify(data));
-				},
-				success: function( data ) {
-					var nodes = data.nodes;
-					var edges = data.edges;
-					
-					var an = {};
-					for(var i = 0; i < analysis.length; i++){
-						if(analysis[i].name == analysisName){
-							an = analysis[i];
-							break;
-						}
+	}
+	
+	var vizs = "<ul>";
+	for(var i = 0; i < analysis.length; i++){
+		//adds directly a hook to get the version by adding as revision number the last element of the array of revisions
+		vizs += "<li onclick='getVersion(\\""+analysis[i].name+"\\", \\"!{vizJson.projectName}\\", !{vizJson.revisions[vizJson.revisions.length - 1]})'>" + analysis[i].name + "</li>"
+	}
+	vizs += "</ul>"
+	
+	function getVersion(analysisName, projectName, revisionNumber){
+		$.ajax({
+			url: '/get_data/'+ projectName +'/' + revisionNumber,
+			error: function (data){
+				//alert("error : " + JSON.stringify(data));
+			},
+			success: function( data ) {
+				var nodes = data.nodes;
+				var edges = data.edges;
+				
+				var an = {};
+				for(var i = 0; i < analysis.length; i++){
+					if(analysis[i].name == analysisName){
+						an = analysis[i];
+						break;
 					}
-					var possibleVizs = register.getVisualizations([an]);
-					var graph = genesis.Graph.create(nodes,edges);
-					currentAnalysis = an;
-					
-					
-					var vis = possibleVizs[0];
-					vis.options["filter"] = filterNodes(an.options.elementType, an.options.relation);
-					vis.initializeFromGraph(graph);
-					//fill the list & setup global variable
-					currentDisplayedVis = vis;
-					addCandidatesToElement(vis);
-					
 				}
-			}); 
-		}
-		
-		//candidates is an array of candidates for a choosen visualization 
-		function addCandidatesToElement(vis){
-			//fill the options
-			var opts = "Nodes Options <br/> <ul>";
-			var opList = getOptions(currentAnalysis, currentDisplayedVis);
-			opList = opList.nodes.sizeFunction;
-			for(var i = 0; i < opList.length; i++){
-				opts += "<li  onclick=''>" + opList[i].name + "</li>"
+				var possibleVizs = register.getVisualizations([an]);
+				var graph = genesis.Graph.create(nodes,edges);
+				currentAnalysis = an;
+				
+				
+				var vis = possibleVizs[0];
+				vis.options["filter"] = filterNodes(an.options.elementType, an.options.relation);
+				vis.initializeFromGraph(graph);
+				//fill the list & setup global variable
+				currentDisplayedVis = vis;
+				addCandidatesToElement(vis);
+				
 			}
-			opts += "</ul>"
-			document.getElementById('nodesOptions').innerHTML = opts;
-			
-			var can = "<ul>"
-			var candidates = vis.candidates();
-			for(var i = 0; i < candidates.length; i++){
-				can += "<li class='Candidates' onclick='displayGraphFromList(" + i + ");'>" + candidates[i].name + "</li>"
-			}
-			can += "</ul>";
-			document.getElementById('roots').innerHTML = can;
+		}); 
+	}
+	
+	//candidates is an array of candidates for a choosen visualization 
+	function addCandidatesToElement(vis){
+		//fill the options
+		var opts = "Nodes Options <br/> <ul>";
+		var opList = getOptions(currentAnalysis, currentDisplayedVis);
+		opList = opList.nodes.sizeFunction;
+		for(var i = 0; i < opList.length; i++){
+			opts += "<li  onclick=''>" + opList[i].name + "</li>"
 		}
+		opts += "</ul>"
+		document.getElementById('nodesOptions').innerHTML = opts;
 		
-		//displays the chosen candidate's view
-		function displayGraphFromList(candidate){
-			var cans = currentDisplayedVis.candidates();
-			currentDisplayedVis.visualize(cans[candidate], "#chart");
+		var can = "<ul>"
+		var candidates = vis.candidates();
+		for(var i = 0; i < candidates.length; i++){
+			can += "<li class='Candidates' onclick='displayGraphFromList(" + i + ");'>" + candidates[i].name + "</li>"
 		}
-		
-		function clickProjects(){
-			document.getElementById("projects").style.display = "block";
-			document.getElementById("addProject").style.display = "none";
-			document.getElementById('chart').style.display = 'none';
-			document.getElementById('roots').style.display = 'none';
-		}
-		function clickNew(){
-			document.getElementById("addProject").style.display = "block";
-			document.getElementById("projects").style.display = "none";
-			document.getElementById('chart').style.display = 'none';
-			document.getElementById('roots').style.display = 'none';
-		}
-		
-		$(function() {
-			$('#nodes input').click(updateResults);
-		});
-		
-		// document.getElementById('overlay').style.visibility = 'hidden';
-		document.getElementById('waitbox').style.visibility = 'hidden';
-		projects[0]['argouml'].getHistory(projects[0]['argouml']);
+		can += "</ul>";
+		document.getElementById('roots').innerHTML = can;
+	}
+	
+	//displays the chosen candidate's view
+	function displayGraphFromList(candidate){
+		var cans = currentDisplayedVis.candidates();
+		currentDisplayedVis.visualize(cans[candidate], "#chart");
+	}
+	
+	function clickProjects(){
+		document.getElementById("projects").style.display = "block";
+		document.getElementById("addProject").style.display = "none";
+		document.getElementById('chart').style.display = 'none';
+		document.getElementById('roots').style.display = 'none';
+	}
+	function clickNew(){
+		document.getElementById("addProject").style.display = "block";
+		document.getElementById("projects").style.display = "none";
+		document.getElementById('chart').style.display = 'none';
+		document.getElementById('roots').style.display = 'none';
+	}
+	
+	$(function() {
+		$('#nodes input').click(updateResults);
+	});
+	
+	// document.getElementById('overlay').style.visibility = 'hidden';
+	document.getElementById('waitbox').style.visibility = 'hidden';
+	projects[0]['argouml'].getHistory(projects[0]['argouml']);

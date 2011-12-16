@@ -20,7 +20,7 @@ body {
   color: #999;
 }
 
-#monitor   {
+#monitor {
   font: normal 120% 'century gothic', arial, sans-serif;
   color: #555;
 }
@@ -32,15 +32,6 @@ body {
 #dispProperties {
   padding-top: 20px;
 }
-
-/*#setOptions {
-	display: static;
-	top: 50px;
-	left: 50px;
-	width: 100px;
-	height: 200px;
-	background: #eaeaea;
-}*/
 
 .front-page #doc{
 	min-width:1000px;
@@ -172,10 +163,12 @@ div#legend {
   font-size: .5em;
 }
 
-#content-div{
+#content-div {
 	background: #F4F4F4;
 	margin: auto;
 	display: block;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	padding-left: 30px;
 	padding-right: 30px;
 	width:90%;
@@ -434,7 +427,7 @@ ul#menu-nav li {
 	background-color: #CCC;
 	border: solid 1px #CCC;
 	position: relative;
-	z-index: 1;
+/*	z-index: 1;*/
 }
 
 ul#menu-nav li.selected {
@@ -750,14 +743,14 @@ label.form-select {
 	left: 0; 
 	top: 0;
 	overflow: hidden;
-	background-color: #c8c8c8;
-	opacity: 0.4;
+	background-color: #555;
+	opacity: 0.7;
 }
 
 #waitbox img {
 	position:absolute; 
 	top:50%; 
 	left:50%; 
-	margin-top:-25px;
-	margin-left:-25px;
+	margin-top:-50px;
+	margin-left:-50px;
 }
