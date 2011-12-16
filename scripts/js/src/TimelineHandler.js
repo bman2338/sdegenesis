@@ -32,3 +32,11 @@ function TimelineHandler () {
 	};
 	return obj;
 }
+
+function nextRevision () {
+	
+}
+
+function previousRevision () {
+	
+}
