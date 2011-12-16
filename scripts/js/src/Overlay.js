@@ -17,7 +17,7 @@ function showHide() {
 	} else {
 		$( "#overlay-transparent" ).hide( 'blind', {}, 600);
 		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Show</a>');
-		eventHandler.restart();
+		eventHandler.resume();
 		hidden = true;
 	}
 };
