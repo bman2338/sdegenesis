@@ -129,7 +129,7 @@ function sunburst (rawJson) {
             });
 
 		if (augmentationCallback)
-			path.call(visModel.augment("nodes",augmentationCallback));
+			vis.selectAll("path").call(visModel.augment("nodes",augmentationCallback));
 
 		/*var text = vis.selectAll("text").data(nodes);
 		var textEnter = text.enter().append("svg:text")
