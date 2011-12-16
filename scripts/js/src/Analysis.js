@@ -414,6 +414,16 @@ var authorsCollaborationGraph = function () {
 	return obj;
 };
 
+var timelineStackedBarChart = function () {
+	var obj = createAnalysis("Revisions Timeline");
+	obj.visualizations = [
+	{
+		name: "Contributions BarChart View",
+		visFactory: HistoryStackedBarChart,
+	}];
+	return obj;
+}
+
 var analysisRegister = AnalysisRegister()
 analysisRegister.addEntry(["Class"],classInheritance());
 analysisRegister.addEntry(["Author"],revisionHistoryAnalysis());
@@ -421,3 +431,4 @@ analysisRegister.addEntry(["Author"],authorsCollaborationGraph());
 analysisRegister.addEntry(["Revision"],activityDensityAnalysis());
 analysisRegister.addEntry(["Method"],methodCallGraph());
 analysisRegister.addEntry(["Method", "Class" ],mixedCallGraph());
+analysisRegister.addEntry(["Revision",timelineStackedBarChart()]);

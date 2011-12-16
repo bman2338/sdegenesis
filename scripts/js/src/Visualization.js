@@ -224,3 +224,30 @@ var CalendarVisualization = function () {
 	
 	return obj;
 }
+
+function stackedBarChart (data,sizeX,sizeY,scale,version,step,canvas) {
+
+
+var HistoryStackedBarChartVisualization = function () {
+	var obj = BaseVisualization();
+	obj.addOption("visFun", function (element, canvas, base, augmentationFun ) {
+			stackedBarChart(element,canvas_width,canvas_height,null,obj.source.last,100,canvas);
+	});
+	obj.elements = {
+		bars: {
+			options: {
+			},
+		}
+	};
+	
+	obj.initialize = function (source) {
+		obj.source = historyToD3Format(source);
+	}
+	
+	obj.candidates = function () {
+		if (obj.source == undefined)
+			return [];
+		return [source];
+	};
+	
+	return obj;}
