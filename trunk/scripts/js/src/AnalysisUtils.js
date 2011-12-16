@@ -67,7 +67,7 @@ function filterGraph (relations,vis) {
 		}
 	}
     
-function filterMixedGraph(relations) {
+function filterMixedGraph(relations, optBlockOnTypeAndRelation) {
     return { 
         value : function(elements, obj) {
 			if (obj && obj.id != "Graph")
@@ -77,15 +77,35 @@ function filterMixedGraph(relations) {
                 return nodeTypeIncluded(node, elements ); 
             });
             
+
+	
             var opt = {
-                centers : centers,
+                centers : owl.deepCopy(centers),
                 selectNode : function(node) { return elements.types.indexOf(node.properties.ElementType) != -1;  }, 
                 selectEdge : function(node1, node2) { return true; },
-                expand : function(node, relName) {
-                    return this.selectNode(node) && relations.indexOf(relName) != -1;
-                }
-            };
-            
+				expand : function(node, relName) {
+					var ind = relations.indexOf(relName);
+
+					if(optBlockOnTypeAndRelation) {
+						if(optBlockOnTypeAndRelation.type == node.properties.ElementType && optBlockOnTypeAndRelation.rel == relName) {
+							var block = true;
+							for(var c in centers) {
+								var center = centers[c];
+								if(center.uniqueId == node.uniqueId) {
+									block = false;
+									break;
+								}
+							}
+
+							if(block) {
+								return false;
+							}
+						}
+					}
+					return this.selectNode(node) && ind != -1;
+				}
+			};
+
             var selection = obj.source.getMixedGraph(opt);
             var mixedGraph = toD3Graph(selection.nodes, selection.edges);
           
