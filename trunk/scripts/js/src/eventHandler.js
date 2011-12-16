@@ -6,13 +6,12 @@ var eventHandler = EventHandler();
 
 
 function EventHandler(){
-	var handlers = {
-	};
+	var handlers = {};
 	return{
 		pause: function(){
 			for(var hndlr in handlers){
 				for (var value in handlers[hndlr].defaults) {
-					d3.select(hndlr).on(value, handlers[hndlr].defaults[value]);
+					d3.select(handlers[hndlr].object).on(value, handlers[hndlr].defaults[value]);
 				}
 			}
 		},
@@ -27,7 +26,7 @@ function EventHandler(){
 		
 		add: function(object, type, handler){
 			if (!handlers[object])
-				handlers[object] = { defaults:{ keydown: null, }, values: {} };
+				handlers[object] = { object:object,defaults:{ keydown: null, }, values: {} };
 			handlers[object].values[type] = handler;
 			//handlers.push({obj:object, hand:handler, typ:type, running:true});
 			d3.select(object).on(type,handler);
