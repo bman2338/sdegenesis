@@ -56,7 +56,7 @@ function sunburst (rawJson) {
 	  sunburstRoots(rawJson)
 
 	}
-	function _sunburst(root, target,vis,augmentationCallback) { 
+	function _sunburst(root, target,visModel,augmentationCallback) { 
 		var w = canvas_height-5,
 		h = w,
 		r = w / 2,
