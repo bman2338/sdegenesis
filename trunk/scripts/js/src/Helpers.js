@@ -8,7 +8,7 @@ var insertButtonsForTimeline = function(){
 	
 	var oldButtons = '<button id="group" class="first" onclick="transitionGroup()"> Group </button> <button id="stack" class="active last" onclick="transitionStack()">Stack</button><button id="highlight" class="active last" onclick="highlightMse()">toggle MSE</button><p>';
 	var buttons = '<button id="backbutton" class="first" onclick="timelineHandler.backFunction()">back</button><button id="forwardbutton" class="active last" onclick="timelineHandler.forwardFunction()">forward</button><button id="playbutton" class="active last" onclick="timelineHandler.playFunction(this)">'+name+'</button>';
-	$("#timelinechart").append("<div class=\"timelineController\">" + buttons + "</div>");
+	//$("#timelinechart").append("<div class=\"timelineController\">" + buttons + "</div>");
 }
 
 function forward(){

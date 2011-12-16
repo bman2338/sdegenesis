@@ -1,39 +1,51 @@
-var n = 3, // number of layers
-    m, // number of revisions
-	data,				//added , modified, deleted
-	colorsMse = new Array("#404ACF","#50CC3D","#CC5241");
-	colorsNo = new Array("#8FF", "#888", "#F88");
-	colorsHi = new Array("#A9A9A9","#EEE", "#CCC");
-	modType = new Array("addedFilesCount","modifiedFilesCount","deletedFilesCount");
-	currentLast = 0,
-	currentFirst = 0,
-	currentScale = 0,
-	currenX = 0,
-	currenY = 0,
-	bars = null;
-var revisionsMap =[];
-var cleanedHist;
-var layers;
-var currentCanvas;
+
+function timelineState () {
+	var obj = {
+
+ n: 3, // number of layers
+    m:-1, // number of revisions
+	data:null,				//added , modified, deleted
+	colorsMse: new Array("#404ACF","#50CC3D","#CC5241"),
+	colorsNo : new Array("#8FF", "#888", "#F88"),
+	colorsHi : new Array("#A9A9A9","#EEE", "#CCC"),
+	modType : new Array("addedFilesCount","modifiedFilesCount","deletedFilesCount"),
+	currentLast : 0,
+	currentFirst : 0,
+	currentScale : 0,
+	currenX : 0,
+	currenY : 0,
+	bars : null,
+};
+ obj.revisionsMap =[];
+ obj.cleanedHist;
+ obj.layers;
+ obj.currentCanvas;
     
-var p = 30,
-    w, //size x
-    h, //size y
-    mx,my,mz,
-    x = function(d) { return d.x * w / mx; }, // position of d
-    y0 = function(d) { return h - d.y0 * h / my; }, //height of 1st bar
-    y1 = function(d) { return h - (d.y + d.y0) * h / my; }, //height of 2nd bar
-    y2 = function(d) { return d.y * h / mz; }; // or `my` to not rescale, height of 3rd bar
-   
-function displayTimeline(hist, sizeX, sizeY, scale){
-	stackedBarChart(hist,sizeX,sizeY,scale,hist.last,300,"#timelinechart")
+ obj.p = 30;
+ obj.w, //size x
+ obj.h, //size y
+ obj.mx;
+ obj.my;
+ obj.mz;
+return obj;
 }
 
-function getRevisions (history,to,step) {
+var xCl = function (o) { return function(d) { return d.x * o.w / o.mx; } }, // position of d
+    y0Cl = function (o) {return function(d) { return o.h - d.y0 * o.h / o.my; } }, //height of 1st bar
+    y1Cl = function (o) {return function(d) { 
+		return o.h - (d.y + d.y0) * o.h / o.my; } 
+	}, //height of 2nd bar
+    y2Cl = function (o) {return function(d) { return d.y * o.h / o.mz; } }; // or `my` to not rescale, height of 3rd bar
+   
+function displayTimeline(hist, sizeX, sizeY, scale){
+	stackedBarChart(hist,sizeX,sizeY,scale,hist.last,300,"#timelinechart",timeline_state);
+}
+
+function getRevisions (history,to,step,obj) {
 	var revs = {}
 	var i = to;
 	for (i; i > to - step && i >= 0; --i) {
-		var rev = cleanedHist[i];
+		var rev = obj.cleanedHist[i];
 		revs[i] = rev;
 	};
 	return {
@@ -42,47 +54,52 @@ function getRevisions (history,to,step) {
 	};
 }
 
-function stackedBarChart (data,sizeX,sizeY,scale,version,step,canvas) {
+function stackedBarChart (data,sizeX,sizeY,scale,version,step,canvas,obj) {
+
+	var xe = xCl(obj);
+	var y0e = y0Cl(obj);
+	var y1e = y1Cl(obj);
+	var y2e = y2Cl(obj);
 
 	if (canvas)
-		currentCanvas = canvas;
+		obj.currentCanvas = canvas;
 	if (scale == null)
 		scale = function (x) { return x; };
-    d3.select(currentCanvas).html("");
-	$(currentCanvas).html = "";
-	currentLast = version;
-	currentX = sizeX;
-	currentY = sizeY;
-	w = sizeX;
-	h = sizeY - .5 - p;
-	cleanedHist = data;
-	currentScale = scale;
+    d3.select(obj.currentCanvas).html("");
+	$(obj.currentCanvas).html = "";
+	obj.currentLast = version;
+	obj.currentX = sizeX;
+	obj.currentY = sizeY;
+	obj.w = sizeX;
+	obj.h = sizeY - .5 - obj.p;
+	obj.cleanedHist = data;
+	obj.currentScale = scale;
 	
-	var revsData = getRevisions(cleanedHist,version,step);
+	var revsData = getRevisions(obj.cleanedHist,version,step,obj);
 	var revs = revsData.revs;
 		
-	currentFirst = revsData.first;
+	obj.currentFirst = revsData.first;
 	
-	data = getData(revs, scale);
-	m= data[0].length;
-	d3.layout.stack()(data);
+	obj.data = getData(revs, scale,obj);
+	obj.m= obj.data[0].length;
+	d3.layout.stack()(obj.data);
 	
-	for (var i = 0; i < data.length; ++i) {
-		for (var j = 0; j < data[i].length; ++j) {
-			data[i][j].columnIndex = i;
+	for (var i = 0; i < obj.data.length; ++i) {
+		for (var j = 0; j < obj.data[i].length; ++j) {
+			obj.data[i][j].columnIndex = i;
 		}
 	}
 	
-	mx = m;
+	obj.mx = obj.m;
 	
-	my = d3.max(data, function(d) {
+	obj.my = d3.max(obj.data, function(d) {
       return d3.max(d, function(d) {
        return d.y0 + d.y;
       });
     });
 
     //my=300;
-    mz = d3.max(data, function(d) {
+    obj.mz = d3.max(obj.data, function(d) {
       return d3.max(d, function(d) {
         return d.y;
       });
@@ -90,43 +107,51 @@ function stackedBarChart (data,sizeX,sizeY,scale,version,step,canvas) {
 
 	
 	//svg containing the whole graph
-	var vis = d3.select(currentCanvas)
+	var vis = d3.select(obj.currentCanvas)
 		.append("svg:svg")
-		.attr("width", w)
-		.attr("height", h + p);
+		.attr("width", obj.w)
+		.attr("height", obj.h + obj.p);
 	// set color of the bars
 	
 	
 	vis.append("svg:text")
-	   .attr("x", w-50)
-	   .attr("y", h+10)
+	.attr("class","timelineLabel")
+	   .attr("x", obj.w-50)
+	   .attr("y", obj.h+10)
 	   .attr("dy", ".71em")
 	   .attr("text-anchor", "middle")
-	   .text("Rev."+currentLast);
+	   .text("Rev."+obj.currentLast);
 
 	vis.append("svg:text")
-	   .attr("x", 50)
-	   .attr("y", h+10)
+	   .attr("x", 45)
+		.attr("class","timelineLabel")
+	   .attr("y", obj.h+10)
 	   .attr("dy", ".71em")
 	   .attr("text-anchor", "middle")
-	   .text("Rev."+currentFirst);
+	   .text("Rev."+obj.currentFirst);
 	
-	layers = vis.selectAll("g.layer")
-		.data(data)
+	var cl1 = function (o) { 
+			return function(d, i) { 
+				return o.colorsMse[i]; 
+			} 
+		}(obj);
+	
+	obj.layers = vis.selectAll("g.layer")
+		.data(obj.data)
 		.enter().append("svg:g")
-		.style("fill", function(d, i) { return colorsMse[i]; })
+		.style("fill", cl1)
 		.attr("class", "layer");
 
 
 
 	//add bars 
-	bars = layers.selectAll("g.bar")
+	obj.bars = obj.layers.selectAll("g.bar")
 		.data(function(d) { return d; })
 		.enter().append("svg:g")
 		.attr("class", "bar")
-		.attr("transform", function(d) { return "translate(" + x(d) + ",0)"; })
+		.attr("transform", function(d) { return "translate(" + xe(d) + ",0)"; })
 		.on("click", function(d, i) {
-			highlightCurrent(i);
+			//highlightCurrent(i,obj);
 			/*projects[0][currentProject].getRevision(projects[0][currentProject], cleanedHist.i, function(rev){
 				projects[0][currentProject].currRev = rev.revisionNumber;
 			});*/
@@ -134,35 +159,35 @@ function stackedBarChart (data,sizeX,sizeY,scale,version,step,canvas) {
 	
 	
  	//append rectangles to the bar	
-	bars.append("svg:rect").on("mouseover", function(d, i) { 
-			var revisionNumber=revisionsMap[i];
-			var currentHistory = cleanedHist[revisionNumber];
+	obj.bars.append("svg:rect").on("mouseover", function(d, i) { 
+			var revisionNumber=obj.revisionsMap[i];
+			var currentHistory = obj.cleanedHist[revisionNumber];
 			if (!currentHistory)
 				return;
-			var modtype = modType[d.columnIndex];
+			var modtype = obj.modType[d.columnIndex];
 			tooltip.show(modtype + ": "+currentHistory[modtype] +"<br>Revision: " + revisionNumber + "<br>Author: " + currentHistory.author +"<br>Date: " + currentHistory.date+"");
 		})
 		.on("mouseout", function(d, i){
 			tooltip.hide();
 		})
-		.attr("width", x({x: .9}))
+		.attr("width", xe({x: .9}))
 		.attr("x", 0)
-		.attr("y", h)
+		.attr("y", obj.h)
 		.attr("height", 0)
 		.transition()
 		.delay(function(d, i) { return i * 10; })
-		.attr("y", y1)
-		.attr("height", function(d) { return y0(d) - y1(d); });
+		.attr("y", y1e)
+		.attr("height", function(a,b) { return function(d) { return a(d) - b(d); } }(y0e,y1e));
 
 
 	vis.append("svg:line")
 		.attr("x1", 0)
-		.attr("x2", w - x({x: .1}))
-		.attr("y1", h)
-		.attr("y2", h);
+		.attr("x2", obj.w - xe({x: .1}))
+		.attr("y1", obj.h)
+		.attr("y2", obj.h);
 		
 		function highlightCurrent(selected){
-		 	var l = layers.selectAll("g.layer rect")
+		 	var l = obj.layers.selectAll("g.layer rect")
 		 	l.style("stroke", function(d, i){
 				if(selected == i) {
 					return "#f00";
@@ -177,25 +202,44 @@ function stackedBarChart (data,sizeX,sizeY,scale,version,step,canvas) {
 }
 
 //d3.select(window).on("keydown", 
-eventHandler.add(window,"keydown",
-function() {   
-	var displacement = 0;  
-	switch (d3.event.keyCode) {
-		case 37: displacement = -200; break;
-		case 39: displacement = 200; break;
-		default:
-			return;
+
+/*eventHandler.add(window,"keydown",
+function (o) {
+	return function() {   
+		var displacement = 0;  
+		switch (d3.event.keyCode) {
+			case 37: displacement = -200; break;
+			case 39: displacement = 200; break;
+			default:
+				return;
+		}
+	repaint(displacement,300,o);
 	}
-	repaint(displacement,300);
-});
+}(obj));*/
+
+
+var f = function (o) {
+	return function() {   
+		var displacement = 0;  
+		switch (d3.event.keyCode) {
+			case 37: displacement = -200; break;
+			case 39: displacement = 200; break;
+			default:
+				return;
+		}
+		repaint(displacement,300,o);
+	}
+}(obj);
+
+d3.select(window).on("keydown",f);
 
 }
 
-function repaint (displacement,minStep) {
-	var ver = currentFirst+displacement;
-	if (displacement > 0 && ver == currentLast)
+function repaint (displacement,minStep,obj) {
+	var ver = obj.currentFirst+displacement;
+	if (displacement > 0 && ver == obj.currentLast)
 		return false;
-	else if (displacement < 0 && ver == currentFirst)
+	else if (displacement < 0 && ver == obj.currentFirst)
 		return false;
 		
 	var last;
@@ -204,17 +248,17 @@ function repaint (displacement,minStep) {
 		ver = 0;
 		last = minStep;
 	}
-	else if (ver > cleanedHist.last) {
-		ver = cleanedHist.last;
-		last = ver;
+	else if (ver > obj.cleanedHist.last) {
+		ver = obj.cleanedHist.last-minStep;
+		last = obj.cleanedHist.last;
 	}
 	else {
 		last = ver + minStep;
-		if (last > cleanedHist.last)
-			last = cleanedHist.last;
+		if (last > obj.cleanedHist.last)
+			last = obj.cleanedHist.last;
 	}
 	
-	if (last == currentLast)
+	if (last == obj.currentLast && ver == obj.currentFirst)
 		return false;
 	
 	/*currentLast = last;
@@ -229,7 +273,7 @@ function repaint (displacement,minStep) {
 	bars.selectAll("rect").data(function (d) {
 			return d;
 	}).transition().duration(750).attr("height",y);*/
-	stackedBarChart(cleanedHist,currentX,currentY,currentScale,last,minStep);
+	stackedBarChart(obj.cleanedHist,obj.currentX,obj.currentY,obj.currentScale,last,minStep,obj.currentCanvas,obj);
 	return true;
 }
 
@@ -237,7 +281,7 @@ function repaint (displacement,minStep) {
 /*
  * format the history
  */
-function getData(history, scale){
+function getData(history, scale,obj){
 	var result = [[],[],[]];
 	var i=0;
 	
@@ -252,7 +296,7 @@ function getData(history, scale){
 			result[0].push({x: i, y: scale(history[rev].addedFilesCount)});
 			result[1].push({x: i, y: scale(history[rev].modifiedFilesCount)});
 			result[2].push({x: i, y: scale(history[rev].deletedFilesCount)});	
-			revisionsMap[i] = rev;
+			obj.revisionsMap[i] = rev;
 			++i;
 		}
 	}	
@@ -260,36 +304,36 @@ function getData(history, scale){
 }
 
 
-function highlightMse(){
-	var group = d3.selectAll(currentCanvas);
+function highlightMse(obj){
+	var group = d3.selectAll(obj.currentCanvas);
 	
 	group.selectAll("g.layer rect")
 		.transition()
 			.duration(500)
 			.style("fill", function(d, i){
-			var revisionNumber=revisionsMap[d.x];
-			var currentHistory = cleanedHist[revisionNumber]; 
+			var revisionNumber=obj.revisionsMap[d.x];
+			var currentHistory = obj.cleanedHist[revisionNumber]; 
 			if(currentHistory && currentHistory.hasMse)
-				return colorsMse[d.columnIndex];
-			return colorsHi[d.columnIndex];	
+				return obj.colorsMse[d.columnIndex];
+			return obj.colorsHi[d.columnIndex];	
 		});
 		
 	group.select("#highlight")
 		.attr("onclick", "undoHighlight()");
 }
 
-function undoHighlight(){
-	var group = d3.selectAll(currentCanvas);
+function undoHighlight(obj){
+	var group = d3.selectAll(obj.currentCanvas);
 	
 	group.selectAll("g.layer rect")
 		.transition()
 			.duration(500)
 			.style("fill", function(d, i){
-			var revisionNumber=revisionsMap[d.x];
-			var currentHistory = cleanedHist[revisionNumber];
+			var revisionNumber=obj.revisionsMap[d.x];
+			var currentHistory = obj.cleanedHist[revisionNumber];
 			if(currentHistory.hasMse)
-				return colorsMse[d.columnIndex];
-			return colorsMse[d.columnIndex];	
+				return obj.colorsMse[d.columnIndex];
+			return obj.colorsMse[d.columnIndex];	
 		});
 		
 	group.select("#highlight")
@@ -297,7 +341,7 @@ function undoHighlight(){
 }
  
 
-function transitionGroup() {
+function transitionGroup(obj) {
   var group = d3.selectAll(currentCanvas);
 
   group.select("#group")
@@ -324,7 +368,7 @@ function transitionGroup() {
 }
 
 
-function transitionStack() {
+function transitionStack(obj) {
   var stack = d3.select(currentCanvas);
 
   stack.select("#group")

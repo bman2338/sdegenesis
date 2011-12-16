@@ -419,16 +419,16 @@ var timelineStackedBarChart = function () {
 	obj.visualizations = [
 	{
 		name: "Contributions BarChart View",
-		visFactory: HistoryStackedBarChart,
+		visFactory: HistoryStackedBarChartVisualization,
 	}];
 	return obj;
 }
 
 var analysisRegister = AnalysisRegister()
 analysisRegister.addEntry(["Class"],classInheritance());
-analysisRegister.addEntry(["Author"],revisionHistoryAnalysis());
 analysisRegister.addEntry(["Author"],authorsCollaborationGraph());
+analysisRegister.addEntry(["Author"],revisionHistoryAnalysis());
 analysisRegister.addEntry(["Revision"],activityDensityAnalysis());
 analysisRegister.addEntry(["Method"],methodCallGraph());
 analysisRegister.addEntry(["Method", "Class" ],mixedCallGraph());
-analysisRegister.addEntry(["Revision",timelineStackedBarChart()]);
+analysisRegister.addEntry(["Revision"],timelineStackedBarChart());

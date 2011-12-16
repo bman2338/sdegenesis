@@ -27,6 +27,20 @@ html(lang="eng")
 		link(type="text/css", rel="stylesheet", href="http://atelier.inf.usi.ch/~babazadm/sdegenesis/website/pages/style/tooltip.css")
 		link(type="text/css", rel="stylesheet", href="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/button.css")
 		
+		script(type="text/javascript")
+			$(document).ready(function(){
+				$("li.two a").click(function() {
+					$("li.two").removeClass("selected");
+					$(this).parents().addClass("selected");
+					return false;
+				});
+			
+				$( "#slidingUpTimeline" ).click(function() {
+					$(this).toggleClass( "showami-la-timeline", 1000 );
+					return false;
+				});
+			});
+		
 	body
 		#main
 			#logo

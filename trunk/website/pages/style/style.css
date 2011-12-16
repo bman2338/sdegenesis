@@ -47,30 +47,13 @@ body {
     overflow: visible;
 }
  
-#slidingUpTimeline {
-	bottom: 0px ;
-	display: none ;
-	position: fixed ;
-	width: 90% ;
-}
- 
 #timelinechart {
-/*	border: 1px solid #666666 ;*/
-	border-bottom-width: 0px ;
+/*	border-bottom-width: 0px ;
 	border-radius: 15px;
 	background: #F4F4F4;
 	z-index:10;
-	padding: 20px 20px 20px 20px ;
-/*	-moz-box-shadow:0px -5px 300px #666;*/
-/*    -webkit-box-shadow:0px -5px 300px #666;*/
+	padding: 20px 20px 20px 20px;*/
 }
-
-/*#slideUpTimeline {
-	bottom: 0px;
-	position: fixed;
-	margin-left: auto;
-	margin-right: auto;
-}*/
 
 #projectstable { 
   padding-bottom: 30px;
@@ -779,4 +762,8 @@ label.form-select {
 	width: 80px;
 	margin-top:-30px;
 	margin-left:-34px;
+}
+
+.timelineLabel {
+	font-size: 16px;
 }

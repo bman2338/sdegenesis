@@ -225,13 +225,11 @@ var CalendarVisualization = function () {
 	return obj;
 }
 
-function stackedBarChart (data,sizeX,sizeY,scale,version,step,canvas) {
-
-
 var HistoryStackedBarChartVisualization = function () {
 	var obj = BaseVisualization();
+	obj.internalState = timelineState();
 	obj.addOption("visFun", function (element, canvas, base, augmentationFun ) {
-			stackedBarChart(element,canvas_width,canvas_height,null,obj.source.last,100,canvas);
+			stackedBarChart(element,canvas_width,canvas_height,null,obj.source.last,500,canvas,obj.internalState);
 	});
 	obj.elements = {
 		bars: {
@@ -239,9 +237,8 @@ var HistoryStackedBarChartVisualization = function () {
 			},
 		}
 	};
-	
 	obj.initialize = function (source) {
-		obj.source = historyToD3Format(source);
+		obj.source = source;
 	}
 	
 	obj.candidates = function () {
@@ -250,4 +247,5 @@ var HistoryStackedBarChartVisualization = function () {
 		return [source];
 	};
 	
-	return obj;}
+	return obj;
+}
