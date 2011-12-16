@@ -399,7 +399,7 @@ app.get('/show_project/:projectname', function(req, res){
 * Redirect for the AJAX request of the revisions
 */
 app.get('/get_data/:projectname/:rev', function(req, res){
-	console.log(req.params.projectname + '_rev' + req.params.rev + '_edges');
+	console.log(req.params.projectname + '_rev' + req.params.rev + '_edges RICHIESTI');
 	mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(req.params.projectname + '_rev' + req.params.rev + '_edges').find().toArray(function(err, edges){
 		mongo.db('localhost:8888/genesis_db?auto_reconnect').collection(req.params.projectname + '_rev' + req.params.rev + '_nodes').find().toArray(function(err, nodes){
 			//SEND BACK VIA AJAX THE RESULTS nodes[0] and edges[0]
