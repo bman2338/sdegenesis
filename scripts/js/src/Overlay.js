@@ -49,6 +49,8 @@ var globalElementsSelected;
 var globalResultsToAnalyze;
 
 function initialVisualization (analysisId,visualizationId,els,override) {	
+	displayRevTag();
+	
 	var analysisAvailable = getAvailableAnalysis(els);
 	var analysis = analysisAvailable[analysisId];
 	
@@ -97,9 +99,19 @@ function initialVisualization (analysisId,visualizationId,els,override) {
 		drawFunction(vis,analysis,[vis.source],elementsSelected,override);
 	}
 }
+
+function displayRevTag() {
+	if(projects[0][currentProject].currRev)
+		$("#revtag").html("Current Workspace Revision: " + projects[0][currentProject].currRev).attr("float", "right");
+	else
+		$("#revtag").html("");	
+}
+
 	
 function displayAnalysis (divId,elements) {
-	
+	displayRevTag();
+		
+		
 	var div = $("#"+divId);
 	div.html("");
 	var tree = div.append("<ul class=\"tree\"></ul>").find('ul');

@@ -41,6 +41,7 @@ function countProperties(obj) {
 
 var prefetchRevisions = function(prefetchRev, history, proj){
 	var prefetchRevisions = [];
+	
 	for (var i = history.last; i >= 0; --i) {
 		if (!history[i])
 			continue;
