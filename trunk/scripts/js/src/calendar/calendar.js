@@ -28,7 +28,7 @@ function plotHistoryCalendar(history, visModel, augmentationCallback) {
 	.attr("height", h + m[0] + m[2])
 	.attr("class", "RdYlGn")
 	.append("svg:g")
-	.attr("transform", "translate(" + (m[3] + (w - z * 53) / 2) + "," + (m[0] + (canvas_height/2.0 - z * 7) / 2) + ")");
+	.attr("transform", "translate(" + (m[3] + (w - z * 53) / 2) + "," + (m[0] + (h - z * 7) / 2) + ")");
 
 	svg.append("svg:text")
 	.attr("transform", "translate(-6," + z * 3.5 + ")rotate(-90)")
