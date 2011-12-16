@@ -103,7 +103,7 @@ function sunburst (rawJson) {
 		.attr("fill-rule", "evenodd")
 		.style("fill", colour)
 		.on("click", click)
-        .on("mouseover", function(d, i) { 
+        /*.on("mouseover", function(d, i) { 
                 d3.select("#monitor").html(d.name) 
                 var t = d3.select(d3.event.currentTarget);
 				var id = t.attr("id");
@@ -126,7 +126,7 @@ function sunburst (rawJson) {
 				}
 				var elements = t.selectAll("tspan")
                 elements.attr("visibility", "hidden");
-            }).call(visModel.augment("nodes",augmentationCallback));
+            })*/.call(visModel.augment("nodes",augmentationCallback));
 
 		/*var text = vis.selectAll("text").data(nodes);
 		var textEnter = text.enter().append("svg:text")
