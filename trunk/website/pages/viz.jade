@@ -87,14 +87,14 @@ script(type="text/javascript")
 					else{
 						//alert("ueo, la richiedo")
 						proj.heldRevisions[rev] = false;
-						//hideAll();
+						hideAll();
 						$.ajax({
 							url: '/get_data/'+ "!{vizJson.projectName}" +'/' + rev,
 							error: function (data ){
 								alert("Some problem happened: " + JSON.stringify(data));
 							},
 							success: function( data ) {
-								//showAll();
+								showAll();
 								//alert("ricevuto: " + JSON.strigify(data));
 								var nodes = data.nodes;
 								var edges = data.edges;
@@ -169,6 +169,8 @@ script(type="text/javascript")
 			}
 		}
 	});
+	
+#revtag
 
 #overlay-transparent
 	#overlay(class="ui-widget-content ui-corner-all")

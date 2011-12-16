@@ -350,14 +350,14 @@ var methodCallGraph = function () {
 		}
 	};
 	obj.visualizations = [
-	{
+/*	{
 		name: "Call Tree",
 		visFactory: TreeVisualization,
 	},
 	{
 		name: "Call Sunburst",
 		visFactory: SunburstVisualization,
-	},
+	},*/
 	{
 		name: "Call Graph",
 		visFactory: GraphVisualization,
@@ -380,6 +380,13 @@ var mixedCallGraph = function() {
 	}];
     return obj;
 };
+
+var mixedCallGraphFromClass = function() {
+	  var obj = mixedCallGraph();
+		obj.name = "Mixed Call Graph from class methods";
+	//	obj.elements.types.push("Method");
+		return obj;
+}
 
 var authorsCollaborationGraph = function () {
 	var obj = createAnalysis("Authors Collboration");
@@ -430,5 +437,22 @@ analysisRegister.addEntry(["Author"],authorsCollaborationGraph());
 analysisRegister.addEntry(["Author"],revisionHistoryAnalysis());
 analysisRegister.addEntry(["Revision"],activityDensityAnalysis());
 analysisRegister.addEntry(["Method"],methodCallGraph());
-analysisRegister.addEntry(["Method", "Class" ],mixedCallGraph());
+analysisRegister.addEntry(["Method", "Class" ], mixedCallGraph());
+//analysisRegister.addEntry(["Class" ], mixedCallGraphFromClass());
 analysisRegister.addEntry(["Revision"],timelineStackedBarChart());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
