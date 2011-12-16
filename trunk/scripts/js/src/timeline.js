@@ -88,7 +88,7 @@ function stackedBarChart (data,sizeX,sizeY,scale,version,step,canvas) {
 
 	
 	//svg containing the whole graph
-	var vis = d3.select("#chart")
+	var vis = d3.select(currentCanvas)
 		.append("svg:svg")
 		.attr("width", w)
 		.attr("height", h + p);
