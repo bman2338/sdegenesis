@@ -107,17 +107,6 @@
 		#error
 
 script(type="text/javascript")
-	$(document).ready(function(){
-		$("li.two a").click(function() {
-			$("li.two").removeClass("selected");
-			$(this).parents().addClass("selected");
-			return false;
-		});
-	});
-	
-// TODO: Do the fucking check on the required paramenters (*) in the form
-// Moreover do not send 'undefined' to Luca that he's getting crazy :)
-script
 	function validateSubmission(){
 		//Checks if some field has or is not an url
 		var pname = document.getElementById('projectName');

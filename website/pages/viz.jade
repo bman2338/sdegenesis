@@ -1,5 +1,6 @@
-script
+script(type="text/javascript")
 	var currentProject = "!{vizJson.projectName}";
+	
 	function hideAll(){
 		document.getElementById('waitbox').style.visibility = 'visible';
 	}
@@ -44,12 +45,12 @@ script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenes
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/Helpers.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/QueryLanguage.js")
 
-
 script(type="text/javascript")
+	
+	var timeline_state = timelineState();
 	
 	$(function() {
 		$( "#overlay-transparent" ).hide();
-		
 	});
 	
 	var projects = [];
@@ -112,11 +113,22 @@ script(type="text/javascript")
 							success: function( data ) {
 								var h = data.history;
 								proj.history = h;
-								proj.currRev = 500;
-								displayTimeline(h, canvas_width, canvas_height, function(x){return x});
-								insertButtonsForTimeline();
+								proj.currRev = h.last;
+								// displayTimeline(h, canvas_width, canvas_height, function(x){return x});
+								//insertButtonsForTimeline();
 								var revsToPrefetch = prefetchRevisions(10, h, proj);
+								proj.revsToPrefetch = revsToPrefetch;
 								showAll();
+								var analysis = analysisRegister.getEntries(["Revision"])[1];
+								var vis = bootstrapVisualization(analysis,0,h);		
+								canvas_width = $( "#content-div" ).width();
+								canvas_height = $( window ).height() - $( "#logo" ).height() - parseInt($( "#content-div" ).css("padding-top")) * 2 - 20;								var canvas = "#chart";
+								$(canvas).html("");
+								var obj = {
+									types: ["Revision"],
+									nodes: [h],
+								};
+								vis.visualize(obj,canvas);
 								return h;
 							}
 						});
@@ -158,7 +170,7 @@ script(type="text/javascript")
 	
 		h3(class="ui-widget-header ui-corner-all") Query
 		input(id="query", type="text", style="width: 89%; margin-right:10px")
-		input(type="submit", onclick="javascript:filterResults()", class="submit", style="width: 9%", value="Filter", id="submitStoCazzo") Filter
+		input(type="submit", onclick="javascript:filterResults()", class="submit", style="width: 9%", value="Filter", id="submit") Filter
 		table(id="results-analysis")
 			tr
 				td
@@ -167,6 +179,8 @@ script(type="text/javascript")
 				td			
 					h3(class="ui-widget-header ui-corner-all") Analysis \& Viz
 					#analysis
+
+#timelinechart
 
 #topmenu
 	ul(id="menu-nav")
@@ -280,18 +294,8 @@ script(type="text/javascript")
 					span 
 						input(type="submit", class="submit", value="Send", id="submissionButton") Submit request		
 		#error
-					
-
-	script(type="text/javascript")
-		$(document).ready(function(){
-			$("li.two a").click(function() {
-				$("li.two").removeClass("selected");
-				$(this).parents().addClass("selected");
-				return false;
-			});
-		});
 	
-	script
+	script(type="text/javascript")
 		function validateSubmission(){
 			//Checks if some field has or is not an url
 			var pname = document.getElementById('projectName');
@@ -325,25 +329,14 @@ script(type="text/javascript")
 		document.getElementById("projects").style.display = "none";
 		document.getElementById("submissionButton").disabled = true;
 
-#treename
-#monitor
+// #treename
+// #monitor
 #chart
+
 #slidingUpTimeline
 	#timelinechart
-		button(id="group", class="first", onclick="transitionGroup()") Group
-		button(id="stack", class="active last", onclick="transitionStack()") Stack
-		button(id="highlight", class="active last", onclick="highlightMse()") toggle MSE
-		button(id="backbutton", class="first", onclick="back()") Back
-		button(id="playbutton", class="active last", onclick="play()") Play
-		button(id="forwardbutotn", class="active last", onclick="forward()") Forward
-		p
-
-		#chart(class="Block Right", style="overflow:visible")
-
-#bottompart
-	img(src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/website/pages/style/arrow.png", style="left: -50px")
 	
-script
+script(type="text/javascript")
 	
 	function graphTest() {
 		var graph = genesis.Graph.create(!{JSON.stringify(nodes)}, !{JSON.stringify(edges)});
@@ -455,26 +448,6 @@ script
 	
 	$(function() {
 		$('#nodes input').click(updateResults);
-	});
-	
-	jQuery(function( $ ){
-		// Get a reference to the container.
-		var container = $( "#bottompart" );
-		// Bind the link to toggle the slide.
-		$( "#slidingUpTimeline" ).click(
-			function( event ){
-			// Prevent the default event.
-			event.preventDefault();
-			// Toggle the slide based on its current
-			// visibility.
-			if (container.is( ":visible" )){
-				// Hide - slide up.
-				container.slideUp( 500 );
-			} else {
-				// Show - slide down.
-				container.slideDown( 500 );
-			}
-		});
 	});
 	
 	// document.getElementById('overlay').style.visibility = 'hidden';

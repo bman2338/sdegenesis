@@ -59,12 +59,3 @@ script(type="text/javascript")
 
 #banner
 	img(src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/website/pages/img/banner.png", alt="Sample visualizations")
-				
-script(type="text/javascript")
-	$(document).ready(function(){
-		$("li.two a").click(function() {
-			$("li.two").removeClass("selected");
-			$(this).parents().addClass("selected");
-			return false;
-		});
-	});

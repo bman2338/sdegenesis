@@ -12,7 +12,7 @@ function showHide() {
 		$('#node-selection').click(updateResults);
 		$( "#show-hide" ).html('<a class="topnav" onclick="showHide()" href="#" target="_top">Hide</a>');
 		canvas_width = $( "#content-div" ).width();
-		canvas_height = $( window ).height() - $( "#logo" ).height() - parseInt($( "#content-div" ).css("padding-top")) * 2;
+		canvas_height = $( window ).height() - $( "#logo" ).height() - parseInt($( "#content-div" ).css("padding-top")) * 2 - 20;
 		eventHandler.pause();
 		hidden = false;
 	} else {
