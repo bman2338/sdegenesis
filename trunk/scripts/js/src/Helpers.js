@@ -41,18 +41,14 @@ function countProperties(obj) {
 
 var prefetchRevisions = function(prefetchRev, history){
 	var prefetchRevisions = [];
-	//alert(countProperties(history));
-	for(var rev in history){
-		//alert(JSON.stringify(history[i]));
-		if(rev && rev.hasMse == "true"){
-			alert("preso!");
-			prefetchRevisions.push(rev);
-			prefetchRev--;
-			if(preferchRev == 0)
-				break;
-		}
-	}
-	
+	for (var i = history.last; i >= 0; --i) {
+		if (!history[i])
+			continue;
+		if (history[i].hasMse == "true")
+			prefechRevisions.push(i);
+		if (prefetchVersions.length >= prefetchRev)
+			break;
+	}	
 	for(var i = 0; i < prefetchRevisions.length; ++i){
 		getRevision(proj, prefetchRevisions[i]);
 	}
