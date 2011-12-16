@@ -72,16 +72,15 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
     //    doSnapshot(rev, firstRev)
 
     //Check Diffs
-    var current = firstRev
-    var next = current + step
+    var current = 1
+    var next = firstRev
 
     while (next <= lastRev) {
 
       //Get Diff Status Logs
       val (addedFiles, modifiedFiles, deletedFiles) = doDiffStatus(current, next)
 
-      if (!modifiedFiles.isEmpty || !addedFiles.isEmpty || !deletedFiles.isEmpty || next % step == 0) {
-        //(next - firstRev) % step == 0) {
+      if (!modifiedFiles.isEmpty || !addedFiles.isEmpty || !deletedFiles.isEmpty || (next - firstRev) % step == 0) {
         val revisionEntity = new RevisionEntity
         val (author, date) = getRevisionInfo(next)
         revisionEntity.addProperty(RevisionEntityProperty.NUMBER, new IntValue(next))
@@ -96,15 +95,14 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
         })
         revisionEntity.addProperty(RevisionEntityProperty.PROJECT, new StringValue(projectName + "_rev" + next))
 
-        //if ((next - firstRev) % step == 0) {
-        if (next % step == 0) {
+        if ((next - firstRev) % step == 0) {
           //Update Repository
           doUpdate(next)
 
           //Add addedFiles for revision with lines ownership
-          //getBlameInfo(next, addedFiles) foreach ((f) => revisionEntity.addProperty(RevisionEntityProperty.ADDED_FILES, f))
+          getBlameInfo(next, addedFiles) foreach ((f) => revisionEntity.addProperty(RevisionEntityProperty.ADDED_FILES, f))
           //Add addedFiles for revision with lines ownership
-          //getBlameInfo(next, modifiedFiles) foreach ((f) => revisionEntity.addProperty(RevisionEntityProperty.MODIFIED_FILES, f))
+          getBlameInfo(next, modifiedFiles) foreach ((f) => revisionEntity.addProperty(RevisionEntityProperty.MODIFIED_FILES, f))
 
           revisionEntity.addProperty(RevisionEntityProperty.HAS_MSE, new BooleanValue(true))
 
@@ -134,16 +132,16 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
         history += (revisionEntity)
       }
 
-      current += step
-      next = next + step //current + 1
+      current = next
+      next = current + 1
       if (history.length >= 100) {
-        //notifyOnCrawlingComplete(history)
+       notifyOnCrawlingComplete(history)
         history.clear()
       }
     }
 
-    //if (history.length > 0)
-    //notifyOnCrawlingComplete(history)
+    if (history.length > 0)
+     notifyOnCrawlingComplete(history)
 
   }
 
@@ -181,12 +179,13 @@ class SVNCrawler(url: String, projectName: String, projectPath: String,
         println("Project Checkout at rev. " + rev)
         manager.getUpdateClient.doCheckout(svnUrl, new File(projectPath),
           SVNRevision.create(rev), SVNRevision.create(rev), SVNDepth.INFINITY, false)
+        retry = false
       }
       catch {
         case (e: SVNException) => {
           println(e)
           n_tries -= 1
-          retry = if (n_tries <= 0) false else true
+          retry = if (n_tries <= 0) false else throw e
         }
       }
     } while (retry)
