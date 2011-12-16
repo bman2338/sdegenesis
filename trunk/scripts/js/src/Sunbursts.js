@@ -92,6 +92,9 @@ function sunburst (rawJson) {
 			nodes[0].name = vis.name();
 		else
 			nodes[0].name = "Sunburst Root";
+		nodes[0].properties = {
+			name: nodes[0].name;
+		}
 		nodes[0].isRoot = true;
 
 		var path = vis.selectAll("path").data(nodes);
