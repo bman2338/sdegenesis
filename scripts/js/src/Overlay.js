@@ -3,7 +3,7 @@ var elementsSelected = [];
 var hidden = true;
 
 var canvas_width = 1200;
-var canvas_height = 200;
+var canvas_height = 300;
 
 function showHide() {
 	if(hidden) {
@@ -45,7 +45,16 @@ function initialVisualization (analysisId,visualizationId) {
 	var analysisAvailable = getAvailableAnalysis(elementsSelected);
 	var analysis = analysisAvailable[analysisId];
 	
-	if (elementsSelected.indexOf("Revision") == -1) {
+	var useHistory = false;
+	
+	for (var i = 0; i < skipElements.length; ++i) {
+		if (elementsSelected.indexOf(skipElements[i])) {
+			useHistory = true;
+			break;
+		}
+	}
+	
+	if (!useHistory) {
 		projects[0][currentProject].getRevision(projects[0][currentProject], projects[0][currentProject].currRev, function(rev){
 			var vis = bootstrapVisualization(analysis,visualizationId,rev.graph);
 			var resultsToAnalyze = [];
@@ -54,6 +63,7 @@ function initialVisualization (analysisId,visualizationId) {
 					resultsToAnalyze.push(rev.graph.getNodeFromId(element.value));
 				});
 			});
+			
 			if (resultsToAnalyze.length == 0)
 				return false;
 	
@@ -72,21 +82,31 @@ function displayAnalysis (divId,elements) {
 	div.html("");
 	var tree = div.append("<ul class=\"tree\"></ul>").find('ul');
 
+	alert(JSON.stringify(elements));
+
 	$.each(elements, function(index,element) {
 		var list = null;
-		if (index == elements.length-1)
+		if (index == elements.length-1) {
 			list = tree.append("<li class=\"last top-analysis\">"+element.name+"</li>").find('li');
-		else
-			list = tree.append("<li>"+element.name+"</li>").find('li');
+		} else {
+			list = tree.append("<li class=\"top-analysis\">"+element.name+"</li>").find('li');
+		}
+		
 		var innerTree = list.append("<ul></ul>").find('ul');
-		var visz = element.getVisualizations(nodes);
+		
+		// var visz = element.getVisualizations(nodes);
+		var visz = element.getVisualizations(element);
+		
+		alert(JSON.stringify(visz));
+		
 		var analysisIndex = index;
-		$.each(visz,function(index,element) {
-			var clickFun = "javascript:initialVisualization(" + analysisIndex + "," + index +")"
-			if (index == visz.length-1)
-				innerTree.append("<li class=\"last\" onclick=\"" + clickFun + "\">"+element.name+"</li>");
+		
+		$.each(visz,function(idx,porcodio) {
+			var clickFun = "javascript:initialVisualization(" + analysisIndex + "," + idx +")"
+			if (idx == visz.length-1)
+				innerTree.append("<li class=\"last\" onclick=\"" + clickFun + "\">"+porcodio.name+"</li>");
 			else
-				innerTree.append("<li class=\"inner-viz\" onclick=\"" + clickFun + "\">"+element.name+"</li>");
+				innerTree.append("<li class=\"inner-viz\" onclick=\"" + clickFun + "\">"+porcodio.name+"</li>");
 		});				
 	});
 }
@@ -166,7 +186,22 @@ function showResults(elements) {
 			});
 		table += '</tr></table>';	
 		resultDiv.innerHTML = table;
+		$.each(elementsSelected,
+			function(index, header) {
+				sortList(header  + '-select'); 
+			});
 	});
+}
+
+// FIXME: FUCKING SLOW! Crash on Safari!
+function sortList(id) {
+    $("#" + id).each(function() {
+    	var value = $(this).val();
+        $(this).html($("option", $(this)).sort(function(aOption, anOption) {
+            return aOption.text == anOption.text ? 0 : aOption.text < anOption.text ? -1 : 1
+        }));
+        $(this).val(value);
+    });
 }
 
 function showAnalysis(analysis) {

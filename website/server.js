@@ -623,6 +623,14 @@ app.get('/get_data/:projectname/history/modified_files/:rev', function(req, res)
 	});
 });
 
+/*
+* Route for the AJAX request for handling requests
+* for the bug tracker informations
+*/
+app.get('/get_btinfo/:projectname', function(req, res){
+	var projectName = req.params.projectname;
+	//waiting for how the btinfo is stored in the DB
+});
 
 
 function getRelation(edges, relationName) {
