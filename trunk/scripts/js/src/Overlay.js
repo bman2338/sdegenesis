@@ -84,15 +84,16 @@ function displayAnalysis (divId,elements) {
 
 	alert(JSON.stringify(elements));
 
-	$.each(elements, function(index,element) {
+	$.each(elements, function(index, element) {
 		var list = null;
-		if (index == elements.length-1) {
+		
+		if (index == elements.length - 1) {
 			list = tree.append("<li class=\"last top-analysis\">"+element.name+"</li>").find('li');
 		} else {
 			list = tree.append("<li class=\"top-analysis\">"+element.name+"</li>").find('li');
 		}
 		
-		var innerTree = list.append("<ul></ul>").find('ul');
+		var innerTree;
 		
 		// var visz = element.getVisualizations(nodes);
 		var visz = element.getVisualizations(element);
@@ -101,12 +102,20 @@ function displayAnalysis (divId,elements) {
 		
 		var analysisIndex = index;
 		
-		$.each(visz,function(idx,porcodio) {
+		$.each(visz,function(idx, elmn) {
+			var innerTree = null;
+			if(idx == 0 && index == 0) {
+				innerTree = list.append("<ul></ul>").find('ul');
+			}
+			else {
+				innerTree = list.append("<ul></ul>").find('ul').last();
+			}
+			
 			var clickFun = "javascript:initialVisualization(" + analysisIndex + "," + idx +")"
-			if (idx == visz.length-1)
-				innerTree.append("<li class=\"last\" onclick=\"" + clickFun + "\">"+porcodio.name+"</li>");
+			if (idx == visz.length - 1)
+				innerTree.append("<li class=\"last\" onclick=\"" + clickFun + "\">"+elmn.name+"</li>");
 			else
-				innerTree.append("<li class=\"inner-viz\" onclick=\"" + clickFun + "\">"+porcodio.name+"</li>");
+				innerTree.append("<li class=\"inner-viz\" onclick=\"" + clickFun + "\">"+elmn.name+"</li>");
 		});				
 	});
 }
