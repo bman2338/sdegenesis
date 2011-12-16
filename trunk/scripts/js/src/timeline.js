@@ -14,6 +14,7 @@ var n = 3, // number of layers
 var revisionsMap =[];
 var cleanedHist;
 var layers;
+var currentCanvas;
     
 var p = 20,
     w, //size x
@@ -25,7 +26,7 @@ var p = 20,
     y2 = function(d) { return d.y * h / mz; }; // or `my` to not rescale, height of 3rd bar
    
 function displayTimeline(hist, sizeX, sizeY, scale){
-	stackedBarChart(hist,sizeX,sizeY,scale,hist.last,300)
+	stackedBarChart(hist,sizeX,sizeY,scale,hist.last,300,"#timelinechart")
 }
 
 function getRevisions (history,to,step) {
@@ -41,10 +42,12 @@ function getRevisions (history,to,step) {
 	};
 }
 
-function stackedBarChart (data,sizeX,sizeY,scale,version,step) {
+function stackedBarChart (data,sizeX,sizeY,scale,version,step,canvas) {
 
-    d3.select("#chart").html("");
-	$("#chart").html = "";
+	if (canvas)
+		currentCanvas = canvas;
+    d3.select(currentCanvas).html("");
+	$(currentCanvas).html = "";
 	currentLast = version;
 	currentX = sizeX;
 	currentY = sizeY;
@@ -171,6 +174,28 @@ function stackedBarChart (data,sizeX,sizeY,scale,version,step) {
 
 }
 
+function TimelineWidget () {
+	var obj = {};
+	obj.interval = 1500;
+	obj.playInterval = 0;
+	obj.forwardFunction = function () { };
+	obj.backFunction = function () { };
+	obj.playFunction = function () { 
+		playInterval = setInterval(function() {
+			obj.forwardFunction();
+		}, obj.interval);
+	};
+	obj.pauseFunction = function () { 
+		obj.playInterval = clearInterval(obj.playInterval);
+	};
+	
+	obj.setBehavior = function (f,b) {
+		obj.forwardFunction = f;
+		obj.backFunction = b;
+	}
+	return obj;
+}
+
 function forward(){
 	repaint(200, 300);
 }
@@ -178,17 +203,6 @@ function forward(){
 function back(){
 	repaint(-200, 300);
 }
-
-var playInterval = 0;
-function play(step){
-	playInterval = setInterval(function() {
-  		redraw(step, 300);
- 	}, 1500);
- }
- 
- function pause(){
- 	playInterval = clearInterval(playInterval);
- }
 
 //d3.select(window).on("keydown", 
 eventHandler.add(window,"keydown",
