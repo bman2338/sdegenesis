@@ -14,23 +14,24 @@ import java.io.File
 import scala.ch.usi.inf.genesis.database.MongoDBWrapper
 import scala.Int
 
-class ClassLocChecker extends ModelVisitor{
-  def visit(obj: ModelObject): NavigatorOption ={
-      obj.getProperty("loc") match{
-        case Some(v) => println(obj.getName()+"\tLOC: "+v)
-        case _ =>
-      }
-      CONTINUE
+class ClassLocChecker extends ModelVisitor {
+  def visit(obj: ModelObject): NavigatorOption = {
+    obj.getProperty("loc") match {
+      case Some(v) => println(obj.getName() + "\tLOC: " + v)
+      case _ =>
+    }
+    CONTINUE
   }
 }
 
 
-object  Main {
+object Main {
 
-   var host = "127.0.0.1";
+  var host = "127.0.0.1";
   var port = 8888;
   var db = "genesis_db";
-private def onParsingCompleted(revision: RevisionEntity,
+
+  private def onParsingCompleted(revision: RevisionEntity,
                                  projectName: String,
                                  projectPath: String,
                                  mseFile: File) {
@@ -49,7 +50,7 @@ private def onParsingCompleted(revision: RevisionEntity,
     res match {
       case Some(node) => {
         locMutator.mutate(node)
-       // ownerMutator.mutate(node)
+        // ownerMutator.mutate(node)
         val graph = new GraphExtractor().extractGraph(node)
         val mongo = new MongoDBWrapper(host, port, db);
         val revNumber = revision.getProperty(RevisionEntityProperty.NUMBER) match {
@@ -64,14 +65,13 @@ private def onParsingCompleted(revision: RevisionEntity,
 
 
   private def onRepositoryCrawlingComplete(revisions: ListBuffer[RevisionEntity], prjName: String, prjPath: String) {
-    revisions foreach((r) => println(r.properties))
+    revisions foreach ((r) => println(r.properties))
     val mongo = new MongoDBWrapper(host, port, db);
     mongo.saveRepositoryHistory(revisions, prjName)
   }
 
 
-  
-  def main (args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit = {
     import scala.io._
     import org.tmatesoft.svn.core.SVNException
 
@@ -87,9 +87,9 @@ private def onParsingCompleted(revision: RevisionEntity,
     var inFamixPath = args(4);
 
     object Int {
-      def unapply (s:String) : Option[Int] = try {
+      def unapply(s: String): Option[Int] = try {
         Some(s.toInt)
-      }  catch {
+      } catch {
         case _ => None
       }
     }
@@ -134,34 +134,33 @@ private def onParsingCompleted(revision: RevisionEntity,
       db = args(12)
 
 
-    try{
+    try {
 
       val inFamix = new InFamixWrapper(inFamixPath, FamixLanguage.JAVA.getId)
 
-      var auth : RepositoryUserAuth = null
+      var auth: RepositoryUserAuth = null
       if (username != null && password != null)
-        auth = new RepositoryUserAuth(username,password)
+        auth = new RepositoryUserAuth(username, password)
       val crawler = new SVNCrawler(
-      //"http://crypto-box.googlecode.com/svn/trunk/",
-      //"https://sdegenesis.googlecode.com/svn/trunk/",
-      repository,
-      //"argouml",
-      projectName,
-      projectPath,
-      mses,
-      inFamix,
-      auth,
-      "\\.java")
+        //"http://crypto-box.googlecode.com/svn/trunk/",
+        //"https://sdegenesis.googlecode.com/svn/trunk/",
+        repository,
+        //"argouml",
+        projectName,
+        projectPath,
+        mses,
+        inFamix,
+        auth,
+        "\\.java")
 
-      crawler.onSourceParsingCompleteDelegates+=onParsingCompleted
+      crawler.onSourceParsingCompleteDelegates += onParsingCompleted
       crawler.onCrawlingCompleteDelegates += onRepositoryCrawlingComplete
-      crawler.crawl(from,to, step)
+      crawler.crawl(from, to, step)
 
 
-
-    }catch{
+    } catch {
       case e: SVNException => println(e)
-      case anyEx : Exception => anyEx.printStackTrace()
+      case anyEx: Exception => anyEx.printStackTrace()
     }
   }
 }
