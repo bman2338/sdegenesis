@@ -46,6 +46,21 @@ body {
     display: block;
     overflow: visible;
 }
+ 
+#slidingUpTimeline {
+	bottom: 0px ;
+	display: none ;
+	position: fixed ;
+	width: 90% ;
+}
+ 
+#timelinechart {
+	border: 1px solid #666666 ;
+	border-bottom-width: 0px ;
+	border-radius: 10px;
+	z-index:10;
+	padding: 20px 20px 20px 20px ;
+}
 
 #projectstable { 
   padding-bottom: 30px;
@@ -53,7 +68,7 @@ body {
   text-align: left;
   width:100%; 
   border-spacing:1px;
-  border:0px;    
+  border:0px;
 }
   
 #projectstable tr, #projectstable tr th, 
@@ -750,7 +765,8 @@ label.form-select {
 #waitbox img {
 	position:absolute; 
 	top:50%; 
-	left:50%; 
-	margin-top:-50px;
-	margin-left:-50px;
+	left:50%;
+	width: 80px;
+	margin-top:-30px;
+	margin-left:-34px;
 }

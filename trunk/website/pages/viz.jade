@@ -56,6 +56,7 @@ script(type="text/javascript")
 			heldRevisions : new Array(),
 			history : undefined,
 			currRev : undefined,
+			btInfo : undefined,
 			getRevision : function(proj, rev, callback){
 					//for(var i = 0; i < heldRevisions.length; i++){
 					if(proj.heldRevisions[rev] == false){
@@ -110,6 +111,26 @@ script(type="text/javascript")
 						return proj.history;
 					}
 				},
+			getBTInfo : function(proj){
+				if(proj.btInfo){
+					return proj.btInfo;
+				}
+				else {
+					hideAll();
+					$.ajax({
+						url: '/get_btinfo/'+ "!{vizJson.projectName}",
+						error: function (data ){
+							alert("Some problem happened: " + JSON.stringify(data));
+						},
+						success: function( data ) {
+							var info = data.btInfo;
+							proj.btInfo = info;
+							showAll();
+							return info;
+						}
+					});
+				}
+			}
 		}
 	});
 	
@@ -258,6 +279,7 @@ script(type="text/javascript")
 						input(type="submit", class="submit", value="Send", id="submissionButton") Submit request		
 		#error
 					
+
 	script(type="text/javascript")
 		$(document).ready(function(){
 			$("li.two a").click(function() {
@@ -303,15 +325,20 @@ script(type="text/javascript")
 
 #treename
 #monitor
-
 #chart
-	button(id="group", class="first", onclick="transitionGroup()") Group
-	button(id="stack", class="active last", onclick="transitionStack()") Stack
-	button(id="highlight", class="active last", onclick="highlightMse()") toggle MSE
-	p
+#slidingUpTimeline
+	#timelinechart
+		button(id="group", class="first", onclick="transitionGroup()") Group
+		button(id="stack", class="active last", onclick="transitionStack()") Stack
+		button(id="highlight", class="active last", onclick="highlightMse()") toggle MSE
+		button(id="backbutton", class="first", onclick="back()") Back
+		button(id="playbutton", class="active last", onclick="play()") Play
+		button(id="forwardbutotn", class="active last", onclick="forward()") Forward
+		p
 
-// div(class="Block", id="vizContainer")
-#chart(class="Block Right", style="overflow:visible")
+		#chart(class="Block Right", style="overflow:visible")
+
+#slideUpTimeline Slide up Timeline
 	
 script
 	
@@ -425,6 +452,26 @@ script
 	
 	$(function() {
 		$('#nodes input').click(updateResults);
+	});
+	
+	jQuery(function( $ ){
+		// Get a reference to the container.
+		var container = $( "#slidingUpTimeline" );
+		// Bind the link to toggle the slide.
+		$( "#slideUpTimeline" ).click(
+			function( event ){
+			// Prevent the default event.
+			event.preventDefault();
+			// Toggle the slide based on its current
+			// visibility.
+			if (container.is( ":visible" )){
+				// Hide - slide up.
+				container.slideUp( 500 );
+			} else {
+				// Show - slide down.
+				container.slideDown( 500 );
+			}
+		});
 	});
 	
 	// document.getElementById('overlay').style.visibility = 'hidden';

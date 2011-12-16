@@ -16,7 +16,7 @@ var cleanedHist;
 var layers;
 var currentCanvas;
     
-var p = 100,
+var p = 30,
     w, //size x
     h, //size y
     mx,my,mz,
