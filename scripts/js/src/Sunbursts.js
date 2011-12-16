@@ -126,10 +126,7 @@ function sunburst (rawJson) {
 				}
 				var elements = t.selectAll("tspan")
                 elements.attr("visibility", "hidden");
-            });
-
-		if (augmentationCallback)
-			vis.selectAll("path").call(visModel.augment("nodes",augmentationCallback));
+            }).call(visModel.augment("nodes",augmentationCallback));
 
 		/*var text = vis.selectAll("text").data(nodes);
 		var textEnter = text.enter().append("svg:text")
