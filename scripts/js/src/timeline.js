@@ -192,9 +192,9 @@ function() {
 function repaint (displacement,minStep) {
 	var ver = currentFirst+displacement;
 	if (displacement > 0 && ver == currentLast)
-		return;
+		return false;
 	else if (displacement < 0 && ver == currentFirst)
-		return;
+		return false;
 		
 	var last;
 		
@@ -212,6 +212,9 @@ function repaint (displacement,minStep) {
 			last = cleanedHist.last;
 	}
 	
+	if (last == currentLast)
+		return false;
+	
 	/*currentLast = last;
 	currentFirst = last - minStep;
 	
@@ -225,6 +228,7 @@ function repaint (displacement,minStep) {
 			return d;
 	}).transition().duration(750).attr("height",y);*/
 	stackedBarChart(cleanedHist,currentX,currentY,currentScale,last,minStep);
+	return true;
 }
 
 

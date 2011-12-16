@@ -40,7 +40,10 @@ script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenes
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/timeline.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/tooltip.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/calendar/calendar.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/TimelineHandler.js")
 script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/Helpers.js")
+script(type="text/javascript", src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/scripts/js/src/QueryLanguage.js")
+
 
 script(type="text/javascript")
 	
@@ -61,23 +64,27 @@ script(type="text/javascript")
 			getRevision : function(proj, rev, callback){
 					//for(var i = 0; i < heldRevisions.length; i++){
 					if(proj.heldRevisions[rev] == false){
+						//alert("ritorno");
 						return;
 					}
-					if(proj.heldRevisions[rev] != undefined){
+					else if(proj.heldRevisions[rev] != undefined){
+						//alert("cel'ho già")
 						if(callback)
 							callback(proj.heldRevisions[rev]);
 					}
 					//}
 					else{
+						//alert("ueo, la richiedo")
 						proj.heldRevisions[rev] = false;
-						hideAll();
+						//hideAll();
 						$.ajax({
 							url: '/get_data/'+ "!{vizJson.projectName}" +'/' + rev,
 							error: function (data ){
 								alert("Some problem happened: " + JSON.stringify(data));
 							},
 							success: function( data ) {
-								showAll();
+								//showAll();
+								//alert("ricevuto: " + JSON.strigify(data));
 								var nodes = data.nodes;
 								var edges = data.edges;
 								var graph = genesis.Graph.create(nodes,edges);
@@ -104,6 +111,7 @@ script(type="text/javascript")
 								proj.currRev = 500;
 								displayTimeline(h, canvas_width, canvas_height, function(x){return x});
 								insertButtonsForTimeline();
+								var revsToPrefetch = prefetchRevisions(10, h, proj);
 								showAll();
 								return h;
 							}
@@ -135,38 +143,26 @@ script(type="text/javascript")
 			}
 		}
 	});
-	
-	
-	function countProperties(obj) {
-		var count = 0;
-		
-		for(var prop in obj) {
-			if(obj.hasOwnProperty(prop))
-				++count;
-			}
-			
-			return count;
-	}
 
 #overlay-transparent
 	#overlay(class="ui-widget-content ui-corner-all")
-		h3(class="ui-widget-header ui-corner-all") Nodes
-			#nodes
-		
-			script(type="text/javascript")
-				displayMultiple('nodes', [{name:'Class',value:'Classes'}, {name:'Method',value:'Methods'}, {name:'Revision',value:'History'}, {name:'Author',value:'Authors'}]);
-		
-			h3(class="ui-widget-header ui-corner-all") Query
-			input(type="text", style="width: 89%; margin-right:10px")
-			input(type="submit", class="submit", style="width: 9%", value="Filter", id="submissionButton") Filter
-			table(id="results-analysis")
-				tr
-					td
-						h3(class="ui-widget-header ui-corner-all") Candidates
-						#results
-					td			
-						h3(class="ui-widget-header ui-corner-all") Analysis \& Viz
-						#analysis
+		h3(class="ui-widget-header ui-corner-all") Entities
+		#nodes
+	
+		script(type="text/javascript")
+			displayMultiple('nodes', [{name:'Class',value:'Classes'}, {name:'Method',value:'Methods'}, {name:'Revision',value:'History'}, {name:'Author',value:'Authors'}]);
+	
+		h3(class="ui-widget-header ui-corner-all") Query
+		input(id="query", type="text", style="width: 89%; margin-right:10px")
+		input(type="submit", onclick="javascript:filterResults()", class="submit", style="width: 9%", value="Filter", id="submitStoCazzo") Filter
+		table(id="results-analysis")
+			tr
+				td
+					h3(class="ui-widget-header ui-corner-all") Candidates
+					#results
+				td			
+					h3(class="ui-widget-header ui-corner-all") Analysis \& Viz
+					#analysis
 
 #topmenu
 	ul(id="menu-nav")
@@ -340,7 +336,8 @@ script(type="text/javascript")
 
 		#chart(class="Block Right", style="overflow:visible")
 
-#slideUpTimeline Slide up Timeline
+#slideUpTimeline
+	img(src="http://atelier.inf.usi.ch/~babazadm/sdegenesis/website/pages/style/arrow.png", style="left: -50px")
 	
 script
 	

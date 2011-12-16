@@ -1,4 +1,5 @@
 var skipElements = ["Revision","Author"];
+
 var elementsSelected = [];
 var hidden = true;
 
@@ -45,11 +46,11 @@ function initialVisualization (analysisId,visualizationId) {
 	var analysisAvailable = getAvailableAnalysis(elementsSelected);
 	var analysis = analysisAvailable[analysisId];
 	
-	var useHistory = false;
+	var useHistory = true;
 	
-	for (var i = 0; i < skipElements.length; ++i) {
-		if (elementsSelected.indexOf(skipElements[i])) {
-			useHistory = true;
+	for (var i = 0; i < elementsSelected.length; ++i) {
+		if (skipElements.indexOf(elementsSelected[i]) == -1) {
+			useHistory = false;
 			break;
 		}
 	}
@@ -82,8 +83,6 @@ function displayAnalysis (divId,elements) {
 	div.html("");
 	var tree = div.append("<ul class=\"tree\"></ul>").find('ul');
 
-	alert(JSON.stringify(elements));
-
 	$.each(elements, function(index, element) {
 		var list = null;
 		
@@ -96,9 +95,7 @@ function displayAnalysis (divId,elements) {
 		var innerTree;
 		
 		var visz = element.getVisualizations(element);
-		
-		alert(JSON.stringify(visz));
-		
+				
 		var analysisIndex = index;
 		
 		$.each(visz,function(idx, elmn) {
@@ -139,67 +136,111 @@ function updateResults() {
       elementsSelected.push($(this).val());
 	});
 	
-	var results = showResults(elementsSelected);
+	var results = showResults();
 	showAnalysis(elementsSelected,results);
 	
 }
 
-function showResults(elements) {
+
+function showResults() {
 	var results = {};	
 	
 	projects[0][currentProject].getRevision(projects[0][currentProject], projects[0][currentProject].currRev, function(rev){
 				
 		var shouldSkip = [];
-				
-		$.each(elements,
+
+		$.each(elementsSelected,
 			function(index, node) {
 				if (skipElements.indexOf(node) != -1) {
 					shouldSkip.push(index);
-				}
-				else {
+				} else {
 					results[node] = rev.graph.getNodesByType(node);
 				}
 			});
-			
-			var resultDiv = document.getElementById("results");
-			
-		if (shouldSkip.length == elements.length) {
+
+		// alert(JSON.stringify(results));
+
+		if (shouldSkip.length == elementsSelected.length) {
 			resultDiv.innerHTML = "";
 			return;
 		}
 			
-		var table = '<table id=\"results-table\">';
-		table += '<tr>'; 
-		$.each(elementsSelected,
-			function(index, header) {
-				if (shouldSkip.indexOf(index) == -1) {
-					table += '<td>' + header + '</td>';
-				}
-			});
-		
-		table += '</tr>'; 
-		table += '<tr>';
-		$.each(elementsSelected,
-			function(index, header) {
-				if (results[header]) {
-					table += '<td><select class=\"candidates\" id="' + header  + '-select" multiple="multiple" size="20">';			
-				$.each(results[header],
-					function(indexx, element) {
-						if (shouldSkip.indexOf(indexx) == -1) {
-							table += '<option value=\"'+element.uniqueId+'\">' + element.properties.name + '</option>';
-						}
-					});
-				table += '</td>';
-				}
-			});
-		table += '</tr></table>';	
-		resultDiv.innerHTML = table;
+		var resultDiv = document.getElementById("results");
+			
+		resultDiv.innerHTML = getTable(shouldSkip, results);
+	
 		$.each(elementsSelected,
 			function(index, header) {
 				sortList(header  + '-select'); 
 			});
 	});
 }
+
+function filterResults() {
+	var results = {};	
+	
+	projects[0][currentProject].getRevision(projects[0][currentProject], projects[0][currentProject].currRev, function(rev){
+				
+		var shouldSkip = [];
+				
+		var query = document.getElementById("query").value;
+	
+		// alert(query)
+	
+		if(query != "") {
+			results = getQueryResults(query, elementsSelected, rev.graph);
+		} else {
+		 	showResults();
+			return;
+		}
+
+			
+		var resultDiv = document.getElementById("results");
+			
+		if (shouldSkip.length == elementsSelected.length) {
+			resultDiv.innerHTML = "";
+			return;
+		}
+			
+		resultDiv.innerHTML = getTable(shouldSkip, results);
+	
+		$.each(elementsSelected,
+			function(index, header) {
+				sortList(header  + '-select'); 
+			});
+	});
+}
+
+
+function getTable(shouldSkip, results) {
+	var table = '<table id=\"results-table\">';
+	table += '<tr>'; 
+	$.each(elementsSelected,
+		function(index, header) {
+			if (shouldSkip.indexOf(index) == -1) {
+				table += '<td>' + header + '</td>';
+			}
+		});
+	
+	table += '</tr>'; 
+	table += '<tr>';
+	$.each(elementsSelected,
+		function(index, header) {
+			if (results[header]) {
+				table += '<td><select class=\"candidates\" id="' + header  + '-select" multiple="multiple" size="20">';			
+			$.each(results[header],
+				function(indexx, element) {
+					if (shouldSkip.indexOf(indexx) == -1) {
+						table += '<option value=\"'+element.uniqueId+'\">' + element.properties.name + '</option>';
+					}
+				});
+			table += '</td>';
+			}
+		});
+	table += '</tr></table>';
+	return table;
+}
+
 
 // FIXME: FUCKING SLOW! Crash on Safari!
 function sortList(id) {

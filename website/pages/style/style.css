@@ -62,6 +62,13 @@ body {
 	padding: 20px 20px 20px 20px ;
 }
 
+#slideUpTimeline {
+	bottom: 0px;
+	position: fixed;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 #projectstable { 
   padding-bottom: 30px;
   padding-top: 30px;
@@ -70,7 +77,7 @@ body {
   border-spacing:1px;
   border:0px;
 }
-  
+
 #projectstable tr, #projectstable tr th, 
 #projectstable tr, #projectstable tr td {
 	background: #ccc;
