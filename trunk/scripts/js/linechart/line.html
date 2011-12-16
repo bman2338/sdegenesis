@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Line Chart</title>
+    <link type="text/css" rel="stylesheet" href="line.css"/>
+	<link type="text/css" rel="stylesheet" href="tree.css"/>
+    <script type="text/javascript" src="../../d3.js"></script>
+	<script type="text/javascript" src="../../d3.time.js"></script>
+	<script type="text/javascript" src="../../d3.time.min.js"></script>
+	<script type="text/javascript" src="history.js"></script>
+	<script type="text/javascript" src="history2.js"></script>
+	<script type="text/javascript" src="history3.js"></script>
+	<script type="text/javascript" src="cleanHistory.js"></script>
+    <script type="text/javascript" src="line.js"></script>
+	<script type="text/javascript" src="tooltip.js"></script>
+	
+	<script type="text/javascript">
+	function onLoad(){
+		h=[];
+		var t = cleanHistory(hhistory);
+		var t1 = cleanHistory(hhistory2);
+		var t2 = cleanHistory(hhistory3);
+		for(o in t)
+			h.push(t[o]);
+		for(o in t1)
+			h.push(t1[o]);
+		for(o in t2)
+			h.push(t2[o]);
+
+	}
+	function showCommitHistory(){
+		d3.select("#chart").html("");	
+		plotSeries(getCommitHistoryData(h), "Time", "File Changed");
+	}
+	function showChangesHistory(){
+		d3.select("#chart").html("");	
+		plotSeries(getChangesHistory(h), "Time", "File Changed");
+	}
+	
+	</script>
+	
+	
+  </head>
+  <body onload="onLoad();">
+	<ul class="Menu">
+		<li><a href="javascript:showCommitHistory()"> Commit History Evolution </li>
+		<li><a href="javascript:showChangesHistory()"> Changes History </a> </li>
+	</ul>
+	
+	
+	<button onclick="showCommitHistory();">
+	<link type="text/css" rel="stylesheet" href="tooltip.css"></link>
+  </body>
+</html>
