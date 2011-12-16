@@ -73,7 +73,6 @@
 			}
 			//TODO make copy
 			data[date].push(entry);
-			
 		}
 		return { "dates": dates, "data" : data, "minYear": minYear, "maxYear": maxYear };
 	}
