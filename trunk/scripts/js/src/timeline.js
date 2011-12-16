@@ -180,7 +180,6 @@ function back(){
 }
 
 var playInterval = 0;
-// missing parameters at the moment
 function play(step){
 	playInterval = setInterval(function() {
   		redraw(step, 300);
@@ -188,7 +187,7 @@ function play(step){
  }
  
  function pause(){
- 	clearInterval(playInterval);
+ 	playInterval = clearInterval(playInterval);
  }
 
 //d3.select(window).on("keydown", 
